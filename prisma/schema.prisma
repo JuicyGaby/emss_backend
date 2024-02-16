@@ -1,0 +1,413 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model access_rights {
+  id                    Int     @id @default(autoincrement())
+  access_name           String  @db.VarChar(50)
+  can_view_all_dtr      Boolean @default(false)
+  can_insert_dtr        Boolean @default(false)
+  can_create_dept_sched Boolean @default(false)
+  can_edit_chart        Boolean @default(false)
+  can_manage_training   Boolean @default(false)
+}
+
+model announcements {
+  id         Int      @id @default(autoincrement())
+  picture_id Int
+  detail     String   @db.VarChar(1000)
+  posted_by  String   @db.VarChar(100)
+  attachment String?  @db.VarChar(255)
+  created_at DateTime @default(now()) @db.DateTime(0)
+  updated_at DateTime @default(now()) @db.DateTime(0)
+}
+
+model calendar_events {
+  id          Int      @id @default(autoincrement())
+  employee_id Int?
+  title       String   @db.VarChar(100)
+  description String   @db.VarChar(255)
+  event_date  DateTime @db.Date
+  event_type  String   @db.VarChar(50)
+}
+
+model comments {
+  id              Int      @id @default(autoincrement())
+  announcement_id Int
+  picture_id      Int
+  comment_by      String   @db.VarChar(100)
+  comment         String   @db.VarChar(500)
+  created_at      DateTime @default(now()) @db.DateTime(0)
+}
+
+model committees {
+  id        Int    @id @default(autoincrement())
+  comm_name String @unique(map: "comm_name") @db.VarChar(100)
+  comm_code String @db.VarChar(50)
+}
+
+model departments {
+  id              Int    @id @default(autoincrement())
+  dept_name       String @unique(map: "dept_name_UNIQUE") @db.VarChar(100)
+  dept_code       String @db.VarChar(50)
+  dept_supervisor Int?
+  dept_div        String @db.VarChar(100)
+  dept_div_head   Int?
+}
+
+model dept_org {
+  id          Int     @id @default(autoincrement())
+  dept_id     Int
+  pid         Int?
+  name        String? @db.VarChar(150)
+  description String? @db.VarChar(50)
+  level       String? @db.VarChar(50)
+  image       Int?
+}
+
+model designations {
+  id               Int    @id @default(autoincrement())
+  designation_name String @unique(map: "designation_name_UNIQUE") @db.VarChar(100)
+  designation_code String @db.VarChar(50)
+  salary_grade     Int
+}
+
+model employee_address {
+  id          Int     @id @default(autoincrement())
+  employee_id Int
+  id_type     String  @unique(map: "id_type_UNIQUE") @db.VarChar(50)
+  lot_no      String? @db.VarChar(50)
+  street      String? @db.VarChar(50)
+  subdivision String? @db.VarChar(50)
+  barangay    String? @db.VarChar(50)
+  city        String? @db.VarChar(50)
+  province    String? @db.VarChar(50)
+  zip_code    String? @db.VarChar(20)
+  type        String? @db.VarChar(20)
+}
+
+model employee_dependent {
+  id          Int       @id @default(autoincrement())
+  employee_id Int
+  name        String?   @db.VarChar(250)
+  birth_date  DateTime? @db.Date
+}
+
+model employee_education {
+  id             Int     @id @default(autoincrement())
+  employee_id    Int
+  level          Int?
+  id_level       String  @unique(map: "id_level_UNIQUE") @db.VarChar(50)
+  level_name     String  @db.VarChar(50)
+  school_name    String? @db.VarChar(100)
+  course         String? @db.VarChar(100)
+  year_from      String? @db.VarChar(10)
+  year_to        String? @db.VarChar(10)
+  highest_level  String? @db.VarChar(50)
+  year_graduated String? @db.VarChar(10)
+  scholarship    String? @db.VarChar(50)
+}
+
+model employee_eligibility {
+  id            Int       @id @default(autoincrement())
+  employee_id   Int
+  name          String?   @db.VarChar(100)
+  rating        String?   @db.VarChar(10)
+  exam_date     DateTime? @db.Date
+  exam_place    String?   @db.VarChar(100)
+  license_no    String?   @db.VarChar(20)
+  validity_date DateTime? @db.Date
+}
+
+model employee_reference {
+  id          Int     @id @default(autoincrement())
+  employee_id Int
+  name        String? @db.VarChar(150)
+  address     String? @db.VarChar(150)
+  tel_no      String? @db.VarChar(20)
+}
+
+model employee_sched_2020 {
+  id          Int     @id @default(autoincrement())
+  employee_id Int
+  id_month    String  @unique(map: "id_month_UNIQUE") @db.VarChar(20)
+  d1          String? @db.VarChar(50)
+  d2          String? @db.VarChar(50)
+  d3          String? @db.VarChar(50)
+  d4          String? @db.VarChar(50)
+  d5          String? @db.VarChar(50)
+  d6          String? @db.VarChar(50)
+  d7          String? @db.VarChar(50)
+  d8          String? @db.VarChar(50)
+  d9          String? @db.VarChar(50)
+  d10         String? @db.VarChar(50)
+  d11         String? @db.VarChar(50)
+  d12         String? @db.VarChar(50)
+  d13         String? @db.VarChar(50)
+  d14         String? @db.VarChar(50)
+  d15         String? @db.VarChar(50)
+  d16         String? @db.VarChar(50)
+  d17         String? @db.VarChar(50)
+  d18         String? @db.VarChar(50)
+  d19         String? @db.VarChar(50)
+  d20         String? @db.VarChar(50)
+  d21         String? @db.VarChar(50)
+  d22         String? @db.VarChar(50)
+  d23         String? @db.VarChar(50)
+  d24         String? @db.VarChar(50)
+  d25         String? @db.VarChar(50)
+  d26         String? @db.VarChar(50)
+  d27         String? @db.VarChar(50)
+  d28         String? @db.VarChar(50)
+  d29         String? @db.VarChar(50)
+  d30         String? @db.VarChar(50)
+  d31         String? @db.VarChar(50)
+  remarks     String? @db.VarChar(255)
+}
+
+model employee_sched_2021 {
+  id          Int     @id @default(autoincrement())
+  employee_id Int
+  id_month    String  @unique(map: "id_month") @db.VarChar(20)
+  d1          String? @db.VarChar(50)
+  d2          String? @db.VarChar(50)
+  d3          String? @db.VarChar(50)
+  d4          String? @db.VarChar(50)
+  d5          String? @db.VarChar(50)
+  d6          String? @db.VarChar(50)
+  d7          String? @db.VarChar(50)
+  d8          String? @db.VarChar(50)
+  d9          String? @db.VarChar(50)
+  d10         String? @db.VarChar(50)
+  d11         String? @db.VarChar(50)
+  d12         String? @db.VarChar(50)
+  d13         String? @db.VarChar(50)
+  d14         String? @db.VarChar(50)
+  d15         String? @db.VarChar(50)
+  d16         String? @db.VarChar(50)
+  d17         String? @db.VarChar(50)
+  d18         String? @db.VarChar(50)
+  d19         String? @db.VarChar(50)
+  d20         String? @db.VarChar(50)
+  d21         String? @db.VarChar(50)
+  d22         String? @db.VarChar(50)
+  d23         String? @db.VarChar(50)
+  d24         String? @db.VarChar(50)
+  d25         String? @db.VarChar(50)
+  d26         String? @db.VarChar(50)
+  d27         String? @db.VarChar(50)
+  d28         String? @db.VarChar(50)
+  d29         String? @db.VarChar(50)
+  d30         String? @db.VarChar(50)
+  d31         String? @db.VarChar(50)
+  remarks     String? @db.VarChar(255)
+}
+
+model employees {
+  id                      Int       @id @default(autoincrement())
+  qrcode                  String?   @unique(map: "qrcode_UNIQUE") @db.VarChar(20)
+  dept_id                 Int
+  designation_id          Int
+  username                String    @unique(map: "username") @db.VarChar(50)
+  password                String    @db.VarChar(50)
+  dept_section            String?   @db.VarChar(150)
+  fname                   String    @db.VarChar(50)
+  mname                   String    @db.VarChar(50)
+  lname                   String    @db.VarChar(50)
+  ext_name                String?   @db.VarChar(50)
+  birth_date              DateTime? @db.Date
+  birth_place             String?   @db.VarChar(100)
+  gender                  String?   @db.VarChar(10)
+  civil_status            String?   @db.VarChar(30)
+  height                  String?   @db.VarChar(10)
+  weight                  String?   @db.VarChar(10)
+  blood_type              String?   @db.VarChar(5)
+  gsis_id                 String?   @db.VarChar(30)
+  pagibig_id              String?   @db.VarChar(30)
+  phic_id                 String?   @db.VarChar(30)
+  sss_id                  String?   @db.VarChar(30)
+  tin_id                  String?   @db.VarChar(30)
+  agency_id               String?   @db.VarChar(30)
+  pin                     String?   @db.VarChar(30)
+  citizenship             String?   @db.VarChar(50)
+  citizenship_country     String?   @db.VarChar(30)
+  tel_no                  String?   @db.VarChar(20)
+  mobile_no               String?   @db.VarChar(20)
+  email                   String?   @db.VarChar(100)
+  spouse_fname            String?   @db.VarChar(50)
+  spouse_mname            String?   @db.VarChar(50)
+  spouse_lname            String?   @db.VarChar(50)
+  spouse_ename            String?   @db.VarChar(20)
+  spouse_occupation       String?   @db.VarChar(50)
+  spouse_employer         String?   @db.VarChar(150)
+  spouse_business_address String?   @db.VarChar(150)
+  spouse_tel_no           String?   @db.VarChar(20)
+  father_fname            String?   @db.VarChar(50)
+  father_mname            String?   @db.VarChar(50)
+  father_lname            String?   @db.VarChar(50)
+  father_ename            String?   @db.VarChar(50)
+  mother_fname            String?   @db.VarChar(50)
+  mother_mname            String?   @db.VarChar(50)
+  mother_lname            String?   @db.VarChar(50)
+  date_hired              DateTime? @db.Date
+  type                    String?   @db.VarChar(50)
+  flexi_time              Boolean   @default(false)
+  employment_status       String    @default("R") @db.Char(2)
+  status                  Boolean   @default(true)
+  prc_id                  String?   @db.VarChar(50)
+  login_token             String?   @db.VarChar(150)
+}
+
+model employees2 {
+  id                      Int       @id @default(autoincrement())
+  dept_id                 Int
+  designation_id          Int
+  username                String    @unique(map: "username") @db.VarChar(50)
+  password                String    @db.VarChar(50)
+  fname                   String    @db.VarChar(50)
+  mname                   String?   @db.VarChar(50)
+  lname                   String    @db.VarChar(50)
+  ext_name                String?   @db.VarChar(50)
+  birth_date              DateTime? @db.Date
+  birth_place             String?   @db.VarChar(100)
+  gender                  String?   @db.VarChar(10)
+  civil_status            String?   @db.VarChar(30)
+  height                  Int?
+  weight                  Int?
+  blood_type              String?   @db.VarChar(5)
+  gsis_id                 String?   @db.VarChar(30)
+  pagibig_id              String?   @db.VarChar(30)
+  phic_id                 String?   @db.VarChar(30)
+  sss_id                  String?   @db.VarChar(30)
+  tin_id                  String?   @db.VarChar(30)
+  agency_id               String?   @db.VarChar(30)
+  pin                     String?   @db.VarChar(30)
+  citizenship             String?   @db.VarChar(50)
+  citizenship_country     String?   @db.VarChar(30)
+  tel_no                  String?   @db.VarChar(20)
+  mobile_no               String?   @db.VarChar(20)
+  email                   String?   @db.VarChar(100)
+  spouse_fname            String?   @db.VarChar(50)
+  spouse_mname            String?   @db.VarChar(50)
+  spouse_lname            String?   @db.VarChar(50)
+  spouse_ename            String?   @db.VarChar(20)
+  spouse_occupation       String?   @db.VarChar(50)
+  spouse_employer         String?   @db.VarChar(150)
+  spouse_business_address String?   @db.VarChar(150)
+  spouse_tel_no           String?   @db.VarChar(20)
+  father_fname            String?   @db.VarChar(50)
+  father_mname            String?   @db.VarChar(50)
+  father_lname            String?   @db.VarChar(50)
+  father_ename            String?   @db.VarChar(50)
+  mother_fname            String?   @db.VarChar(50)
+  mother_mname            String?   @db.VarChar(50)
+  mother_lname            String?   @db.VarChar(50)
+  date_hired              DateTime? @db.Date
+  type                    String?   @db.VarChar(50)
+  flexi_time              Boolean   @default(true)
+  employment_status       String    @default("R") @db.Char(2)
+  status                  Boolean   @default(true)
+}
+
+model learning_development {
+  id          Int       @id @default(autoincrement())
+  employee_id Int
+  title       String?   @db.VarChar(150)
+  date_from   DateTime? @db.Date
+  date_to     DateTime? @db.Date
+  hours       Int?
+  type        String?   @db.VarChar(20)
+  conductor   String?   @db.VarChar(100)
+}
+
+model other_info {
+  id          Int     @id @default(autoincrement())
+  employee_id Int
+  type        String? @db.VarChar(20)
+  detail      String? @db.VarChar(100)
+}
+
+model schedules {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique(map: "name") @db.VarChar(20)
+  description String    @db.VarChar(50)
+  start_at    DateTime? @db.Time(0)
+  end_at      DateTime? @db.Time(0)
+}
+
+model system_access {
+  id           Int     @id @default(autoincrement())
+  emp_sys_id   String  @unique(map: "emp_sys_id_UNIQUE") @db.VarChar(10)
+  employee_id  Int
+  system_id    Int
+  access_right String? @db.VarChar(10)
+}
+
+model system_list {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique(map: "name_UNIQUE") @db.VarChar(100)
+  description String? @db.VarChar(255)
+  url         String? @db.VarChar(50)
+}
+
+model system_rights {
+  id           Int     @id @default(autoincrement())
+  system_id    Int
+  access_right Int?
+  name         String? @db.VarChar(100)
+  description  String? @db.VarChar(255)
+}
+
+model time_logs_2020 {
+  id          Int      @id @default(autoincrement())
+  employee_id Int?
+  temperature String?  @db.VarChar(10)
+  time_log    DateTime @default(now()) @db.DateTime(0)
+  status      String   @db.VarChar(5)
+  remarks     String?  @db.VarChar(150)
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0)
+  created_by  Int?
+  updated_by  Int?
+}
+
+model time_logs_2021 {
+  id          Int      @id @default(autoincrement())
+  employee_id Int
+  temperature String?  @db.VarChar(10)
+  time_log    DateTime @default(now()) @db.DateTime(0)
+  status      String   @db.VarChar(5)
+  remarks     String?  @db.VarChar(150)
+  created_at  DateTime @default(now()) @db.DateTime(0)
+  updated_at  DateTime @default(now()) @db.DateTime(0)
+  created_by  Int?
+  updated_by  Int?
+}
+
+model voluntary_work {
+  id          Int       @id @default(autoincrement())
+  employee_id Int
+  name        String?   @db.VarChar(150)
+  date_from   DateTime? @db.Date
+  date_to     DateTime? @db.Date
+  hours       Int?
+  position    String?   @db.VarChar(100)
+}
+
+model work_experience {
+  id           Int       @id @default(autoincrement())
+  employee_id  Int
+  position     String?   @db.VarChar(100)
+  company      String?   @db.VarChar(100)
+  salary       String?   @db.VarChar(10)
+  salary_grade String?   @db.VarChar(10)
+  status       String?   @db.VarChar(20)
+  date_from    DateTime? @db.Date
+  date_to      DateTime? @db.Date
+  gov_service  String    @default("N") @db.VarChar(5)
+}

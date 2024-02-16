@@ -4,12 +4,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const cors = require('cors')
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+app.use(cors())
 
 // view engine setup
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -18,6 +22,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(function(req, res, next) {
+  const allowedOrigins = ['http://localhost:5173', 'http://192.168.0.141:5173'];
+  const origin = req.headers.origin;
+  console.log(origin);
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+})
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
