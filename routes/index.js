@@ -3,7 +3,7 @@ var router = express.Router();
 
 //* imported controllers
 
-const authemtication = require('../controller/authentication')
+const authentication = require('../controller/authentication')
 const departments = require('../controller/departments')
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -13,7 +13,8 @@ router.get('/', function(req, res, next) {
 
 // * authentication
 
-router.get('/employees', authemtication.employees)
+router.get('/employees', authentication.employees)
+router.post('/login', authentication.login)
 
 module.exports = router;
 
