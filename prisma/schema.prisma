@@ -7,6 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+model sample_patients {
+  id          Int       @id @default(autoincrement())
+  fname       String    @db.VarChar(50)
+  mname       String?   @db.VarChar(50)
+  lname       String    @db.VarChar(50)
+  birth_date  DateTime? @db.Date
+  created_at  DateTime  @default(now()) @db.DateTime(0)
+  sex         String?   @db.VarChar(10)
+  address     String?   @db.VarChar(150)
+  civil_status String?  @db.VarChar(20)
+  age         Int?
+  education EducationAttainment?
+}
+
+enum EducationAttainment {
+  Elementary
+  HighSchool
+  Undergraduate
+  Vocational
+  PostGraduate
+}
+
 model access_rights {
   id                    Int     @id @default(autoincrement())
   access_name           String  @db.VarChar(50)
@@ -17,14 +40,6 @@ model access_rights {
   can_manage_training   Boolean @default(false)
 }
 
-model calendar_events {
-  id          Int      @id @default(autoincrement())
-  employee_id Int?
-  title       String   @db.VarChar(100)
-  description String   @db.VarChar(255)
-  event_date  DateTime @db.Date
-  event_type  String   @db.VarChar(50)
-}
 
 model committees {
   id        Int    @id @default(autoincrement())

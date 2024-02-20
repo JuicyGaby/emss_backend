@@ -13,8 +13,9 @@ router.get('/', function(req, res, next) {
 
 // * authentication
 
-router.get('/employees', authentication.employees)
+// router.get('/employees', authentication.employees)
 router.post('/login', authentication.login)
+router.get('/userByToken', authentication.userByToken)
 
 module.exports = router;
 
