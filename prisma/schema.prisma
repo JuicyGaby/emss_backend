@@ -7,27 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model sample_patients {
-  id          Int       @id @default(autoincrement())
-  fname       String    @db.VarChar(50)
-  mname       String?   @db.VarChar(50)
-  lname       String    @db.VarChar(50)
-  birth_date  DateTime? @db.Date
-  created_at  DateTime  @default(now()) @db.DateTime(0)
-  sex         String?   @db.VarChar(10)
-  address     String?   @db.VarChar(150)
-  civil_status String?  @db.VarChar(20)
-  age         Int?
-  education EducationAttainment?
-}
-
-enum EducationAttainment {
-  Elementary
-  HighSchool
-  Undergraduate
-  Vocational
-  PostGraduate
+  id           Int                  @id @default(autoincrement())
+  fname        String               @db.VarChar(50)
+  mname        String?              @db.VarChar(50)
+  lname        String               @db.VarChar(50)
+  birth_date   DateTime?            @db.Date
+  created_at   DateTime             @default(now()) @db.DateTime(0)
+  sex          String?              @db.VarChar(10)
+  address      String?              @db.VarChar(150)
+  civil_status String?              @db.VarChar(20)
+  age          Int?
+  education    EducationAttainment?
 }
 
 model access_rights {
@@ -39,7 +30,6 @@ model access_rights {
   can_edit_chart        Boolean @default(false)
   can_manage_training   Boolean @default(false)
 }
-
 
 model committees {
   id        Int    @id @default(autoincrement())
@@ -406,4 +396,41 @@ model work_experience {
   date_from    DateTime? @db.Date
   date_to      DateTime? @db.Date
   gov_service  String    @default("N") @db.VarChar(5)
+}
+
+model announcements {
+  id         Int      @id @default(autoincrement())
+  picture_id Int
+  detail     String   @db.VarChar(1000)
+  posted_by  String   @db.VarChar(100)
+  attachment String?  @db.VarChar(255)
+  created_at DateTime @default(now()) @db.DateTime(0)
+  updated_at DateTime @default(now()) @db.DateTime(0)
+}
+
+
+model calendar_events {
+  id          Int      @id @default(autoincrement())
+  employee_id Int?
+  title       String   @db.VarChar(100)
+  description String   @db.VarChar(255)
+  event_date  DateTime @db.Date
+  event_type  String   @db.VarChar(50)
+}
+
+model comments {
+  id              Int      @id @default(autoincrement())
+  announcement_id Int
+  picture_id      Int
+  comment_by      String   @db.VarChar(100)
+  comment         String   @db.VarChar(500)
+  created_at      DateTime @default(now()) @db.DateTime(0)
+}
+
+enum EducationAttainment {
+  Elementary
+  HighSchool
+  Undergraduate
+  Vocational
+  PostGraduate
 }

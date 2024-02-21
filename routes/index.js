@@ -5,6 +5,8 @@ var router = express.Router();
 
 const authentication = require('../controller/authentication')
 const departments = require('../controller/departments')
+const patients = require('../controller/patients')
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -24,3 +26,7 @@ module.exports = router;
 router.get('/departments', departments.departments)
 
 
+// * patients
+
+router.get('/patients', patients.getPatients)
+router.post('/patients', patients.createPatient)

@@ -9,6 +9,7 @@ const { getUser, getUserByToken, updateUserToken } = require('../repository/auth
 exports.login = async function(req, res, next) {
     try {
         const { username, password } = req.body
+        console.log(md5(password));
         let user = await getUser(username, password)
         if (user) {
             if (!user.login_token) {
