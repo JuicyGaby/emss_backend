@@ -30,3 +30,4 @@ router.get('/departments', departments.departments)
 
 router.get('/patients', patients.getPatients)
 router.post('/patients', patients.createPatient)
+router.put('/patients', patients.updatePatient)
