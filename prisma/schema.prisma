@@ -7,63 +7,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model AccessRight {
+model departments {
+  id              Int    @id @default(autoincrement())
+  dept_name       String @unique(map: "dept_name_UNIQUE") @db.VarChar(100)
+  dept_code       String @db.VarChar(50)
+  dept_supervisor Int?
+  dept_div        String @db.VarChar(100)
+  dept_div_head   Int?
+}
+
+model access_rights {
   id        Int      @id @default(autoincrement())
   name      String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  employee_access_rights employee_access_rights[]
 }
 
-model employees {
-  id                    Int      @id @default(autoincrement())
-  qrcode                String?  @unique @db.VarChar(20)
-  dept_id               Int
-  designation_id        Int
-  username              String   @unique(map: "username") @db.VarChar(50)
-  password              String   @db.VarChar(50)
-  dept_section          String?  @db.VarChar(150)
-  fname                 String   @db.VarChar(50)
-  mname                 String   @db.VarChar(50)
-  lname                 String   @db.VarChar(50)
-  ext_name              String?  @db.VarChar(50)
-  birth_date            DateTime? @db.Date
-  birth_place           String?  @db.VarChar(100)
-  gender                String?  @db.VarChar(10)
-  civil_status          String?  @db.VarChar(30)
-  height                String?  @db.VarChar(10)
-  weight                String?  @db.VarChar(10)
-  blood_type            String?  @db.VarChar(5)
-  gsis_id               String?  @db.VarChar(30)
-  pagibig_id            String?  @db.VarChar(30)
-  phic_id               String?  @db.VarChar(30)
-  sss_id                String?  @db.VarChar(30)
-  tin_id                String?  @db.VarChar(30)
-  agency_id             String?  @db.VarChar(30)
-  pin                   String?  @db.VarChar(30)
-  citizenship           String?  @db.VarChar(50)
-  citizenship_country   String?  @db.VarChar(30)
-  tel_no                String?  @db.VarChar(20)
-  mobile_no             String?  @db.VarChar(20)
-  email                 String?  @db.VarChar(100)
-  spouse_fname          String?  @db.VarChar(50)
-  spouse_mname          String?  @db.VarChar(50)
-  spouse_lname          String?  @db.VarChar(50)
-  spouse_ename          String?  @db.VarChar(20)
-  spouse_occupation     String?  @db.VarChar(50)
-  spouse_employer       String?  @db.VarChar(150)
-  spouse_business_address String?  @db.VarChar(150)
-  spouse_tel_no         String?  @db.VarChar(20)
-  father_fname          String?  @db.VarChar(50)
-  father_mname          String?  @db.VarChar(50)
-  father_lname          String?  @db.VarChar(50)
-  father_ename          String?  @db.VarChar(50)
-  mother_fname          String?  @db.VarChar(50)
-  mother_mname          String?  @db.VarChar(50)
-  mother_lname          String?  @db.VarChar(50)
-  date_hired            DateTime? @db.Date
-  type                  String?  @db.VarChar(50)
-  flexi_time            Boolean  @default(false)
-  employment_status     String   @db.Char(2) @default("R")
-  status                Boolean  @default(true)
-  prc_id                String?  @db.VarChar(50)
-  login_token           String?  @db.VarChar(150)
+model employee_access_rights {
+  id             Int      @id @default(autoincrement())
+  employee_id    Int
+  access_right_id Int @default(1)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  access_rights  access_rights @relation(fields: [access_right_id], references: [id])
+}
+
+model patients {
+  id           Int                  @id @default(autoincrement())
+  fname        String               @db.VarChar(50)
+  mname        String?              @db.VarChar(50)
+  lname        String               @db.VarChar(50)
+  birth_date   DateTime?            @db.Date
+  created_at   DateTime             @default(now()) @db.DateTime(0)
+  sex          String?              @db.VarChar(10)
+  address      String?              @db.VarChar(150)
+  civil_status String?              @db.VarChar(20)
+  age          Int?
+  education_attainment String?     @db.VarChar(50)
+  is_active    Int                  @default(1) @db.TinyInt
+}
+model designations {
+  id               Int    @id @default(autoincrement())
+  designation_name String @unique(map: "designation_name_UNIQUE") @db.VarChar(100)
+  designation_code String @db.VarChar(50)
+  salary_grade     Int
 }

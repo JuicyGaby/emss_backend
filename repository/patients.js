@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 
 async function getPatients() {
-    return await prisma.sample_patients.findMany();
+    return await prisma.patients.findMany();
 }
 
 async function createPatient(patient) {
@@ -24,7 +24,7 @@ async function createPatient(patient) {
         return ({ error: 'A patient with these details already exists' });
     }
 
-    return await prisma.sample_patients.create({
+    return await prisma.patients.create({
         data: {
             fname: firstName,
             mname: middleName,
@@ -47,7 +47,7 @@ async function updatePatient(patient) {
         birth_date,
         civil_status
     } = patient;
-    return await prisma.sample_patients.update({
+    return await prisma.patients.update({
         where: {
             id: parseInt(id)
         },
@@ -62,7 +62,7 @@ async function updatePatient(patient) {
     })
 }
 async function isPatientExisting(fname, mname, lname) {
-    const existingPatient = await prisma.sample_patients.findFirst({
+    const existingPatient = await prisma.patients.findFirst({
         where : {
             fname,
             mname,
