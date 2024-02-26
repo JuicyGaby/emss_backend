@@ -4,8 +4,6 @@ const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const { getUser, getUserByToken, updateUserToken } = require('../repository/authentication')
 
-
-
 exports.login = async function(req, res, next) {
     try {
         const { username, password } = req.body
