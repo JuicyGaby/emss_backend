@@ -6,6 +6,7 @@ var router = express.Router();
 const authentication = require('../controller/authentication')
 const departments = require('../controller/departments')
 const patients = require('../controller/patients')
+const employees = require('../controller/employees')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -31,3 +32,6 @@ router.get('/departments', departments.departments)
 router.get('/patients', patients.getPatients)
 router.post('/patients', patients.createPatient)
 router.put('/patients', patients.updatePatient)
+
+// employees 
+router.get('/employees', employees.employeeRights)
