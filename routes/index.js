@@ -6,6 +6,7 @@ var router = express.Router();
 const authentication = require('../controller/authentication')
 const patients = require('../controller/patients')
 const assessmentTool = require('../controller/assesment-tool')
+const employees = require('../controller/employees')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -32,3 +33,7 @@ router.put('/patients', patients.updatePatient)
 // * assesment-tool
 
 router.post('/interview', assessmentTool.interview)
+
+
+// employees 
+router.get('/employees', employees.employeeRights)
