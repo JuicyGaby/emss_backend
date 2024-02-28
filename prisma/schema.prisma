@@ -69,7 +69,7 @@ model patient_interview {
   id                       Int       @id @default(autoincrement())
   patient_id               Int?
   interview_date           DateTime? @db.Date
-  interview_time           DateTime? @db.Time
+  interview_time           String?   @db.VarChar(50)
   admission_date_and_time  DateTime? @db.DateTime
   basic_ward               String?   @db.VarChar(50)
   nonbasic_ward            String?   @db.VarChar(50)

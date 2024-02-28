@@ -4,15 +4,13 @@ var router = express.Router();
 //* imported controllers
 
 const authentication = require('../controller/authentication')
-const departments = require('../controller/departments')
 const patients = require('../controller/patients')
-const employees = require('../controller/employees')
+const assessmentTool = require('../controller/assesment-tool')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
-
 
 // * authentication
 
@@ -22,10 +20,6 @@ router.get('/userByToken', authentication.userByToken)
 
 module.exports = router;
 
-//* departments 
-
-router.get('/departments', departments.departments)
-
 
 // * patients
 
@@ -33,5 +27,8 @@ router.get('/patients', patients.getPatients)
 router.post('/patients', patients.createPatient)
 router.put('/patients', patients.updatePatient)
 
-// employees 
-router.get('/employees', employees.employeeRights)
+
+
+// * assesment-tool
+
+router.post('/interview', assessmentTool.interview)
