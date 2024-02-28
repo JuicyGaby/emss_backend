@@ -3,14 +3,14 @@ const { parse } = require("dotenv");
 const prisma = new PrismaClient();
 
 const getEmployeeAccessRights = async function(employeeID) {
-    console.log(employeeID);
     checkEmployeeAccessRights(employeeID);
-    return await prisma.employee_access_rights.findFirst({
+    const user = await prisma.employee_access_rights.findFirst({
         where: { employee_id: parseInt(employeeID) },
         include: {
             access_rights: true,
         }
     });
+    return user;
 }
 
 const checkEmployeeAccessRights = async function(employeeID) {
@@ -20,14 +20,10 @@ const checkEmployeeAccessRights = async function(employeeID) {
         }
     });
     if (!employeeRight) {
-        console.log('you do not have access rights');
         createEmployeeAccessRights(employeeID);
-        console.log('access rights created');
         return
     }
-    console.log('you have access rights');
 }
-
 const createEmployeeAccessRights = async function(employeeID) {
     await prisma.employee_access_rights.create({
         data: {
@@ -35,7 +31,6 @@ const createEmployeeAccessRights = async function(employeeID) {
         }
     });
 }
-
 module.exports = {
     getEmployeeAccessRights
 }

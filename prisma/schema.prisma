@@ -7,48 +7,204 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model departments {
-  id              Int    @id @default(autoincrement())
-  dept_name       String @unique(map: "dept_name_UNIQUE") @db.VarChar(100)
-  dept_code       String @db.VarChar(50)
-  dept_supervisor Int?
-  dept_div        String @db.VarChar(100)
-  dept_div_head   Int?
-}
-
 model access_rights {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
+  id                     Int                      @id @default(autoincrement())
+  name                   String
+  can_view               Int                      @default(0) @db.TinyInt
+  can_create             Int                      @default(0) @db.TinyInt
+  can_update             Int                      @default(0) @db.TinyInt
+  can_delete             Int                      @default(0) @db.TinyInt
+  can_manage             Int                      @default(0) @db.TinyInt
+  createdAt              DateTime                 @default(now())
   employee_access_rights employee_access_rights[]
 }
 
 model employee_access_rights {
-  id             Int      @id @default(autoincrement())
-  employee_id    Int
-  access_right_id Int @default(1)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  access_rights  access_rights @relation(fields: [access_right_id], references: [id])
+  id                  Int           @id @default(autoincrement())
+  employee_id         Int
+  employee_department String?       @db.VarChar(50)
+  access_right_id     Int           @default(1)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  access_rights       access_rights @relation(fields: [access_right_id], references: [id])
 }
 
+// * I Start of the Demograhic Data
+
 model patients {
-  id           Int                  @id @default(autoincrement())
-  fname        String               @db.VarChar(50)
-  mname        String?              @db.VarChar(50)
-  lname        String               @db.VarChar(50)
-  birth_date   DateTime?            @db.Date
-  created_at   DateTime             @default(now()) @db.DateTime(0)
-  sex          String?              @db.VarChar(10)
-  address      String?              @db.VarChar(150)
-  civil_status String?              @db.VarChar(20)
-  age          Int?
-  education_attainment String?     @db.VarChar(50)
-  is_active    Int                  @default(1) @db.TinyInt
+  id                   Int       @id @default(autoincrement())
+  first_name           String    @db.VarChar(50)
+  middle_name          String?   @db.VarChar(50)
+  last_name            String    @db.VarChar(50)
+  birth_date           DateTime? @db.Date
+  age                  Int?
+  sex                  String?   @db.VarChar(10)
+  contact_number       String?   @db.VarChar(20)
+  place_of_birth       String?   @db.VarChar(100)
+  gender               String?   @db.VarChar(50)
+  religion             String?   @db.VarChar(50)
+  nationality          String?   @db.VarChar(50)
+  civil_status         String?   @db.VarChar(50)
+  education_attainment String?   @db.VarChar(50)
+  living_arrangement   String?   @db.VarChar(50)
+  educational_status   String?   @db.VarChar(50)
+  occupation           String?   @db.VarChar(50)
+  monthly_income       String?   @db.VarChar(50)
+  ph_membership_number String?   @db.VarChar(50)
+  ph_membership_type   String?   @db.VarChar(50)
+  created_at           DateTime  @default(now()) @db.DateTime(0)
+
+  patient_permanent_address        patient_permanent_address[]
+  patient_temporary_address        patient_temporary_address[]
+  patient_educ_attainment          patient_educ_attainment[]
+  patient_family_composition       patient_family_composition[]
+  patient_mswd_classification      patient_mswd_classification[]
+  patient_monthly_expenses         patient_monthly_expenses[]
+  patient_medical_data             patient_medical_data[]
+  patient_health_and_mental_health patient_health_and_mental_health[]
+  patient_interview                patient_interview[]
 }
-model designations {
-  id               Int    @id @default(autoincrement())
-  designation_name String @unique(map: "designation_name_UNIQUE") @db.VarChar(100)
-  designation_code String @db.VarChar(50)
-  salary_grade     Int
+
+model patient_interview {
+  id                       Int       @id @default(autoincrement())
+  patient_id               Int?
+  interview_date           DateTime? @db.Date
+  interview_time           DateTime? @db.Time
+  admission_date_and_time  DateTime? @db.DateTime
+  basic_ward               String?   @db.VarChar(50)
+  nonbasic_ward            String?   @db.VarChar(50)
+  health_record_number     String?   @db.VarChar(50)
+  mswd_number              String?   @db.VarChar(50)
+  referring_party          String?   @db.VarChar(50)
+  address                  String?   @db.VarChar(50)
+  contact_number           String?   @db.VarChar(50)
+  informant                String?   @db.VarChar(50)
+  relationship_to_patient  String?   @db.VarChar(50)
+  informant_contact_number String?   @db.VarChar(50)
+  informant_address        String?   @db.VarChar(50)
+  patients                 patients? @relation(fields: [patient_id], references: [id])
 }
+
+model patient_permanent_address {
+  id           Int      @id @default(autoincrement())
+  patient_id   Int
+  region       String?  @db.VarChar(50)
+  province     String?  @db.VarChar(50)
+  district     String?  @db.VarChar(50)
+  municipality String?  @db.VarChar(50)
+  barangay     String?  @db.VarChar(50)
+  purok        String?  @db.VarChar(50)
+  patients     patients @relation(fields: [patient_id], references: [id])
+}
+
+model patient_temporary_address {
+  id           Int      @id @default(autoincrement())
+  patient_id   Int
+  region       String?  @db.VarChar(50)
+  province     String?  @db.VarChar(50)
+  district     String?  @db.VarChar(50)
+  municipality String?  @db.VarChar(50)
+  barangay     String?  @db.VarChar(50)
+  purok        String?  @db.VarChar(50)
+  patients     patients @relation(fields: [patient_id], references: [id])
+}
+
+model patient_educ_attainment {
+  id                 Int      @id @default(autoincrement())
+  patient_id         Int
+  highest_educ_level String?  @db.VarChar(50)
+  educational_status String?  @db.VarChar(50)
+  patients           patients @relation(fields: [patient_id], references: [id])
+}
+
+model patient_family_composition {
+  id                     Int       @id @default(autoincrement())
+  patient_id             Int
+  full_name              String?   @db.VarChar(50)
+  age                    Int?
+  birth_date             DateTime? @db.Date
+  civil_status           String?   @db.VarChar(50)
+  relationship           String?   @db.VarChar(50)
+  educational_attainment String?   @db.VarChar(50)
+  occupation             String?   @db.VarChar(50)
+  monthly_income         String?   @db.VarChar(50)
+  other_source_of_income String?   @db.VarChar(50)
+  household_size         Int?
+  total_household_income String?   @db.VarChar(50)
+  per_capita_income      String?   @db.VarChar(50)
+  patients               patients  @relation(fields: [patient_id], references: [id])
+}
+
+// * End of the Demograhic Data
+
+// * II Start of MSWD Classification
+
+model patient_mswd_classification {
+  id                                Int      @id @default(autoincrement())
+  patient_id                        Int
+  main_classification               String?  @db.VarChar(50)
+  sub_classification                String?  @db.VarChar(50)
+  membership_to_marginalized_sector String?  @db.VarChar(50)
+  patients                          patients @relation(fields: [patient_id], references: [id])
+}
+
+// * End of MSWD Classification
+
+// * III Start of Monthly Expenses
+
+model patient_monthly_expenses {
+  id                     Int      @id @default(autoincrement())
+  particular1            Json?
+  particular2            Json?
+  patient_id             Int
+  light_source           Json?
+  fuel_source            String?  @db.VarChar(50)
+  water_source           String?  @db.VarChar(50)
+  total_monthly_expenses String?  @db.VarChar(50)
+  remarks                String?  @db.VarChar(255)
+  patients               patients @relation(fields: [patient_id], references: [id])
+}
+
+// * End of Monthly Expenses
+
+// * IV Start of Medical Data
+
+model patient_medical_data {
+  id                           Int      @id @default(autoincrement())
+  patient_id                   Int
+  admitting_diagnosis          String?  @db.VarChar(255)
+  final_diagnosis              String?  @db.VarChar(255)
+  duration_of_problems         String?  @db.VarChar(50)
+  previous_treatment           String?  @db.VarChar(255)
+  present_treatment_plan       String?  @db.VarChar(255)
+  health_accessibility_problem String?  @db.VarChar(50)
+  // severity_index               String? @db.VarChar(50)
+  // duration_index               String? @db.VarChar(50)
+  // coping_index                 String? @db.VarChar(50)
+  patients                     patients @relation(fields: [patient_id], references: [id])
+}
+
+// * End of Medical Data
+
+// Start of rating and feedback
+
+// * V Start of Health and Mental health
+
+model patient_health_and_mental_health {
+  id                                   Int   @id @default(autoincrement())
+  patient_id                           Int
+  abscence_of_adequate_health_services Json?
+  inaccessibility_of_health_services   Json?
+  abscence_of_support_health_services  Json?
+  absence_of_adequate_mental_services  Json?
+  inaccessibility_of_mental_services   Json?
+  absence_of_support_mental_services   Json?
+
+  patients patients @relation(fields: [patient_id], references: [id])
+}
+
+// * End of Health and Mental health
+
+// * VI Start of Rating and Feedback
+
+// * Start of Rating and Feedback
