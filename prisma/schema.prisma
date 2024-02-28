@@ -54,15 +54,18 @@ model patients {
   ph_membership_type   String?   @db.VarChar(50)
   created_at           DateTime  @default(now()) @db.DateTime(0)
 
-  patient_permanent_address        patient_permanent_address[]
-  patient_temporary_address        patient_temporary_address[]
-  patient_educ_attainment          patient_educ_attainment[]
-  patient_family_composition       patient_family_composition[]
-  patient_mswd_classification      patient_mswd_classification[]
-  patient_monthly_expenses         patient_monthly_expenses[]
-  patient_medical_data             patient_medical_data[]
-  patient_health_and_mental_health patient_health_and_mental_health[]
-  patient_interview                patient_interview[]
+  patient_permanent_address                patient_permanent_address[]
+  patient_temporary_address                patient_temporary_address[]
+  patient_educ_attainment                  patient_educ_attainment[]
+  patient_family_composition               patient_family_composition[]
+  patient_mswd_classification              patient_mswd_classification[]
+  patient_monthly_expenses                 patient_monthly_expenses[]
+  patient_medical_data                     patient_medical_data[]
+  patient_health_and_mental_health         patient_health_and_mental_health[]
+  patient_interview                        patient_interview[]
+  patient_safety                           patient_safety[]
+  patient_assessment_of_social_functioning patient_assessment_of_social_functioning[]
+  // patient_problems_in_the_environment      patient_problems_in_the_environment[]
 }
 
 model patient_interview {
@@ -137,7 +140,7 @@ model patient_family_composition {
 
 // * End of the Demograhic Data
 
-// * II Start of MSWD Classification
+// * II MSWD Classification
 
 model patient_mswd_classification {
   id                                Int      @id @default(autoincrement())
@@ -150,7 +153,7 @@ model patient_mswd_classification {
 
 // * End of MSWD Classification
 
-// * III Start of Monthly Expenses
+// * III Monthly Expenses
 
 model patient_monthly_expenses {
   id                     Int      @id @default(autoincrement())
@@ -165,9 +168,9 @@ model patient_monthly_expenses {
   patients               patients @relation(fields: [patient_id], references: [id])
 }
 
-// * End of Monthly Expenses
+// * III Monthly Expenses
 
-// * IV Start of Medical Data
+// * IV Medical Data
 
 model patient_medical_data {
   id                           Int      @id @default(autoincrement())
@@ -184,11 +187,11 @@ model patient_medical_data {
   patients                     patients @relation(fields: [patient_id], references: [id])
 }
 
-// * End of Medical Data
+// * IV Medical Data
 
-// Start of rating and feedback
+// rating and feedback
 
-// * V Start of Health and Mental health
+// * V Health and Mental health
 
 model patient_health_and_mental_health {
   id                                   Int   @id @default(autoincrement())
@@ -203,8 +206,85 @@ model patient_health_and_mental_health {
   patients patients @relation(fields: [patient_id], references: [id])
 }
 
-// * End of Health and Mental health
+// * V Health and Mental health
 
-// * VI Start of Rating and Feedback
+// * VI Rating and Feedback
 
-// * Start of Rating and Feedback
+// * VI Rating and Feedback
+
+// * VII Safety
+
+model patient_safety {
+  id                                  Int      @id @default(autoincrement())
+  patient_id                          Int
+  voice_crime_in_community            Json?
+  unsafe_working_conditions           Json?
+  unsafe_codition_home                Json?
+  absence_of_adequate_safety_services Json?
+  natural_disasters                   Json?
+  human_created_disasters             Json?
+  patients                            patients @relation(fields: [patient_id], references: [id])
+}
+
+// * VII Safety
+
+// * VIII Assesment of Social Functioning
+model patient_assessment_of_social_functioning {
+  // familial roles
+  id                     Int      @id @default(autoincrement())
+  patient_id             Int
+  parent                 Json?
+  spouse                 Json?
+  child                  Json?
+  sibling                Json?
+  other_family_member    Json?
+  significant_others     Json?
+  // interpersonal roles
+  lover                  Json?
+  friend                 Json?
+  neighbor               Json?
+  member                 Json?
+  // occupational roles
+  worker_paid_economy    Json?
+  worker_home            Json?
+  worker_volunteer       Json?
+  student                Json?
+  // Special life situation roles
+  consumer               Json?
+  inpatient              Json?
+  outpatient             Json?
+  er_patient             Json?
+  prisoner               Json?
+  immigrant_legal        Json?
+  immigrant_undocumented Json?
+  imigrant_refugee       Json?
+  patients               patients @relation(fields: [patient_id], references: [id])
+}
+
+// * VIII Assesment of Social Functioning
+
+// * IX Problems in the environment
+// model patient_problems_in_the_environment {
+//   id                   Int      @id @default(autoincrement())
+//   patient_id           Int
+//   // food and nutrition
+//   lack_of_regular_food_supply Json?
+//   nutritionally_Inadequate_food_supply       Json?
+//   documented_malnutrition                   Json?
+//   // shelter
+//   absence_of_shelter                        Json?
+//   substandard_shelter                       Json?
+//   // employment
+//   unemployment_not_available_in_community   Json?
+//   underemployment_not_available_in_community Json?
+//   inappropiate_employment_acceptable_in_community Json?
+//   // economic resources
+  
+//   // transportation
+
+
+
+//   patients             patients @relation(fields: [patient_id], references: [id])
+// }
+
+// * IX Problems in the environment
