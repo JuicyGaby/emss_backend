@@ -33,29 +33,27 @@ model employee_access_rights {
 
 model patients {
   id                   Int       @id @default(autoincrement())
-  first_name           String    @db.VarChar(50)
-  middle_name          String?   @db.VarChar(50)
-  last_name            String    @db.VarChar(50)
+  first_name           String?   @db.VarChar(100)
+  middle_name          String?   @db.VarChar(100)
+  last_name            String?   @db.VarChar(100)
   birth_date           DateTime? @db.Date
-  age                  Int?
+  age                  String?
   sex                  String?   @db.VarChar(10)
   contact_number       String?   @db.VarChar(20)
   place_of_birth       String?   @db.VarChar(100)
-  gender               String?   @db.VarChar(50)
-  religion             String?   @db.VarChar(50)
-  nationality          String?   @db.VarChar(50)
-  civil_status         String?   @db.VarChar(50)
-  education_attainment String?   @db.VarChar(50)
-  living_arrangement   String?   @db.VarChar(50)
-  educational_status   String?   @db.VarChar(50)
-  occupation           String?   @db.VarChar(50)
-  monthly_income       String?   @db.VarChar(50)
-  ph_membership_number String?   @db.VarChar(50)
-  ph_membership_type   String?   @db.VarChar(50)
+  gender               String?   @db.VarChar(100)
+  religion             String?   @db.VarChar(100)
+  nationality          String?   @db.VarChar(100)
+  civil_status         String?   @db.VarChar(100)
+  living_arrangement   String?   @db.VarChar(100)
+  occupation           String?   @db.VarChar(255)
+  monthly_income       String?   @db.VarChar(100)
+  ph_membership_number String?   @db.VarChar(100)
+  ph_membership_type   String?   @db.VarChar(100)
   created_at           DateTime  @default(now()) @db.DateTime(0)
 
-  patient_permanent_address                patient_permanent_address[]
-  patient_temporary_address                patient_temporary_address[]
+  patient_education                        patient_education[]
+  addresses                                patient_address[]
   patient_educ_attainment                  patient_educ_attainment[]
   patient_family_composition               patient_family_composition[]
   patient_mswd_classification              patient_mswd_classification[]
@@ -65,51 +63,52 @@ model patients {
   patient_interview                        patient_interview[]
   patient_safety                           patient_safety[]
   patient_assessment_of_social_functioning patient_assessment_of_social_functioning[]
-  // patient_problems_in_the_environment      patient_problems_in_the_environment[]
 }
 
 model patient_interview {
   id                       Int       @id @default(autoincrement())
   patient_id               Int?
-  interview_date           DateTime? @db.Date
+  interview_date           String?   @db.VarChar(200)
   interview_time           String?   @db.VarChar(50)
-  admission_date_and_time  DateTime? @db.DateTime
-  basic_ward               String?   @db.VarChar(50)
-  nonbasic_ward            String?   @db.VarChar(50)
-  health_record_number     String?   @db.VarChar(50)
-  mswd_number              String?   @db.VarChar(50)
-  referring_party          String?   @db.VarChar(50)
-  address                  String?   @db.VarChar(50)
-  contact_number           String?   @db.VarChar(50)
-  informant                String?   @db.VarChar(50)
-  relationship_to_patient  String?   @db.VarChar(50)
-  informant_contact_number String?   @db.VarChar(50)
-  informant_address        String?   @db.VarChar(50)
+  admission_date_and_time  String?   @db.VarChar(200)
+  basic_ward               String?   @db.VarChar(200)
+  nonbasic_ward            String?   @db.VarChar(200)
+  health_record_number     String?   @db.VarChar(200)
+  mswd_number              String?   @db.VarChar(200)
+  referring_party          String?   @db.VarChar(200)
+  address                  String?   @db.VarChar(200)
+  contact_number           String?   @db.VarChar(200)
+  informant                String?   @db.VarChar(200)
+  relationship_to_patient  String?   @db.VarChar(200)
+  informant_contact_number String?   @db.VarChar(200)
+  informant_address        String?   @db.VarChar(200)
   patients                 patients? @relation(fields: [patient_id], references: [id])
 }
 
-model patient_permanent_address {
-  id           Int      @id @default(autoincrement())
-  patient_id   Int
-  region       String?  @db.VarChar(50)
-  province     String?  @db.VarChar(50)
-  district     String?  @db.VarChar(50)
-  municipality String?  @db.VarChar(50)
-  barangay     String?  @db.VarChar(50)
-  purok        String?  @db.VarChar(50)
-  patients     patients @relation(fields: [patient_id], references: [id])
+model patient_education {
+  id                 Int      @id @default(autoincrement())
+  patient_id         Int
+  education          String?  @db.VarChar(50)
+  educational_status String?  @db.VarChar(50)
+  patients           patients @relation(fields: [patient_id], references: [id])
 }
 
-model patient_temporary_address {
-  id           Int      @id @default(autoincrement())
+enum AddressType {
+  PERMANENT
+  TEMPORARY
+}
+
+model patient_address {
+  id           Int         @id @default(autoincrement())
   patient_id   Int
-  region       String?  @db.VarChar(50)
-  province     String?  @db.VarChar(50)
-  district     String?  @db.VarChar(50)
-  municipality String?  @db.VarChar(50)
-  barangay     String?  @db.VarChar(50)
-  purok        String?  @db.VarChar(50)
-  patients     patients @relation(fields: [patient_id], references: [id])
+  address_type AddressType
+  region       String?     @db.VarChar(50)
+  province     String?     @db.VarChar(50)
+  district     String?     @db.VarChar(50)
+  municipality String?     @db.VarChar(50)
+  barangay     String?     @db.VarChar(50)
+  purok        String?     @db.VarChar(50)
+  patients     patients    @relation(fields: [patient_id], references: [id])
 }
 
 model patient_educ_attainment {
@@ -138,8 +137,6 @@ model patient_family_composition {
   patients               patients  @relation(fields: [patient_id], references: [id])
 }
 
-// * End of the Demograhic Data
-
 // * II MSWD Classification
 
 model patient_mswd_classification {
@@ -150,8 +147,6 @@ model patient_mswd_classification {
   membership_to_marginalized_sector String?  @db.VarChar(50)
   patients                          patients @relation(fields: [patient_id], references: [id])
 }
-
-// * End of MSWD Classification
 
 // * III Monthly Expenses
 
@@ -168,8 +163,6 @@ model patient_monthly_expenses {
   patients               patients @relation(fields: [patient_id], references: [id])
 }
 
-// * III Monthly Expenses
-
 // * IV Medical Data
 
 model patient_medical_data {
@@ -181,15 +174,8 @@ model patient_medical_data {
   previous_treatment           String?  @db.VarChar(255)
   present_treatment_plan       String?  @db.VarChar(255)
   health_accessibility_problem String?  @db.VarChar(50)
-  // severity_index               String? @db.VarChar(50)
-  // duration_index               String? @db.VarChar(50)
-  // coping_index                 String? @db.VarChar(50)
   patients                     patients @relation(fields: [patient_id], references: [id])
 }
-
-// * IV Medical Data
-
-// rating and feedback
 
 // * V Health and Mental health
 
@@ -205,10 +191,6 @@ model patient_health_and_mental_health {
 
   patients patients @relation(fields: [patient_id], references: [id])
 }
-
-// * V Health and Mental health
-
-// * VI Rating and Feedback
 
 // * VI Rating and Feedback
 
@@ -279,12 +261,49 @@ model patient_assessment_of_social_functioning {
 //   underemployment_not_available_in_community Json?
 //   inappropiate_employment_acceptable_in_community Json?
 //   // economic resources
-  
+
 //   // transportation
-
-
 
 //   patients             patients @relation(fields: [patient_id], references: [id])
 // }
 
 // * IX Problems in the environment
+
+model ph_regions {
+  id        Int            @id @default(autoincrement())
+  psgcCode  String         @db.VarChar(50)
+  regDesc   String         @db.VarChar(50)
+  regCode   String         @unique @db.VarChar(50)
+  provinces ph_provinces[]
+}
+
+model ph_provinces {
+  id       Int           @id @default(autoincrement())
+  psgcCode String        @db.VarChar(50)
+  provDesc String        @db.VarChar(50)
+  regCode  String        @db.VarChar(50)
+  provCode String        @unique @db.VarChar(50)
+  region   ph_regions    @relation(fields: [regCode], references: [regCode])
+  cities   ph_city_mun[] // Add this line
+}
+
+model ph_city_mun {
+  id          Int            @id @default(autoincrement())
+  psgcCode    String         @db.VarChar(50)
+  citymunDesc String         @db.VarChar(50)
+  regDesc     String         @db.VarChar(50)
+  provCode    String         @db.VarChar(50)
+  citymunCode String         @unique @db.VarChar(50)
+  province    ph_provinces   @relation(fields: [provCode], references: [provCode]) // Add this line
+  barangays   ph_barangays[] // Add this line
+}
+
+model ph_barangays {
+  id          Int         @id @default(autoincrement())
+  brgyDesc    String      @db.VarChar(50)
+  regCode     String      @db.VarChar(50)
+  provCode    String      @db.VarChar(50)
+  citymunCode String      @db.VarChar(50)
+  brgyCode    String      @unique @db.VarChar(50)
+  city        ph_city_mun @relation(fields: [citymunCode], references: [citymunCode]) // Add this line
+}
