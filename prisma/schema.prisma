@@ -93,22 +93,18 @@ model patient_education {
   patients           patients @relation(fields: [patient_id], references: [id])
 }
 
-enum AddressType {
-  PERMANENT
-  TEMPORARY
-}
 
 model patient_address {
   id           Int         @id @default(autoincrement())
   patient_id   Int
-  address_type AddressType
-  region       String?     @db.VarChar(50)
-  province     String?     @db.VarChar(50)
-  district     String?     @db.VarChar(50)
-  municipality String?     @db.VarChar(50)
-  barangay     String?     @db.VarChar(50)
-  purok        String?     @db.VarChar(50)
-  patients     patients    @relation(fields: [patient_id], references: [id])
+  address_type  String?     @db.VarChar(150)
+  region       String?     @db.VarChar(150)
+  province     String?     @db.VarChar(150)
+  district     String?     @db.VarChar(150)
+  municipality String?     @db.VarChar(150)
+  barangay     String?     @db.VarChar(150)
+  purok        String?     @db.VarChar(600)
+  patients     patients?    @relation(fields: [patient_id], references: [id])
 }
 
 model patient_educ_attainment {
