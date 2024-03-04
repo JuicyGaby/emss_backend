@@ -118,15 +118,15 @@ model patient_educ_attainment {
 model patient_family_composition {
   id                     Int       @id @default(autoincrement())
   patient_id             Int
-  full_name              String?   @db.VarChar(50)
-  age                    Int?
+  full_name              String?   @db.VarChar(200)
+  age                    String?  @db.VarChar(100)
   birth_date             DateTime? @db.Date
   civil_status           String?   @db.VarChar(50)
-  relationship           String?   @db.VarChar(50)
-  educational_attainment String?   @db.VarChar(50)
-  occupation             String?   @db.VarChar(50)
-  monthly_income         String?   @db.VarChar(50)
-  other_source_of_income String?   @db.VarChar(50)
+  relationship           String?   @db.VarChar(150)
+  educational_attainment String?   @db.VarChar(100)
+  occupation             String?   @db.VarChar(150)
+  monthly_income         String?   @db.VarChar(200)
+  other_source_of_income String?   @db.VarChar(200)
   household_size         Int?
   total_household_income String?   @db.VarChar(50)
   per_capita_income      String?   @db.VarChar(50)
