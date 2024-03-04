@@ -12,11 +12,14 @@ async function getPatientById(id) {
     const patient = await prisma.patients.findUnique({
         where: {
             id: parseInt(id)
+        },
+        include: {
+            patient_interview: true,
+            patient_family_composition: true,
         }
     });
     return patient;
 }
-
 
 module.exports = {
     getPatients, getPatientById
