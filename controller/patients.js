@@ -1,4 +1,4 @@
-const { getPatients, createPatient, updatePatient } = require('../repository/patients');
+const { getPatients, getPatientById } = require('../repository/patients');
 
 
 exports.getPatients = async function(req, res, next) {
@@ -10,28 +10,10 @@ exports.getPatients = async function(req, res, next) {
     }
 }
 
-exports.createPatient = async function(req, res, next) {
+exports.getPatientById = async function(req, res, next) {
+    const id = req.params.id;
     try {
-        const patient = await createPatient(req.body);
-        if (patient.error) {
-            res.status(400).send({ error: 'A patient with these details already exists' });
-            return
-        }
-        console.log(patient);
-        res.send(patient);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-exports.updatePatient = async function(req, res, next) {
-    try {
-        // console.log(req.body)
-        const patient = await updatePatient(req.body);
-        if (patient.error) {
-            res.status(400).send({ error: 'A patient with these details already exists' });
-            return
-        }
+        const patient = await getPatientById(id);
         res.send(patient);
     } catch (error) {
         console.error(error);

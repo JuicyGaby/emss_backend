@@ -25,10 +25,7 @@ module.exports = router;
 // * patients
 
 router.get('/patients', patients.getPatients)
-router.post('/patients', patients.createPatient)
-router.put('/patients', patients.updatePatient)
-
-
+router.get('/patients/:id', patients.getPatientById)
 
 // * assesment-tool
 
@@ -37,3 +34,4 @@ router.post('/interview', assessmentTool.interview)
 
 // employees 
 router.get('/employees', employees.employeeRights)
+
