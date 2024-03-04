@@ -51,7 +51,6 @@ model patients {
   ph_membership_number String?   @db.VarChar(100)
   ph_membership_type   String?   @db.VarChar(100)
   created_at           DateTime  @default(now()) @db.DateTime(0)
-
   patient_education                        patient_education[]
   addresses                                patient_address[]
   patient_educ_attainment                  patient_educ_attainment[]
@@ -104,7 +103,7 @@ model patient_address {
   municipality String?     @db.VarChar(150)
   barangay     String?     @db.VarChar(150)
   purok        String?     @db.VarChar(600)
-  patients     patients?    @relation(fields: [patient_id], references: [id])
+  patients     patients    @relation(fields: [patient_id], references: [id])
 }
 
 model patient_educ_attainment {
