@@ -32,11 +32,10 @@ async function getRegion() {
     });
     return region;
 }
-async function getProvinceByRegionCode() {
-    const code = "10";
+async function getProvinceByRegionCode(regCode) {
     const province = await prisma.ph_provinces.findMany({
         where: {
-            regCode: code
+            regCode
         },
         select: {
             provDesc: true,
@@ -45,11 +44,10 @@ async function getProvinceByRegionCode() {
     });
     return province;
 }
-async function getMunicipalityByProvinceCode() {
-    const code = "0128";
+async function getMunicipalityByProvinceCode(provCode) {
     const municipality = await prisma.ph_city_mun.findMany({
         where: {
-            provCode: code
+            provCode
         },
         select: {
             citymunDesc: true,
@@ -59,19 +57,16 @@ async function getMunicipalityByProvinceCode() {
     return municipality;
 }
 
-async function getBarangayByMunicipalityCode() {
-    const code = "012803";
+async function getBarangayByMunicipalityCode(citymunCode) {
     const barangay = await prisma.ph_barangays.findMany({
         where: {
-            citymunCode: code
+            citymunCode
         },
         select: {
             brgyDesc: true,
         }
-        
     });
     return barangay;
-
 }
 
 

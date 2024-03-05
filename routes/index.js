@@ -31,9 +31,10 @@ router.get('/patients/:id', patients.getPatientById)
 
 router.post('/interview', assessmentTool.interview)
 router.get('/region', assessmentTool.getRegion)
-router.get('/provinceByRegionCode', assessmentTool.getProvinceByRegionCode)
-router.get('/municipalityByProvinceCode', assessmentTool.getMunicipalityByProvinceCode)
-router.get('/barangayByMunicipalityCode', assessmentTool.getBarangayByMunicipalityCode)
+router.get('/province/:id', assessmentTool.getProvinceByRegionCode)
+router.get('/municipality/:id', assessmentTool.getMunicipalityByProvinceCode)
+router.get('/barangay/:id', assessmentTool.getBarangayByMunicipalityCode)
+
 
 
 
