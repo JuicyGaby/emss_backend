@@ -33,6 +33,7 @@ router.post('/interview', assessmentTool.interview)
 router.get('/region', assessmentTool.getRegion)
 router.get('/provinceByRegionCode', assessmentTool.getProvinceByRegionCode)
 router.get('/municipalityByProvinceCode', assessmentTool.getMunicipalityByProvinceCode)
+router.get('/barangayByMunicipalityCode', assessmentTool.getBarangayByMunicipalityCode)
 
 
 

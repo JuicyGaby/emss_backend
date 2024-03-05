@@ -1,5 +1,11 @@
 
-const { createInterview, getRegion, getProvinceByRegionCode, getMunicipalityByProvinceCode } = require('../repository/assessment-tool');
+const { 
+    createInterview, 
+    getRegion, 
+    getProvinceByRegionCode, 
+    getMunicipalityByProvinceCode,
+    getBarangayByMunicipalityCode
+} = require('../repository/assessment-tool');
 
 
 exports.interview = async function(req, res, next) {
@@ -32,6 +38,15 @@ exports.getMunicipalityByProvinceCode = async function(req, res, next) {
     try {
         const municipality = await getMunicipalityByProvinceCode();
         res.send(municipality);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+exports.getBarangayByMunicipalityCode = async function(req, res, next) {
+    try {
+        const barangay = await getBarangayByMunicipalityCode();
+        res.send(barangay);
     } catch (error) {
         console.error(error);
     }

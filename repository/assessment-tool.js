@@ -24,7 +24,12 @@ async function createInterview(reqBody) {
     return interview;
 }
 async function getRegion() {
-    const region = await prisma.ph_regions.findMany();
+    const region = await prisma.ph_regions.findMany({
+        select: {
+            regDesc: true,
+            regCode: true
+        }
+    });
     return region;
 }
 async function getProvinceByRegionCode() {
@@ -32,6 +37,10 @@ async function getProvinceByRegionCode() {
     const province = await prisma.ph_provinces.findMany({
         where: {
             regCode: code
+        },
+        select: {
+            provDesc: true,
+            provCode: true
         }
     });
     return province;
@@ -41,15 +50,33 @@ async function getMunicipalityByProvinceCode() {
     const municipality = await prisma.ph_city_mun.findMany({
         where: {
             provCode: code
+        },
+        select: {
+            citymunDesc: true,
+            citymunCode: true
         }
     });
     return municipality;
 }
 
+async function getBarangayByMunicipalityCode() {
+    const code = "012803";
+    const barangay = await prisma.ph_barangays.findMany({
+        where: {
+            citymunCode: code
+        },
+        select: {
+            brgyDesc: true,
+        }
+        
+    });
+    return barangay;
+
+}
 
 
 module.exports = {
-    createInterview, getRegion, getProvinceByRegionCode, getMunicipalityByProvinceCode
+    createInterview, getRegion, getProvinceByRegionCode, getMunicipalityByProvinceCode, getBarangayByMunicipalityCode
 }
 
 
