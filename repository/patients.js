@@ -3,9 +3,10 @@ const prisma = new PrismaClient();
 
 
 async function getPatients() {
-    const patients = await prisma.patients.findMany({
-        take: 100,
-    });
+    const patients = await prisma.patients.findMany( {
+        take: 20000,
+    }
+    );
     return patients;
 }
 async function getPatientById(id) {

@@ -23,9 +23,33 @@ async function createInterview(reqBody) {
     });
     return interview;
 }
+async function getRegion() {
+    const region = await prisma.ph_regions.findMany();
+    return region;
+}
+async function getProvinceByRegionCode() {
+    const code = "10";
+    const province = await prisma.ph_provinces.findMany({
+        where: {
+            regCode: code
+        }
+    });
+    return province;
+}
+async function getMunicipalityByProvinceCode() {
+    const code = "0128";
+    const municipality = await prisma.ph_city_mun.findMany({
+        where: {
+            provCode: code
+        }
+    });
+    return municipality;
+}
+
+
 
 module.exports = {
-    createInterview
+    createInterview, getRegion, getProvinceByRegionCode, getMunicipalityByProvinceCode
 }
 
 
