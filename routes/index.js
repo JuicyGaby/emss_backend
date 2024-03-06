@@ -26,10 +26,14 @@ module.exports = router;
 
 router.get('/patients', patients.getPatients)
 router.get('/patients/:id', patients.getPatientById)
+router.post('/patients', patients.createPatient)
 
 // * assesment-tool
 
 router.post('/interview', assessmentTool.interview)
+router.get('/interview/:id', assessmentTool.getInterview)
+
+
 router.get('/region', assessmentTool.getRegion)
 router.get('/province/:id', assessmentTool.getProvinceByRegionCode)
 router.get('/municipality/:id', assessmentTool.getMunicipalityByProvinceCode)
