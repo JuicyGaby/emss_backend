@@ -4,7 +4,9 @@ const {
     getRegion, 
     getProvinceByRegionCode, 
     getMunicipalityByProvinceCode,
-    getBarangayByMunicipalityCode
+    getBarangayByMunicipalityCode,
+    getInterviewById,
+
 } = require('../repository/assessment-tool');
 
 
@@ -17,6 +19,16 @@ exports.interview = async function(req, res, next) {
         console.error(error);
     }
 }
+exports.getInterview = async function(req, res, next) {
+    const patientId = req.params.id;
+    try {
+        const interview = await getInterviewById(patientId);
+        res.send(interview);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
 exports.getRegion = async function(req, res, next) {
     try {

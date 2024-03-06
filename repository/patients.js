@@ -4,7 +4,7 @@ const moment = require("moment");
 
 async function getPatients() {
   const patients = await prisma.patients.findMany({
-    take: 10,
+   take: 10,
   });
   return patients;
 }
@@ -59,36 +59,37 @@ async function createPatient(reqBody) {
 }
 
 async function createPatientAddress(addressData, addressType, patientId) {
-  console.log(addressType);
-  const [region, province, municipality] = await Promise.all([
-    prisma.ph_regions.findFirst({
-      where: {
-        regCode: addressData.region,
-      },
-      select: {
-        regDesc: true,
-      },
-    }),
-    prisma.ph_provinces.findFirst({
-      where: {
-        provCode: addressData.province,
-      },
-      select: {
-        provDesc: true,
-      },
-    }),
-    prisma.ph_city_mun.findFirst({
-      where: {
-        citymunCode: addressData.municipality,
-      },
-      select: {
-        citymunDesc: true,
-      },
-    }),
+
+   const [region, province, municipality] = await Promise.all([
+      addressData.region ? prisma.ph_regions.findFirst({
+          where: {
+              regCode: addressData.region,
+          },
+          select: {
+              regDesc: true,
+          },
+      }) : { regDesc: null },
+      addressData.province ? prisma.ph_provinces.findFirst({
+          where: {
+              provCode: addressData.province,
+          },
+          select: {
+              provDesc: true,
+          },
+      }) : { provDesc: null },
+      addressData.municipality ? prisma.ph_city_mun.findFirst({
+          where: {
+              citymunCode: addressData.municipality,
+          },
+          select: {
+              citymunDesc: true,
+          },
+      }) : { citymunDesc: null },
   ]);
-  console.log(region, province, municipality);
-  const newAddress = await prisma.patient_address.create({
-    data: {
+
+   console.log(region, province, municipality);
+   const newAddress = await prisma.patient_address.create({
+      data: {
       patient_id: patientId,
       region: region.regDesc,
       province: province.provDesc,
@@ -97,9 +98,9 @@ async function createPatientAddress(addressData, addressType, patientId) {
       barangay: addressData.baranggay,
       purok: addressData.purok,
       address_type: addressType,
-    },
-  });
-  console.log("Created address", newAddress);
+      },
+   });
+   console.log("Created address", newAddress);
 }
 
 async function createPatientInterview(interview, patientId) {

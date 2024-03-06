@@ -31,6 +31,9 @@ router.post('/patients', patients.createPatient)
 // * assesment-tool
 
 router.post('/interview', assessmentTool.interview)
+router.get('/interview/:id', assessmentTool.getInterview)
+
+
 router.get('/region', assessmentTool.getRegion)
 router.get('/province/:id', assessmentTool.getProvinceByRegionCode)
 router.get('/municipality/:id', assessmentTool.getMunicipalityByProvinceCode)

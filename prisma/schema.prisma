@@ -51,6 +51,7 @@ model patients {
   ph_membership_number                     String?                                    @db.VarChar(100)
   ph_membership_type                       String?                                    @db.VarChar(100)
   created_at                               DateTime                                   @default(now()) @db.DateTime(0)
+  created_by                               String?                                    @db.VarChar(100)
   patient_education                        patient_education[]
   addresses                                patient_address[]
   patient_educ_attainment                  patient_educ_attainment[]
