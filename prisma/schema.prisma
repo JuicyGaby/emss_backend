@@ -32,25 +32,25 @@ model employee_access_rights {
 // * I Start of the Demograhic Data
 
 model patients {
-  id                   Int       @id @default(autoincrement())
-  first_name           String?   @db.VarChar(100)
-  middle_name          String?   @db.VarChar(100)
-  last_name            String?   @db.VarChar(100)
-  birth_date           DateTime? @db.Date
-  age                  String?
-  sex                  String?   @db.VarChar(10)
-  contact_number       String?   @db.VarChar(20)
-  place_of_birth       String?   @db.VarChar(100)
-  gender               String?   @db.VarChar(100)
-  religion             String?   @db.VarChar(100)
-  nationality          String?   @db.VarChar(100)
-  civil_status         String?   @db.VarChar(100)
-  living_arrangement   String?   @db.VarChar(100)
-  occupation           String?   @db.VarChar(255)
-  monthly_income       String?   @db.VarChar(100)
-  ph_membership_number String?   @db.VarChar(100)
-  ph_membership_type   String?   @db.VarChar(100)
-  created_at           DateTime  @default(now()) @db.DateTime(0)
+  id                                       Int                                        @id @default(autoincrement())
+  first_name                               String?                                    @db.VarChar(100)
+  middle_name                              String?                                    @db.VarChar(100)
+  last_name                                String?                                    @db.VarChar(100)
+  birth_date                               String?                                    @db.VarChar(100)
+  age                                      String?
+  sex                                      String?                                    @db.VarChar(10)
+  contact_number                           String?                                    @db.VarChar(20)
+  place_of_birth                           String?                                    @db.VarChar(100)
+  gender                                   String?                                    @db.VarChar(100)
+  religion                                 String?                                    @db.VarChar(100)
+  nationality                              String?                                    @db.VarChar(100)
+  civil_status                             String?                                    @db.VarChar(100)
+  living_arrangement                       String?                                    @db.VarChar(100)
+  occupation                               String?                                    @db.VarChar(255)
+  monthly_income                           String?                                    @db.VarChar(100)
+  ph_membership_number                     String?                                    @db.VarChar(100)
+  ph_membership_type                       String?                                    @db.VarChar(100)
+  created_at                               DateTime                                   @default(now()) @db.DateTime(0)
   patient_education                        patient_education[]
   addresses                                patient_address[]
   patient_educ_attainment                  patient_educ_attainment[]
@@ -65,23 +65,24 @@ model patients {
 }
 
 model patient_interview {
-  id                       Int       @id @default(autoincrement())
-  patient_id               Int?
-  interview_date           String?   @db.VarChar(200)
-  interview_time           String?   @db.VarChar(50)
-  admission_date_and_time  String?   @db.VarChar(200)
-  basic_ward               String?   @db.VarChar(200)
-  nonbasic_ward            String?   @db.VarChar(200)
-  health_record_number     String?   @db.VarChar(200)
-  mswd_number              String?   @db.VarChar(200)
-  referring_party          String?   @db.VarChar(200)
-  address                  String?   @db.VarChar(200)
-  contact_number           String?   @db.VarChar(200)
-  informant                String?   @db.VarChar(200)
-  relationship_to_patient  String?   @db.VarChar(200)
-  informant_contact_number String?   @db.VarChar(200)
-  informant_address        String?   @db.VarChar(200)
-  patients                 patients? @relation(fields: [patient_id], references: [id])
+  id                       Int      @id @default(autoincrement())
+  patient_id               Int
+  interview_date           String?  @db.VarChar(200)
+  interview_time           String?  @db.VarChar(50)
+  admission_date_and_time  String?  @db.VarChar(200)
+  basic_ward               String?  @db.VarChar(200)
+  nonbasic_ward            String?  @db.VarChar(200)
+  health_record_number     String?  @db.VarChar(200)
+  mswd_number              String?  @db.VarChar(200)
+  source_of_referral       String?  @db.VarChar(200)
+  referring_party          String?  @db.VarChar(200)
+  address                  String?  @db.VarChar(200)
+  contact_number           String?  @db.VarChar(200)
+  informant                String?  @db.VarChar(200)
+  relationship_to_patient  String?  @db.VarChar(200)
+  informant_contact_number String?  @db.VarChar(200)
+  informant_address        String?  @db.VarChar(200)
+  patients                 patients @relation(fields: [patient_id], references: [id])
 }
 
 model patient_education {
@@ -92,18 +93,17 @@ model patient_education {
   patients           patients @relation(fields: [patient_id], references: [id])
 }
 
-
 model patient_address {
-  id           Int         @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   patient_id   Int
-  address_type  String?     @db.VarChar(150)
-  region       String?     @db.VarChar(150)
-  province     String?     @db.VarChar(150)
-  district     String?     @db.VarChar(150)
-  municipality String?     @db.VarChar(150)
-  barangay     String?     @db.VarChar(150)
-  purok        String?     @db.VarChar(600)
-  patients     patients    @relation(fields: [patient_id], references: [id])
+  address_type String?  @db.VarChar(150)
+  region       String?  @db.VarChar(150)
+  province     String?  @db.VarChar(150)
+  district     String?  @db.VarChar(150)
+  municipality String?  @db.VarChar(150)
+  barangay     String?  @db.VarChar(150)
+  purok        String?  @db.VarChar(600)
+  patients     patients @relation(fields: [patient_id], references: [id])
 }
 
 model patient_educ_attainment {
@@ -118,7 +118,7 @@ model patient_family_composition {
   id                     Int       @id @default(autoincrement())
   patient_id             Int
   full_name              String?   @db.VarChar(200)
-  age                    String?  @db.VarChar(100)
+  age                    String?   @db.VarChar(100)
   birth_date             DateTime? @db.Date
   civil_status           String?   @db.VarChar(50)
   relationship           String?   @db.VarChar(150)

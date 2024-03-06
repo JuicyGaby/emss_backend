@@ -26,6 +26,7 @@ module.exports = router;
 
 router.get('/patients', patients.getPatients)
 router.get('/patients/:id', patients.getPatientById)
+router.post('/patients', patients.createPatient)
 
 // * assesment-tool
 
