@@ -4,23 +4,32 @@ const moment = require("moment");
 
 async function getPatients() {
   const patients = await prisma.patients.findMany({
-   take: 10,
+    take: 10,
   });
   return patients;
 }
-async function getPatientById(id) {
-  const address = await getPatientAddress(id);
-  const patient = await prisma.patients.findFirst({
+async function getPatientById(patient_id) {
+   const patient = await prisma.patients.findUnique({
     where: {
-      id: parseInt(id),
+      id: parseInt(patient_id),
     },
-    include: {
-      patient_interview: true,
-      patient_family_composition: true,
+   });
+   const address = await prisma.patient_address.findMany({
+      where: {
+         patient_id: parseInt(patient_id),
+      },
+   });
+   patient.address = address;
+   return patient;
+}
+
+async function getPatientAddress(id) {
+  const address = await prisma.patient_address.findMany({
+    where: {
+      patient_id: parseInt(id),
     },
   });
-  patient.address = address;
-  return patient;
+  return address;
 }
 
 async function createPatient(reqBody) {
@@ -59,37 +68,42 @@ async function createPatient(reqBody) {
 }
 
 async function createPatientAddress(addressData, addressType, patientId) {
-
-   const [region, province, municipality] = await Promise.all([
-      addressData.region ? prisma.ph_regions.findFirst({
+  const [region, province, municipality] = await Promise.all([
+    addressData.region
+      ? prisma.ph_regions.findFirst({
           where: {
-              regCode: addressData.region,
+            regCode: addressData.region,
           },
           select: {
-              regDesc: true,
+            regDesc: true,
           },
-      }) : { regDesc: null },
-      addressData.province ? prisma.ph_provinces.findFirst({
+        })
+      : { regDesc: null },
+    addressData.province
+      ? prisma.ph_provinces.findFirst({
           where: {
-              provCode: addressData.province,
+            provCode: addressData.province,
           },
           select: {
-              provDesc: true,
+            provDesc: true,
           },
-      }) : { provDesc: null },
-      addressData.municipality ? prisma.ph_city_mun.findFirst({
+        })
+      : { provDesc: null },
+    addressData.municipality
+      ? prisma.ph_city_mun.findFirst({
           where: {
-              citymunCode: addressData.municipality,
+            citymunCode: addressData.municipality,
           },
           select: {
-              citymunDesc: true,
+            citymunDesc: true,
           },
-      }) : { citymunDesc: null },
+        })
+      : { citymunDesc: null },
   ]);
 
-   console.log(region, province, municipality);
-   const newAddress = await prisma.patient_address.create({
-      data: {
+  console.log(region, province, municipality);
+  const newAddress = await prisma.patient_address.create({
+    data: {
       patient_id: patientId,
       region: region.regDesc,
       province: province.provDesc,
@@ -98,9 +112,9 @@ async function createPatientAddress(addressData, addressType, patientId) {
       barangay: addressData.baranggay,
       purok: addressData.purok,
       address_type: addressType,
-      },
-   });
-   console.log("Created address", newAddress);
+    },
+  });
+  console.log("Created address", newAddress);
 }
 
 async function createPatientInterview(interview, patientId) {

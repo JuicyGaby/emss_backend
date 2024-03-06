@@ -11,12 +11,12 @@ exports.getPatients = async function(req, res, next) {
 }
 
 exports.getPatientById = async function(req, res, next) {
-    const id = req.params.id;
+    const patient_id = req.params.id;
     try {
-        const patient = await getPatientById(id);
+        const patient = await getPatientById(patient_id);
         res.send(patient);
     } catch (error) {
-        console.error(error);
+        console.log(error);
     }
 }
 
