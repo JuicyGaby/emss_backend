@@ -52,9 +52,12 @@ model patients {
   ph_membership_type                       String?                                    @db.VarChar(100)
   created_at                               DateTime                                   @default(now()) @db.DateTime(0)
   created_by                               String?                                    @db.VarChar(100)
+  remarks                                  String?                                    @db.VarChar(255)
+  highest_education_level                  String?                                    @db.VarChar(100)
+  education_status                         String?                                    @db.VarChar(100)
+
   patient_education                        patient_education[]
   addresses                                patient_address[]
-  patient_educ_attainment                  patient_educ_attainment[]
   patient_family_composition               patient_family_composition[]
   patient_mswd_classification              patient_mswd_classification[]
   patient_monthly_expenses                 patient_monthly_expenses[]
@@ -63,6 +66,7 @@ model patients {
   patient_interview                        patient_interview[]
   patient_safety                           patient_safety[]
   patient_assessment_of_social_functioning patient_assessment_of_social_functioning[]
+  patient_descrimination                   patient_descrimination[]
 }
 
 model patient_interview {
@@ -83,6 +87,7 @@ model patient_interview {
   relationship_to_patient  String?  @db.VarChar(200)
   informant_contact_number String?  @db.VarChar(200)
   informant_address        String?  @db.VarChar(200)
+  remarks                  String?  @db.VarChar(200)
   patients                 patients @relation(fields: [patient_id], references: [id])
 }
 
@@ -106,15 +111,6 @@ model patient_address {
   purok        String?  @db.VarChar(600)
   patients     patients @relation(fields: [patient_id], references: [id])
 }
-
-model patient_educ_attainment {
-  id                 Int      @id @default(autoincrement())
-  patient_id         Int
-  highest_educ_level String?  @db.VarChar(50)
-  educational_status String?  @db.VarChar(50)
-  patients           patients @relation(fields: [patient_id], references: [id])
-}
-
 model patient_family_composition {
   id                     Int       @id @default(autoincrement())
   patient_id             Int
@@ -138,25 +134,35 @@ model patient_family_composition {
 model patient_mswd_classification {
   id                                Int      @id @default(autoincrement())
   patient_id                        Int
-  main_classification               String?  @db.VarChar(50)
-  sub_classification                String?  @db.VarChar(50)
-  membership_to_marginalized_sector String?  @db.VarChar(50)
+  main_classification               String?  @db.VarChar(100)
+  main_classification_type          String?  @db.VarChar(100)
+  sub_classification_type           String?  @db.VarChar(50)
+  membership_to_marginalized_sector String?  @db.VarChar(255)
+  remarks                           String?  @db.VarChar(255)
   patients                          patients @relation(fields: [patient_id], references: [id])
 }
 
 // * III Monthly Expenses
 
 model patient_monthly_expenses {
-  id                     Int      @id @default(autoincrement())
-  particular1            Json?
-  particular2            Json?
-  patient_id             Int
-  light_source           Json?
-  fuel_source            String?  @db.VarChar(50)
-  water_source           String?  @db.VarChar(50)
-  total_monthly_expenses String?  @db.VarChar(50)
-  remarks                String?  @db.VarChar(255)
-  patients               patients @relation(fields: [patient_id], references: [id])
+  id                  Int      @id @default(autoincrement())
+  patient_id          Int
+  house_lot_cost      Int?
+  food_water_cost     Int?
+  education_cost      Int?
+  clothing_cost       Int?
+  transportation_type String?  @db.VarChar(50)
+  transportation_cost Int?
+  communication_cost  Int?
+  house_help_cost     Int?
+  medical_cost        Int?
+  others_description  String?  @db.VarChar(255)
+  others_cost         Int?
+  light_source        String?  @db.VarChar(50)
+  fuel_source         String?  @db.VarChar(50)
+  total_cost          Int?
+  remarks             String?  @db.VarChar(500)
+  patients            patients @relation(fields: [patient_id], references: [id])
 }
 
 // * IV Medical Data
@@ -166,17 +172,18 @@ model patient_medical_data {
   patient_id                   Int
   admitting_diagnosis          String?  @db.VarChar(255)
   final_diagnosis              String?  @db.VarChar(255)
-  duration_of_problems         String?  @db.VarChar(50)
+  duration_of_problems         String?  @db.VarChar(255)
   previous_treatment           String?  @db.VarChar(255)
   present_treatment_plan       String?  @db.VarChar(255)
-  health_accessibility_problem String?  @db.VarChar(50)
+  health_accessibility_problem String?  @db.VarChar(255)
+  remarks                      String?  @db.VarChar(255)
   patients                     patients @relation(fields: [patient_id], references: [id])
 }
 
 // * V Health and Mental health
 
 model patient_health_and_mental_health {
-  id                                   Int   @id @default(autoincrement())
+  id                                   Int     @id @default(autoincrement())
   patient_id                           Int
   abscence_of_adequate_health_services Json?
   inaccessibility_of_health_services   Json?
@@ -184,11 +191,20 @@ model patient_health_and_mental_health {
   absence_of_adequate_mental_services  Json?
   inaccessibility_of_mental_services   Json?
   absence_of_support_mental_services   Json?
+  remarks                              String? @db.VarChar(255)
 
   patients patients @relation(fields: [patient_id], references: [id])
 }
 
 // * VI Rating and Feedback
+// * VI Discrimination
+
+model patient_descrimination {
+  id                  Int      @id @default(autoincrement())
+  patient_id          Int
+  discrimination_type Json?
+  patients            patients @relation(fields: [patient_id], references: [id])
+}
 
 // * VII Safety
 
