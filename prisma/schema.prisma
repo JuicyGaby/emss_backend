@@ -147,16 +147,24 @@ model patient_mswd_classification {
 // * III Monthly Expenses
 
 model patient_monthly_expenses {
-  id                     Int      @id @default(autoincrement())
-  particular1            Json?
-  particular2            Json?
-  patient_id             Int
-  light_source           Json?
-  fuel_source            String?  @db.VarChar(50)
-  water_source           String?  @db.VarChar(50)
-  total_monthly_expenses String?  @db.VarChar(50)
-  remarks                String?  @db.VarChar(255)
-  patients               patients @relation(fields: [patient_id], references: [id])
+  id                  Int      @id @default(autoincrement())
+  patient_id          Int
+  house_lot_cost      Int?
+  food_water_cost     Int?
+  education_cost      Int?
+  clothing_cost       Int?
+  transportation_type String?  @db.VarChar(50)
+  transportation_cost Int?
+  communication_cost  Int?
+  house_help_cost     Int?
+  medical_cost        Int?
+  others_description  String?  @db.VarChar(255)
+  others_cost         Int?
+  light_source        String?  @db.VarChar(50)
+  fuel_source         String?  @db.VarChar(50)
+  total_cost          Int?
+  remarks             String?  @db.VarChar(500)
+  patients            patients @relation(fields: [patient_id], references: [id])
 }
 
 // * IV Medical Data
