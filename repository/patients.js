@@ -9,18 +9,20 @@ async function getPatients() {
   return patients;
 }
 async function getPatientById(patient_id) {
-   const patient = await prisma.patients.findUnique({
+  const patient = await prisma.patients.findUnique({
     where: {
       id: parseInt(patient_id),
+    }
+  });
+  const address = await prisma.patient_address.findMany({
+    where: {
+      patient_id: parseInt(patient_id),
     },
-   });
-   const address = await prisma.patient_address.findMany({
-      where: {
-         patient_id: parseInt(patient_id),
-      },
-   });
-   patient.address = address;
-   return patient;
+  });
+
+  patient.address = address;
+  console.log(patient);
+  return patient;
 }
 
 async function getPatientAddress(id) {
