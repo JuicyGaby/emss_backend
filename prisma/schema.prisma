@@ -52,6 +52,7 @@ model patients {
   ph_membership_type                       String?                                    @db.VarChar(100)
   created_at                               DateTime                                   @default(now()) @db.DateTime(0)
   created_by                               String?                                    @db.VarChar(100)
+  remarks                                  String?                                    @db.VarChar(255)
   patient_education                        patient_education[]
   addresses                                patient_address[]
   patient_educ_attainment                  patient_educ_attainment[]
@@ -83,6 +84,7 @@ model patient_interview {
   relationship_to_patient  String?  @db.VarChar(200)
   informant_contact_number String?  @db.VarChar(200)
   informant_address        String?  @db.VarChar(200)
+  remarks                  String?  @db.VarChar(200)
   patients                 patients @relation(fields: [patient_id], references: [id])
 }
 
@@ -138,9 +140,11 @@ model patient_family_composition {
 model patient_mswd_classification {
   id                                Int      @id @default(autoincrement())
   patient_id                        Int
-  main_classification               String?  @db.VarChar(50)
-  sub_classification                String?  @db.VarChar(50)
-  membership_to_marginalized_sector String?  @db.VarChar(50)
+  main_classification               String?  @db.VarChar(100)
+  main_classification_type          String?  @db.VarChar(100)
+  sub_classification_type           String?  @db.VarChar(50)
+  membership_to_marginalized_sector String?  @db.VarChar(255)
+  remarks                           String?  @db.VarChar(255)
   patients                          patients @relation(fields: [patient_id], references: [id])
 }
 
@@ -174,10 +178,11 @@ model patient_medical_data {
   patient_id                   Int
   admitting_diagnosis          String?  @db.VarChar(255)
   final_diagnosis              String?  @db.VarChar(255)
-  duration_of_problems         String?  @db.VarChar(50)
+  duration_of_problems         String?  @db.VarChar(255)
   previous_treatment           String?  @db.VarChar(255)
   present_treatment_plan       String?  @db.VarChar(255)
-  health_accessibility_problem String?  @db.VarChar(50)
+  health_accessibility_problem String?  @db.VarChar(255)
+  remarks                      String?  @db.VarChar(255)
   patients                     patients @relation(fields: [patient_id], references: [id])
 }
 
