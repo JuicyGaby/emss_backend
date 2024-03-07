@@ -32,27 +32,28 @@ model employee_access_rights {
 // * I Start of the Demograhic Data
 
 model patients {
-  id                                       Int                                        @id @default(autoincrement())
-  first_name                               String?                                    @db.VarChar(100)
-  middle_name                              String?                                    @db.VarChar(100)
-  last_name                                String?                                    @db.VarChar(100)
-  birth_date                               String?                                    @db.VarChar(100)
-  age                                      String?
-  sex                                      String?                                    @db.VarChar(10)
-  contact_number                           String?                                    @db.VarChar(20)
-  place_of_birth                           String?                                    @db.VarChar(100)
-  gender                                   String?                                    @db.VarChar(100)
-  religion                                 String?                                    @db.VarChar(100)
-  nationality                              String?                                    @db.VarChar(100)
-  civil_status                             String?                                    @db.VarChar(100)
-  living_arrangement                       String?                                    @db.VarChar(100)
-  occupation                               String?                                    @db.VarChar(255)
-  monthly_income                           String?                                    @db.VarChar(100)
-  ph_membership_number                     String?                                    @db.VarChar(100)
-  ph_membership_type                       String?                                    @db.VarChar(100)
-  created_at                               DateTime                                   @default(now()) @db.DateTime(0)
-  created_by                               String?                                    @db.VarChar(100)
-  remarks                                  String?                                    @db.VarChar(255)
+  id                   Int      @id @default(autoincrement())
+  first_name           String?  @db.VarChar(100)
+  middle_name          String?  @db.VarChar(100)
+  last_name            String?  @db.VarChar(100)
+  birth_date           String?  @db.VarChar(100)
+  age                  String?
+  sex                  String?  @db.VarChar(10)
+  contact_number       String?  @db.VarChar(20)
+  place_of_birth       String?  @db.VarChar(100)
+  gender               String?  @db.VarChar(100)
+  religion             String?  @db.VarChar(100)
+  nationality          String?  @db.VarChar(100)
+  civil_status         String?  @db.VarChar(100)
+  living_arrangement   String?  @db.VarChar(100)
+  occupation           String?  @db.VarChar(255)
+  monthly_income       String?  @db.VarChar(100)
+  ph_membership_number String?  @db.VarChar(100)
+  ph_membership_type   String?  @db.VarChar(100)
+  created_at           DateTime @default(now()) @db.DateTime(0)
+  created_by           String?  @db.VarChar(100)
+  remarks              String?  @db.VarChar(255)
+
   patient_education                        patient_education[]
   addresses                                patient_address[]
   patient_educ_attainment                  patient_educ_attainment[]
@@ -64,6 +65,7 @@ model patients {
   patient_interview                        patient_interview[]
   patient_safety                           patient_safety[]
   patient_assessment_of_social_functioning patient_assessment_of_social_functioning[]
+  patient_descrimination                   patient_descrimination[]
 }
 
 model patient_interview {
@@ -189,7 +191,7 @@ model patient_medical_data {
 // * V Health and Mental health
 
 model patient_health_and_mental_health {
-  id                                   Int   @id @default(autoincrement())
+  id                                   Int     @id @default(autoincrement())
   patient_id                           Int
   abscence_of_adequate_health_services Json?
   inaccessibility_of_health_services   Json?
@@ -197,11 +199,20 @@ model patient_health_and_mental_health {
   absence_of_adequate_mental_services  Json?
   inaccessibility_of_mental_services   Json?
   absence_of_support_mental_services   Json?
+  remarks                              String? @db.VarChar(255)
 
   patients patients @relation(fields: [patient_id], references: [id])
 }
 
 // * VI Rating and Feedback
+// * VI Discrimination
+
+model patient_descrimination {
+  id                  Int      @id @default(autoincrement())
+  patient_id          Int
+  discrimination_type Json?
+  patients            patients @relation(fields: [patient_id], references: [id])
+}
 
 // * VII Safety
 
