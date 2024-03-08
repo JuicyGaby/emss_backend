@@ -55,6 +55,7 @@ async function createPatient(reqBody) {
       living_arrangement: demographicData.living_arrangement,
       ph_membership_number: demographicData.ph_membership_number,
       ph_membership_type: demographicData.ph_membership_type,
+      
     },
   });
   const patientId = patient.id;

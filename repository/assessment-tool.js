@@ -32,6 +32,15 @@ const interview = await prisma.patient_interview.findFirst({
   return interview;
 }
 
+async function getFamilyComposition(patient_id) {
+  const familyComposition = await prisma.patient_family_composition.findMany({
+    where: {
+      patient_id: parseInt(patient_id),
+    },
+  });
+  return familyComposition;
+}
+
 async function getRegion() {
   const region = await prisma.ph_regions.findMany({
     select: {
@@ -85,4 +94,5 @@ module.exports = {
   getMunicipalityByProvinceCode,
   getBarangayByMunicipalityCode,
   getInterviewById,
+  getFamilyComposition,
 };

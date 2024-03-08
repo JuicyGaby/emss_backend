@@ -32,6 +32,7 @@ router.post('/patients', patients.createPatient)
 
 router.post('/interview', assessmentTool.interview)
 router.get('/interview/:id', assessmentTool.getInterview)
+router.get('/family-composition/:id', assessmentTool.getFamilyComposition)
 
 
 router.get('/region', assessmentTool.getRegion)
