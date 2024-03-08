@@ -30,11 +30,15 @@ router.post('/patients', patients.createPatient)
 
 // * assesment-tool
 
+// ? interview
 router.post('/interview', assessmentTool.interview)
 router.get('/interview/:id', assessmentTool.getInterview)
+router.put('/interview/:id', assessmentTool.updateInterview)
+
+// ? family composition
 router.get('/family-composition/:id', assessmentTool.getFamilyComposition)
 
-
+// ? address
 router.get('/region', assessmentTool.getRegion)
 router.get('/province/:id', assessmentTool.getProvinceByRegionCode)
 router.get('/municipality/:id', assessmentTool.getMunicipalityByProvinceCode)

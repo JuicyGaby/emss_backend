@@ -1,16 +1,20 @@
 
-const { 
+const {
+    // interview
     createInterview, 
+    getInterviewById,
+    updateInterviewById,
+    // addresss
     getRegion, 
     getProvinceByRegionCode, 
     getMunicipalityByProvinceCode,
     getBarangayByMunicipalityCode,
-    getInterviewById,
+    // family composition
     getFamilyComposition
 
 } = require('../repository/assessment-tool');
 
-
+// * interview
 exports.interview = async function(req, res, next) {
     try {
         // console.log(req.body);
@@ -29,6 +33,21 @@ exports.getInterview = async function(req, res, next) {
         console.error(error);
     }
 }
+exports.updateInterview = async function(req, res, next) {
+    const patientId = req.params.id;
+    const body = req.body;
+    try {
+        const interview = await updateInterviewById(patientId, req.body);
+        res.send(interview);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+
+
+// * family composition
 exports.getFamilyComposition = async function(req, res, next) {
     const patientId = req.params.id;
     try {
