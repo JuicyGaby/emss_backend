@@ -12,7 +12,7 @@ async function getPatientById(patient_id) {
   const patient = await prisma.patients.findUnique({
     where: {
       id: parseInt(patient_id),
-    }
+    },
   });
   const address = await prisma.patient_address.findMany({
     where: {
@@ -24,16 +24,6 @@ async function getPatientById(patient_id) {
   console.log(patient);
   return patient;
 }
-
-async function getPatientAddress(id) {
-  const address = await prisma.patient_address.findMany({
-    where: {
-      patient_id: parseInt(id),
-    },
-  });
-  return address;
-}
-
 async function createPatient(reqBody) {
   const { interview, demographicData } = reqBody;
   const patient = await prisma.patients.create({
@@ -55,7 +45,6 @@ async function createPatient(reqBody) {
       living_arrangement: demographicData.living_arrangement,
       ph_membership_number: demographicData.ph_membership_number,
       ph_membership_type: demographicData.ph_membership_type,
-      
     },
   });
   const patientId = patient.id;
@@ -69,7 +58,6 @@ async function createPatient(reqBody) {
   await createPatientInterview(interview, patientId);
   return patient;
 }
-
 async function createPatientAddress(addressData, addressType, patientId) {
   const [region, province, municipality] = await Promise.all([
     addressData.region
@@ -119,7 +107,6 @@ async function createPatientAddress(addressData, addressType, patientId) {
   });
   console.log("Created address", newAddress);
 }
-
 async function createPatientInterview(interview, patientId) {
   const interviewDateTime = moment(interview.interview_date_time);
   const body = {
@@ -149,8 +136,40 @@ async function createPatientInterview(interview, patientId) {
   console.log("Created interview", newInterview);
 }
 
+async function updatePatient(reqBody) {
+  const patient = await prisma.patients.update({
+    where: {
+      id: parseInt(reqBody.id),
+    },
+    data: {
+      first_name: reqBody.first_name,
+      middle_name: reqBody.middle_name,
+      last_name: reqBody.last_name,
+      age: reqBody.age,
+      birth_date: reqBody.birth_date,
+      sex: reqBody.sex,
+      contact_number: reqBody.contact_number,
+      gender: reqBody.gender,
+      religion: reqBody.religion,
+      nationality: reqBody.nationality,
+      civil_status: reqBody.civil_status,
+      living_arrangement: reqBody.living_arrangement,
+      highest_education_level: reqBody.highest_education_level,
+      education_status: reqBody.education_status,
+      occupation: reqBody.occupation,
+      monthly_income: reqBody.monthly_income,
+      ph_membership_number: reqBody.ph_membership_number,
+      ph_membership_type: reqBody.ph_membership_type,
+      remarks: reqBody.remarks,
+    },
+  });
+  console.log("updated", patient);
+  return patient;
+} 
+
 module.exports = {
   getPatients,
   getPatientById,
   createPatient,
+  updatePatient
 };
