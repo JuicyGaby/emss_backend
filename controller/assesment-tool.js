@@ -1,15 +1,20 @@
 
-const { 
+const {
+    // interview
     createInterview, 
+    getInterviewById,
+    updateInterviewById,
+    // addresss
     getRegion, 
     getProvinceByRegionCode, 
     getMunicipalityByProvinceCode,
     getBarangayByMunicipalityCode,
-    getInterviewById,
+    // family composition
+    getFamilyComposition
 
 } = require('../repository/assessment-tool');
 
-
+// * interview
 exports.interview = async function(req, res, next) {
     try {
         // console.log(req.body);
@@ -28,6 +33,32 @@ exports.getInterview = async function(req, res, next) {
         console.error(error);
     }
 }
+exports.updateInterview = async function(req, res, next) {
+    const patientId = req.params.id;
+    const body = req.body;
+    try {
+        const interview = await updateInterviewById(patientId, req.body);
+        res.send(interview);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+
+
+// * family composition
+exports.getFamilyComposition = async function(req, res, next) {
+    const patientId = req.params.id;
+    try {
+        const familyComposition = await getFamilyComposition(patientId);
+        res.send(familyComposition);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
 
 
 exports.getRegion = async function(req, res, next) {
@@ -56,7 +87,6 @@ exports.getMunicipalityByProvinceCode = async function(req, res, next) {
         console.error(error);
     }
 }
-
 exports.getBarangayByMunicipalityCode = async function(req, res, next) {
     const citymunCode = req.params.id;
     try {
@@ -66,3 +96,5 @@ exports.getBarangayByMunicipalityCode = async function(req, res, next) {
         console.error(error);
     }
 }
+
+
