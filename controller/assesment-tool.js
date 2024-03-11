@@ -1,121 +1,136 @@
-
 const {
-    // interview
-    createInterview, 
-    getInterviewById,
-    updateInterviewById,
-    // addresss
-    getRegion, 
-    getProvinceByRegionCode, 
-    getMunicipalityByProvinceCode,
-    getBarangayByMunicipalityCode,
-    updatePatientAddress,
-    // family composition
-    getFamilyComposition,
-    createFamilyMember
-
-} = require('../repository/assessment-tool');
+  // interview
+  createInterview,
+  getInterviewById,
+  updateInterviewById,
+  // addresss
+  getRegion,
+  getProvinceByRegionCode,
+  getMunicipalityByProvinceCode,
+  getBarangayByMunicipalityCode,
+  updatePatientAddress,
+  // family composition
+  getFamilyComposition,
+  getFamilyInfo,
+  createFamilyMember,
+  updateFamilyMember,
+} = require("../repository/assessment-tool");
 
 // * interview
-exports.interview = async function(req, res, next) {
-    try {
-        // console.log(req.body);
-        const interview = await createInterview(req.body);
-        res.send(interview);
-    } catch (error) {
-        console.error(error);
-    }
-}
-exports.getInterview = async function(req, res, next) {
-    const patientId = req.params.id;
-    try {
-        const interview = await getInterviewById(patientId);
-        res.send(interview);
-    } catch (error) {
-        console.error(error);
-    }
-}
-exports.updateInterview = async function(req, res, next) {
-    const patientId = req.params.id;
-    const body = req.body;
-    try {
-        const interview = await updateInterviewById(patientId, req.body);
-        res.send(interview);
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-
-
+exports.interview = async function (req, res, next) {
+  try {
+    // console.log(req.body);
+    const interview = await createInterview(req.body);
+    res.send(interview);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getInterview = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const interview = await getInterviewById(patientId);
+    res.send(interview);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateInterview = async function (req, res, next) {
+  const patientId = req.params.id;
+  const body = req.body;
+  try {
+    const interview = await updateInterviewById(patientId, req.body);
+    res.send(interview);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // * family composition
-exports.getFamilyComposition = async function(req, res, next) {
+exports.getFamilyComposition = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const familyComposition = await getFamilyComposition(patientId);
+    res.send(familyComposition);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getFamilyInfo = async function (req, res, next) {
     const patientId = req.params.id;
     try {
-        const familyComposition = await getFamilyComposition(patientId);
-        res.send(familyComposition);
+        const familyInfo = await getFamilyInfo(patientId);
+        res.send(familyInfo);
     } catch (error) {
         console.error(error);
     }
-}
-exports.createFamilyMember = async function(req, res, next) {
+};
+
+exports.createFamilyMember = async function (req, res, next) {
+  const familyMember = req.body;
+  try {
+    const newFamilyMember = await createFamilyMember(familyMember);
+    res.send(newFamilyMember);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+exports.updateFamilyMember = async function (req, res, next) {
     const familyMember = req.body;
     try {
-        const newFamilyMember = await createFamilyMember(familyMember);
-        res.send(newFamilyMember);
+        const updatedFamilyMember = await updateFamilyMember(familyMember);
+        res.send(updatedFamilyMember);
     } catch (error) {
         console.error(error);
     }
 }
-
-
 
 // *address
 
 // ? get
-exports.getRegion = async function(req, res, next) {
-    try {
-        const region = await getRegion();
-        res.send(region);
-    } catch (error) {
-        console.error(error);
-    }
-}
-exports.getProvinceByRegionCode = async function(req, res, next) {
-    const regCode = req.params.id;
-    try {
-        const province = await getProvinceByRegionCode(regCode);
-        res.send(province);
-    } catch (error) {
-        console.error(error);
-    }
-}
-exports.getMunicipalityByProvinceCode = async function(req, res, next) {
-    const provCode = req.params.id;
-    try {
-        const municipality = await getMunicipalityByProvinceCode(provCode);
-        res.send(municipality);
-    } catch (error) {
-        console.error(error);
-    }
-}
-exports.getBarangayByMunicipalityCode = async function(req, res, next) {
-    const citymunCode = req.params.id;
-    try {
-        const barangay = await getBarangayByMunicipalityCode(citymunCode);
-        res.send(barangay);
-    } catch (error) {
-        console.error(error);
-    }
-}
+exports.getRegion = async function (req, res, next) {
+  try {
+    const region = await getRegion();
+    res.send(region);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getProvinceByRegionCode = async function (req, res, next) {
+  const regCode = req.params.id;
+  try {
+    const province = await getProvinceByRegionCode(regCode);
+    res.send(province);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getMunicipalityByProvinceCode = async function (req, res, next) {
+  const provCode = req.params.id;
+  try {
+    const municipality = await getMunicipalityByProvinceCode(provCode);
+    res.send(municipality);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getBarangayByMunicipalityCode = async function (req, res, next) {
+  const citymunCode = req.params.id;
+  try {
+    const barangay = await getBarangayByMunicipalityCode(citymunCode);
+    res.send(barangay);
+  } catch (error) {
+    console.error(error);
+  }
+};
 // ? put
-exports.updatePatientAddress = async function(req, res, next) {
-    const patientAddress = req.body
-    try {
-        const patientUpdatedAddress = await updatePatientAddress(patientAddress)
-        res.send(patientUpdatedAddress)
-    } catch (error) {
-        console.log(error);
-    }
-}
+exports.updatePatientAddress = async function (req, res, next) {
+  const patientAddress = req.body;
+  try {
+    const patientUpdatedAddress = await updatePatientAddress(patientAddress);
+    res.send(patientUpdatedAddress);
+  } catch (error) {
+    console.log(error);
+  }
+};
