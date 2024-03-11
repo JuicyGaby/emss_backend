@@ -44,6 +44,8 @@ router.get('/region', assessmentTool.getRegion)
 router.get('/province/:id', assessmentTool.getProvinceByRegionCode)
 router.get('/municipality/:id', assessmentTool.getMunicipalityByProvinceCode)
 router.get('/barangay/:id', assessmentTool.getBarangayByMunicipalityCode)
+router.put('/address', assessmentTool.updatePatientAddress)
+
 
 
 

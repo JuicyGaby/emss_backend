@@ -56,7 +56,6 @@ async function updateInterviewById(patient_id, reqBody) {
       remarks: reqBody.remarks,
     },
   });
-  console.log("updated", interview);
   return interview;
 }
 
@@ -119,6 +118,30 @@ async function getBarangayByMunicipalityCode(citymunCode) {
   return barangay;
 }
 
+async function updatePatientAddress(patientAddresses) {
+  const updatedAddresses = await Promise.all(
+    patientAddresses.map(async (address) => {
+      const updatedAddress = await prisma.patient_address.update({
+        where: {
+          id: address.id,
+          address_type: address.address_type,
+        },
+        data: {
+          region: address.region,
+          province: address.province,
+          district: address.district,
+          municipality: address.municipality,
+          barangay: address.barangay,
+          purok: address.purok,
+        },
+      });
+      return updatedAddress;
+    })
+  );
+  console.log('address updated', updatedAddresses);
+  return updatedAddresses;
+}
+
 module.exports = {
   // interview
   createInterview,
@@ -129,6 +152,7 @@ module.exports = {
   getProvinceByRegionCode,
   getMunicipalityByProvinceCode,
   getBarangayByMunicipalityCode,
+  updatePatientAddress,
   // family composition
   getFamilyComposition,
 };

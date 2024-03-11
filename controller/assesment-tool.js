@@ -9,6 +9,7 @@ const {
     getProvinceByRegionCode, 
     getMunicipalityByProvinceCode,
     getBarangayByMunicipalityCode,
+    updatePatientAddress,
     // family composition
     getFamilyComposition
 
@@ -59,7 +60,7 @@ exports.getFamilyComposition = async function(req, res, next) {
 }
 
 
-
+// *address
 
 exports.getRegion = async function(req, res, next) {
     try {
@@ -98,3 +99,12 @@ exports.getBarangayByMunicipalityCode = async function(req, res, next) {
 }
 
 
+exports.updatePatientAddress = async function(req, res, next) {
+    const patientAddress = req.body
+    try {
+        const patientUpdatedAddress = await updatePatientAddress(patientAddress)
+        res.send(patientUpdatedAddress)
+    } catch (error) {
+        console.log(error);
+    }
+}
