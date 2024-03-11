@@ -11,7 +11,8 @@ const {
     getBarangayByMunicipalityCode,
     updatePatientAddress,
     // family composition
-    getFamilyComposition
+    getFamilyComposition,
+    createFamilyMember
 
 } = require('../repository/assessment-tool');
 
@@ -58,10 +59,21 @@ exports.getFamilyComposition = async function(req, res, next) {
         console.error(error);
     }
 }
+exports.createFamilyMember = async function(req, res, next) {
+    const familyMember = req.body;
+    try {
+        const newFamilyMember = await createFamilyMember(familyMember);
+        res.send(newFamilyMember);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
 
 // *address
 
+// ? get
 exports.getRegion = async function(req, res, next) {
     try {
         const region = await getRegion();
@@ -97,8 +109,7 @@ exports.getBarangayByMunicipalityCode = async function(req, res, next) {
         console.error(error);
     }
 }
-
-
+// ? put
 exports.updatePatientAddress = async function(req, res, next) {
     const patientAddress = req.body
     try {

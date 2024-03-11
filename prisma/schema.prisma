@@ -32,29 +32,29 @@ model employee_access_rights {
 // * I Start of the Demograhic Data
 
 model patients {
-  id                                       Int                                        @id @default(autoincrement())
-  first_name                               String?                                    @db.VarChar(100)
-  middle_name                              String?                                    @db.VarChar(100)
-  last_name                                String?                                    @db.VarChar(100)
-  birth_date                               String?                                    @db.VarChar(100)
-  age                                      String?
-  sex                                      String?                                    @db.VarChar(10)
-  contact_number                           String?                                    @db.VarChar(20)
-  place_of_birth                           String?                                    @db.VarChar(100)
-  gender                                   String?                                    @db.VarChar(100)
-  religion                                 String?                                    @db.VarChar(100)
-  nationality                              String?                                    @db.VarChar(100)
-  civil_status                             String?                                    @db.VarChar(100)
-  living_arrangement                       String?                                    @db.VarChar(100)
-  occupation                               String?                                    @db.VarChar(255)
-  monthly_income                           String?                                    @db.VarChar(100)
-  ph_membership_number                     String?                                    @db.VarChar(100)
-  ph_membership_type                       String?                                    @db.VarChar(100)
-  created_at                               DateTime                                   @default(now()) @db.DateTime(0)
-  created_by                               String?                                    @db.VarChar(100)
-  remarks                                  String?                                    @db.VarChar(255)
-  highest_education_level                  String?                                    @db.VarChar(100)
-  education_status                         String?                                    @db.VarChar(100)
+  id                      Int      @id @default(autoincrement())
+  first_name              String?  @db.VarChar(100)
+  middle_name             String?  @db.VarChar(100)
+  last_name               String?  @db.VarChar(100)
+  birth_date              String?  @db.VarChar(100)
+  age                     String?
+  sex                     String?  @db.VarChar(10)
+  contact_number          String?  @db.VarChar(20)
+  place_of_birth          String?  @db.VarChar(100)
+  gender                  String?  @db.VarChar(100)
+  religion                String?  @db.VarChar(100)
+  nationality             String?  @db.VarChar(100)
+  civil_status            String?  @db.VarChar(100)
+  living_arrangement      String?  @db.VarChar(100)
+  occupation              String?  @db.VarChar(255)
+  monthly_income          String?  @db.VarChar(100)
+  ph_membership_number    String?  @db.VarChar(100)
+  ph_membership_type      String?  @db.VarChar(100)
+  created_at              DateTime @default(now()) @db.DateTime(0)
+  created_by              String?  @db.VarChar(100)
+  remarks                 String?  @db.VarChar(255)
+  highest_education_level String?  @db.VarChar(100)
+  education_status        String?  @db.VarChar(100)
 
   patient_education                        patient_education[]
   addresses                                patient_address[]
@@ -67,6 +67,7 @@ model patients {
   patient_safety                           patient_safety[]
   patient_assessment_of_social_functioning patient_assessment_of_social_functioning[]
   patient_descrimination                   patient_descrimination[]
+  patient_family_info                      patient_family_info[]
 }
 
 model patient_interview {
@@ -111,22 +112,29 @@ model patient_address {
   purok        String?  @db.VarChar(600)
   patients     patients @relation(fields: [patient_id], references: [id])
 }
+
 model patient_family_composition {
   id                     Int       @id @default(autoincrement())
   patient_id             Int
   full_name              String?   @db.VarChar(200)
   age                    String?   @db.VarChar(100)
-  birth_date             DateTime? @db.Date
+  birth_date             String?  @db.VarChar(50)
   civil_status           String?   @db.VarChar(50)
   relationship           String?   @db.VarChar(150)
   educational_attainment String?   @db.VarChar(100)
   occupation             String?   @db.VarChar(150)
   monthly_income         String?   @db.VarChar(200)
-  other_source_of_income String?   @db.VarChar(200)
-  household_size         Int?
-  total_household_income String?   @db.VarChar(50)
-  per_capita_income      String?   @db.VarChar(50)
   patients               patients  @relation(fields: [patient_id], references: [id])
+}
+
+model patient_family_info {
+  id                     Int     @id @default(autoincrement())
+  patient_id             Int
+  other_source_of_income String? @db.VarChar(200)
+  household_size         String? @db.VarChar(50)
+  total_household_income String? @db.VarChar(50)
+  per_capita_income      String? @db.VarChar(50)
+  patients patients @relation(fields: [patient_id], references: [id])
 }
 
 // * II MSWD Classification

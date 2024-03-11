@@ -59,7 +59,8 @@ async function updateInterviewById(patient_id, reqBody) {
   return interview;
 }
 
-// * family composition
+// * FAMILY COMPOSITION
+
 
 async function getFamilyComposition(patient_id) {
   const familyComposition = await prisma.patient_family_composition.findMany({
@@ -68,6 +69,36 @@ async function getFamilyComposition(patient_id) {
     },
   });
   return familyComposition;
+}
+
+const getFamilyInfo = async (patientID) => {
+  const familyInfo = await prisma.patient_family_composition.findFirst({
+    where: {
+      id: parseInt(patientID),
+    },
+  });
+  console.log("familyInfo", familyInfo);
+};
+
+
+
+async function createFamilyMember(reqBody) {
+  console.log("reqBody", reqBody);
+  const familyMember = await prisma.patient_family_composition.create({
+    data: {
+      patient_id: parseInt(reqBody.patient_id),
+      full_name: reqBody.full_name,
+      age: reqBody.age,
+      birth_date: reqBody.birth_date,
+      civil_status: reqBody.civil_status,
+      relationship: reqBody.relationship,
+      educational_attainment: reqBody.educational_attainment,
+      occupation: reqBody.occupation,
+      monthly_income: reqBody.monthly_income,
+    },
+  });
+  console.log("Created", familyMember);
+  return familyMember;
 }
 
 // * address
@@ -138,7 +169,7 @@ async function updatePatientAddress(patientAddresses) {
       return updatedAddress;
     })
   );
-  console.log('address updated', updatedAddresses);
+  console.log("address updated", updatedAddresses);
   return updatedAddresses;
 }
 
@@ -155,4 +186,5 @@ module.exports = {
   updatePatientAddress,
   // family composition
   getFamilyComposition,
+  createFamilyMember,
 };

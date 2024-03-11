@@ -38,6 +38,7 @@ router.put('/interview/:id', assessmentTool.updateInterview)
 
 // ? family composition
 router.get('/family-composition/:id', assessmentTool.getFamilyComposition)
+router.post('/family-composition', assessmentTool.createFamilyMember)
 
 // ? address
 router.get('/region', assessmentTool.getRegion)
