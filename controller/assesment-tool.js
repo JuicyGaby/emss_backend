@@ -14,6 +14,7 @@ const {
   getFamilyInfo,
   createFamilyMember,
   updateFamilyMember,
+  deleteFamilyMember,
 } = require("../repository/assessment-tool");
 
 // * interview
@@ -85,6 +86,16 @@ exports.updateFamilyMember = async function (req, res, next) {
         console.error(error);
     }
 }
+exports.deleteFamilyMember = async function (req, res, next) {
+  const id = req.params.id;
+  try {
+    const deletedFamilyMember = await deleteFamilyMember(id);
+    res.send(deletedFamilyMember);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
 // *address
 

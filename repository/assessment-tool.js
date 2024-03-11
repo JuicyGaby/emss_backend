@@ -112,9 +112,18 @@ async function updateFamilyMember(reqBody) {
       monthly_income: reqBody.monthly_income,
     },
   });
-  console.log("Updated", familyMember);
   return familyMember;
 }
+async function deleteFamilyMember(id) {
+  const familyMember = await prisma.patient_family_composition.delete({
+    where: {
+      id: parseInt(id),
+    },
+  });
+  console.log('deleted family member', familyMember);
+  return familyMember;
+}
+
 
 // * address
 
@@ -204,4 +213,5 @@ module.exports = {
   getFamilyInfo,
   createFamilyMember,
   updateFamilyMember,
+  deleteFamilyMember,
 };

@@ -41,6 +41,7 @@ router.get('/family-composition/:id', assessmentTool.getFamilyComposition)
 router.get('/family-info/:id', assessmentTool.getFamilyInfo)
 router.post('/family-composition', assessmentTool.createFamilyMember)
 router.put('/family-composition', assessmentTool.updateFamilyMember)
+router.delete('/family-composition/:id', assessmentTool.deleteFamilyMember)
 
 
 // ? address
