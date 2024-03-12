@@ -194,9 +194,9 @@ model patient_light_source {
 model patient_water_source {
   id                          Int                      @id @default(autoincrement())
   patient_monthly_expenses_id Int
-  faucet                      String?                  @db.VarChar(100)
-  deep_well                   String?                  @db.VarChar(100)
-  spring                      String?                  @db.VarChar(100)
+  public_artesian_well        String?                  @db.VarChar(100)
+  private_artesian_well       String?                  @db.VarChar(100)
+  water_district              String?                  @db.VarChar(100)
   patient_monthly_expenses    patient_monthly_expenses @relation(fields: [patient_monthly_expenses_id], references: [id])
 }
 
