@@ -15,6 +15,8 @@ const {
   createFamilyMember,
   updateFamilyMember,
   deleteFamilyMember,
+  // mswd classification
+  getMswdClassification,
 } = require("../repository/assessment-tool");
 
 // * interview
@@ -48,6 +50,7 @@ exports.updateInterview = async function (req, res, next) {
 };
 
 // * family composition
+
 exports.getFamilyComposition = async function (req, res, next) {
   const patientId = req.params.id;
   try {
@@ -145,3 +148,15 @@ exports.updatePatientAddress = async function (req, res, next) {
     console.log(error);
   }
 };
+
+// * mswd classfication
+exports.getMswdClassification = async function (req, res, next) {
+  const patientId = req.params.id;
+  console.log(patientId);
+  try {
+    const mswdClassification = await getMswdClassification(patientId);
+    res.send(mswdClassification);
+  } catch (error) {
+    console.error(error);
+  }
+}

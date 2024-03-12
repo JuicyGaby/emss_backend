@@ -51,7 +51,8 @@ router.get('/municipality/:id', assessmentTool.getMunicipalityByProvinceCode)
 router.get('/barangay/:id', assessmentTool.getBarangayByMunicipalityCode)
 router.put('/address', assessmentTool.updatePatientAddress)
 
-
+// ? mswd classification
+router.get('/mswd-classification/:id', assessmentTool.getMswdClassification)
 
 
 

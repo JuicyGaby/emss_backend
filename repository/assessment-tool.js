@@ -120,10 +120,9 @@ async function deleteFamilyMember(id) {
       id: parseInt(id),
     },
   });
-  console.log('deleted family member', familyMember);
+  console.log("deleted family member", familyMember);
   return familyMember;
 }
-
 
 // * address
 
@@ -197,6 +196,27 @@ async function updatePatientAddress(patientAddresses) {
   return updatedAddresses;
 }
 
+// * mswd classfication
+
+async function getMswdClassification(patient_id) {
+  const mswdClassification = await prisma.patient_mswd_classification.findFirst(
+    {
+      where: {
+        patient_id: parseInt(patient_id),
+      },
+    }
+  );
+  if (!mswdClassification) {
+    return {
+      main_classification_type: null,
+      sub_classification_type: null,
+      membership_to_marginalized_sector: null,
+      remarks: null,
+    };
+  }
+  return mswdClassification;
+}
+
 module.exports = {
   // interview
   createInterview,
@@ -214,4 +234,6 @@ module.exports = {
   createFamilyMember,
   updateFamilyMember,
   deleteFamilyMember,
+  // MSWD Classification
+  getMswdClassification,
 };

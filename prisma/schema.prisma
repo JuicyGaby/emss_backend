@@ -150,6 +150,7 @@ model patient_mswd_classification {
   patients                          patients @relation(fields: [patient_id], references: [id])
 }
 
+
 // * III Monthly Expenses
 
 model patient_monthly_expenses {
