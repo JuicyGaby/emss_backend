@@ -254,14 +254,14 @@ async function updateMswwdClassification(reqBody) {
       remarks: reqBody.remarks,
     },
   });
-  console.log('updated', mswdClassification);
+  console.log("updated", mswdClassification);
   return mswdClassification;
 }
 
 // * monthly Expenses
 
 async function getMonthlyExpenses(patient_id) {
-  const monthlyExpenses = await prisma.patient_monthly_expenses.findMany({
+  const monthlyExpenses = await prisma.patient_monthly_expenses.findUnique({
     where: {
       patient_id: parseInt(patient_id),
     },
@@ -269,11 +269,101 @@ async function getMonthlyExpenses(patient_id) {
       patient_water_source: true,
       patient_light_source: true,
       patient_fuel_source: true,
-    }
+    },
   });
+  if (!monthlyExpenses) {
+    return false;
+  }
+  // if (monthlyExpenses.transportation_type) {
+  //   monthlyExpenses.transportation_type =
+  //     monthlyExpenses.transportation_type.split(",");
+  // }
   return monthlyExpenses;
 }
 
+async function createMonthlyExpenses(reqBody) {
+  console.log("reqBody", reqBody);
+  let transportation_type = null;
+  if (reqBody.transportation_type) {
+    let transpo = reqBody.transportation_type;
+    transportation_type = transpo.join(",");
+  }
+  const monthlyExpenses = await prisma.patient_monthly_expenses.create({
+    data: {
+      patient_id: reqBody.patient_id,
+      house_lot_cost: reqBody.house_lot_cost || "0",
+      food_water_cost: reqBody.food_water_cost || "0",
+      education_cost: reqBody.education_cost || "0",
+      clothing_cost: reqBody.clothing_cost || "0",
+      transportation_type: transportation_type,
+      transportation_cost: reqBody.transportation_cost || "0",
+      communication_cost: reqBody.communication_cost || "0",
+      house_help_cost: reqBody.house_help_cost || "0",
+      medical_cost: reqBody.medical_cost || "0",
+      others_description: reqBody.others_description || "",
+      others_cost: reqBody.others_cost || "0",
+      total_cost: reqBody.total_cost || "0",
+      remarks: reqBody.remarks || "",
+    },
+  });
+  patient_monthly_expenses_id = monthlyExpenses.id;
+  await createSources(patient_monthly_expenses_id, reqBody);
+  return monthlyExpenses;
+}
+
+async function createSources(id, reqBody) {
+  const waterSource = await prisma.patient_water_source.create({
+    data: {
+      patient_monthly_expenses_id: id,
+      water_district: reqBody.patient_water_source.water_district || "0",
+      private_artesian_well:
+        reqBody.patient_water_source.private_artesian_well || "0",
+      public_artesian_well:
+        reqBody.patient_water_source.public_artesian_well || "0",
+    },
+  });
+  const lightSource = await prisma.patient_light_source.create({
+    data: {
+      patient_monthly_expenses_id: id,
+      electric: reqBody.patient_light_source.electric || "0",
+      kerosene: reqBody.patient_light_source.kerosene || "0",
+      candle: reqBody.patient_light_source.candle || "0",
+    },
+  });
+  const fuelSource = await prisma.patient_fuel_source.create({
+    data: {
+      patient_monthly_expenses_id: id,
+      charcoal: reqBody.patient_fuel_source.charcoal || "0",
+      kerosene: reqBody.patient_fuel_source.kerosene || "0",
+      gas: reqBody.patient_fuel_source.gas || "0",
+    },
+  });
+  console.log("waterSource", waterSource);
+  console.log("lightSource", lightSource);
+  console.log("fuelSource", fuelSource);
+}
+
+async function getWaterSource() {
+  const waterSource = await prisma.patient_water_source.findMany();
+  return waterSource;
+}
+
+async function updateMonthlyExpenses(reqBody) {
+  const monthlyExpenses = await prisma.patient_monthly_expenses.update({
+    where: {
+      id: parseInt(reqBody.id),
+    },
+    data: {
+      patient_id: parseInt(reqBody.patient_id),
+      monthly_income: reqBody.monthly_income,
+      water_source: reqBody.water_source,
+      light_source: reqBody.light_source,
+      fuel_source: reqBody.fuel_source,
+      remarks: reqBody.remarks,
+    },
+  });
+  return monthlyExpenses;
+}
 
 module.exports = {
   // interview
@@ -298,4 +388,6 @@ module.exports = {
   updateMswwdClassification,
   // monthly expenses
   getMonthlyExpenses,
+  updateMonthlyExpenses,
+  createMonthlyExpenses,
 };

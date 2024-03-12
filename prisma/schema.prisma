@@ -153,7 +153,7 @@ model patient_mswd_classification {
 
 model patient_monthly_expenses {
   id                   Int                    @id @default(autoincrement())
-  patient_id           Int
+  patient_id           Int                    @unique
   house_lot_cost       String?                @db.VarChar(255)
   food_water_cost      String?                @db.VarChar(255)
   education_cost       String?                @db.VarChar(255)

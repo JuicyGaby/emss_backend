@@ -21,7 +21,11 @@ const {
   updateMswwdClassification,
   // monthly expenses
   getMonthlyExpenses,
+  updateMonthlyExpenses,
+  createMonthlyExpenses,
 } = require("../repository/assessment-tool");
+
+const assesmentTool = require("../repository/assessment-tool");
 
 // * interview
 exports.interview = async function (req, res, next) {
@@ -65,13 +69,13 @@ exports.getFamilyComposition = async function (req, res, next) {
   }
 };
 exports.getFamilyInfo = async function (req, res, next) {
-    const patientId = req.params.id;
-    try {
-        const familyInfo = await getFamilyInfo(patientId);
-        res.send(familyInfo);
-    } catch (error) {
-        console.error(error);
-    }
+  const patientId = req.params.id;
+  try {
+    const familyInfo = await getFamilyInfo(patientId);
+    res.send(familyInfo);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 exports.createFamilyMember = async function (req, res, next) {
@@ -85,14 +89,14 @@ exports.createFamilyMember = async function (req, res, next) {
 };
 
 exports.updateFamilyMember = async function (req, res, next) {
-    const familyMember = req.body;
-    try {
-        const updatedFamilyMember = await updateFamilyMember(familyMember);
-        res.send(updatedFamilyMember);
-    } catch (error) {
-        console.error(error);
-    }
-}
+  const familyMember = req.body;
+  try {
+    const updatedFamilyMember = await updateFamilyMember(familyMember);
+    res.send(updatedFamilyMember);
+  } catch (error) {
+    console.error(error);
+  }
+};
 exports.deleteFamilyMember = async function (req, res, next) {
   const id = req.params.id;
   try {
@@ -101,8 +105,7 @@ exports.deleteFamilyMember = async function (req, res, next) {
   } catch (error) {
     console.error(error);
   }
-}
-
+};
 
 // *address
 
@@ -163,25 +166,29 @@ exports.getMswdClassification = async function (req, res, next) {
   } catch (error) {
     console.error(error);
   }
-}
+};
 exports.createMswdClassification = async function (req, res, next) {
   const mswdClassification = req.body;
   try {
-    const newMswdClassification = await createMswdClassification(mswdClassification);
+    const newMswdClassification = await createMswdClassification(
+      mswdClassification
+    );
     res.send(newMswdClassification);
   } catch (error) {
     console.error(error);
   }
-}
+};
 exports.updateMswwdClassification = async function (req, res, next) {
   const mswdClassification = req.body;
   try {
-    const updatedMswdClassification = await updateMswwdClassification(mswdClassification);
+    const updatedMswdClassification = await updateMswwdClassification(
+      mswdClassification
+    );
     res.send(updatedMswdClassification);
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 // * monthly expenses
 exports.getMonthlyExpenses = async function (req, res, next) {
@@ -192,4 +199,24 @@ exports.getMonthlyExpenses = async function (req, res, next) {
   } catch (error) {
     console.error(error);
   }
-}
+};
+
+exports.updateMonthlyExpenses = async function (req, res, next) {
+  const monthlyExpenses = req.body;
+  try {
+    const updatedMonthlyExpenses = await updateMonthlyExpenses(monthlyExpenses);
+    res.send(updatedMonthlyExpenses);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+exports.createMonthlyExpenses = async function (req, res, next) {
+  const monthlyExpenses = req.body;
+  try {
+    const newMonthlyExpenses = await createMonthlyExpenses(monthlyExpenses);
+    res.send(newMonthlyExpenses);
+  } catch (error) {
+    console.error(error);
+  }
+};
