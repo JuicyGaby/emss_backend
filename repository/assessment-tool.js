@@ -258,6 +258,23 @@ async function updateMswwdClassification(reqBody) {
   return mswdClassification;
 }
 
+// * monthly Expenses
+
+async function getMonthlyExpenses(patient_id) {
+  const monthlyExpenses = await prisma.patient_monthly_expenses.findMany({
+    where: {
+      patient_id: parseInt(patient_id),
+    },
+    include: {
+      patient_water_source: true,
+      patient_light_source: true,
+      patient_fuel_source: true,
+    }
+  });
+  return monthlyExpenses;
+}
+
+
 module.exports = {
   // interview
   createInterview,
@@ -279,4 +296,6 @@ module.exports = {
   getMswdClassification,
   createMswdClassification,
   updateMswwdClassification,
+  // monthly expenses
+  getMonthlyExpenses,
 };

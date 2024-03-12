@@ -19,6 +19,8 @@ const {
   getMswdClassification,
   createMswdClassification,
   updateMswwdClassification,
+  // monthly expenses
+  getMonthlyExpenses,
 } = require("../repository/assessment-tool");
 
 // * interview
@@ -162,7 +164,6 @@ exports.getMswdClassification = async function (req, res, next) {
     console.error(error);
   }
 }
-
 exports.createMswdClassification = async function (req, res, next) {
   const mswdClassification = req.body;
   try {
@@ -172,13 +173,22 @@ exports.createMswdClassification = async function (req, res, next) {
     console.error(error);
   }
 }
-
-
 exports.updateMswwdClassification = async function (req, res, next) {
   const mswdClassification = req.body;
   try {
     const updatedMswdClassification = await updateMswwdClassification(mswdClassification);
     res.send(updatedMswdClassification);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// * monthly expenses
+exports.getMonthlyExpenses = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const monthlyExpenses = await getMonthlyExpenses(patientId);
+    res.send(monthlyExpenses);
   } catch (error) {
     console.error(error);
   }

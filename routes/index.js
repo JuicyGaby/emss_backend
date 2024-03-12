@@ -56,6 +56,11 @@ router.get('/mswd-classification/:id', assessmentTool.getMswdClassification)
 router.post('/mswd-classification', assessmentTool.createMswdClassification)
 router.put('/mswd-classification', assessmentTool.updateMswwdClassification)
 
+
+// ? monthly expenses
+
+router.get('/monthly-expenses/:id', assessmentTool.getMonthlyExpenses)
+
 // employees 
 router.get('/employees', employees.employeeRights)
 
