@@ -206,18 +206,27 @@ async function getMswdClassification(patient_id) {
       },
     }
   );
+  // return something if the mswdclassification is null
   if (!mswdClassification) {
-    return {};
+    return {
+      haveClassification: false,
+      main_classification_type: null,
+      sub_classification_type: null,
+      membership_to_marginalized_sector: null,
+      remarks: null,
+    };
   }
+  mswdClassification.haveClassification = true;
   if (mswdClassification.membership_to_marginalized_sector) {
-    mswdClassification.membership_to_marginalized_sector = mswdClassification.membership_to_marginalized_sector.split(',');
+    mswdClassification.membership_to_marginalized_sector =
+      mswdClassification.membership_to_marginalized_sector.split(",");
   }
   return mswdClassification;
 }
 
 async function createMswdClassification(reqBody) {
-  let sectors = reqBody.sectors;
-  let marginalizedSectorString = sectors.join(',');
+  let sectors = reqBody.membership_to_marginalized_sector;
+  let marginalizedSectorString = sectors.join(",");
   const mswdClassification = await prisma.patient_mswd_classification.create({
     data: {
       patient_id: parseInt(reqBody.patient_id),
@@ -232,7 +241,8 @@ async function createMswdClassification(reqBody) {
 }
 
 async function updateMswwdClassification(reqBody) {
-  const marginalizedSectorString = reqBody.membership_to_marginalized_sector.join(',');
+  let sectors = reqBody.membership_to_marginalized_sector;
+  let marginalizedSectorString = sectors.join(",");
   const mswdClassification = await prisma.patient_mswd_classification.update({
     where: {
       id: parseInt(reqBody.id),
@@ -244,6 +254,7 @@ async function updateMswwdClassification(reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  console.log('updated', mswdClassification);
   return mswdClassification;
 }
 
