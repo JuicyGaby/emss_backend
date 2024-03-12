@@ -53,8 +53,8 @@ router.put('/address', assessmentTool.updatePatientAddress)
 
 // ? mswd classification
 router.get('/mswd-classification/:id', assessmentTool.getMswdClassification)
-
-
+router.post('/mswd-classification', assessmentTool.createMswdClassification)
+router.put('/mswd-classification', assessmentTool.updateMswwdClassification)
 
 // employees 
 router.get('/employees', employees.employeeRights)

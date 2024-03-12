@@ -17,6 +17,8 @@ const {
   deleteFamilyMember,
   // mswd classification
   getMswdClassification,
+  createMswdClassification,
+  updateMswwdClassification,
 } = require("../repository/assessment-tool");
 
 // * interview
@@ -156,6 +158,27 @@ exports.getMswdClassification = async function (req, res, next) {
   try {
     const mswdClassification = await getMswdClassification(patientId);
     res.send(mswdClassification);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+exports.createMswdClassification = async function (req, res, next) {
+  const mswdClassification = req.body;
+  try {
+    const newMswdClassification = await createMswdClassification(mswdClassification);
+    res.send(newMswdClassification);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+exports.updateMswwdClassification = async function (req, res, next) {
+  const mswdClassification = req.body;
+  try {
+    const updatedMswdClassification = await updateMswwdClassification(mswdClassification);
+    res.send(updatedMswdClassification);
   } catch (error) {
     console.error(error);
   }
