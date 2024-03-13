@@ -27,6 +27,10 @@ const {
   getMedicalData,
   createMedicalData,
   updateMedicalData,
+  // health and mental health
+  getHealthAndMentalHealth,
+  createHealthAndMentalHealth,
+  updateHealthAndMentalHealth,
 } = require("../repository/assessment-tool");
 
 const assesmentTool = require("../repository/assessment-tool");
@@ -249,6 +253,39 @@ exports.updateMedicalData = async function (req, res, next) {
   try {
     const updatedMedicalData = await updateMedicalData(medicalData);
     res.send(updatedMedicalData);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// * health and mental health
+exports.getHealthAndMentalHealth = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const healthAndMentalHealth = await getHealthAndMentalHealth(patientId);
+    res.send(healthAndMentalHealth);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createHealthAndMentalHealth = async function (req, res, next) {
+  const healthAndMentalHealth = req.body;
+  try {
+    const newHealthAndMentalHealth = await createHealthAndMentalHealth(
+      healthAndMentalHealth
+    );
+    res.send(newHealthAndMentalHealth);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateHealthAndMentalHealth = async function (req, res, next) {
+  const healthAndMentalHealth = req.body;
+  try {
+    const updatedHealthAndMentalHealth = await updateHealthAndMentalHealth(
+      healthAndMentalHealth
+    );
+    res.send(updatedHealthAndMentalHealth);
   } catch (error) {
     console.error(error);
   }

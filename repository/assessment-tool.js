@@ -462,10 +462,11 @@ async function getHealthAndMentalHealth(patient_id) {
   return healthAndMentalHealth || false;
 }
 async function createHealthAndMentalHealth(reqBody) {
+  console.log('reqBody', reqBody);
   const healthAndMentalHealth =
     await prisma.patient_health_and_mental_health.create({
       data: {
-        patient_id: data.patient_id,
+        patient_id: reqBody.patient_id,
         abscence_of_adequate_health_services:
           reqBody.abscence_of_adequate_health_services,
         inaccessibility_of_health_services:
@@ -478,9 +479,10 @@ async function createHealthAndMentalHealth(reqBody) {
           reqBody.inaccessibility_of_mental_services,
         absence_of_support_mental_services:
           reqBody.absence_of_support_mental_services,
-        remarks: data.remarks,
+        remarks: reqBody.remarks,
       },
     });
+  console.log('created', healthAndMentalHealth);
   return healthAndMentalHealth;
 }
 async function updateHealthAndMentalHealth(reqBody) {
@@ -505,6 +507,8 @@ async function updateHealthAndMentalHealth(reqBody) {
         remarks: reqBody.remarks,
       },
     });
+  console.log('updated', healthAndMentalHealth);
+  return healthAndMentalHealth;
 }
 
 module.exports = {
