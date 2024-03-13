@@ -511,32 +511,61 @@ async function updateHealthAndMentalHealth(reqBody) {
   return healthAndMentalHealth;
 }
 
-
-// discrimination 
+// discrimination
 
 async function getDiscrimination(patient_id) {
   const discrimination = await prisma.patient_descrimination.findFirst({
     where: {
-      patient_id: parseInt(patient_id)
-    }
-  })
+      patient_id: parseInt(patient_id),
+    },
+  });
   return discrimination || false;
 }
-async function createDiscrimination(reqBody) {
-  const discrimination = await prisma.patient_descrimination.create({
 
-  })
-  return discrimination;
+async function createDiscrimination(reqBody) {
+  console.log("reqBody", reqBody);
+  const discrimination = await prisma.patient_descrimination.create({
+    data: {
+      patient_id: reqBody.patient_id,
+      Age: reqBody.Age,
+      Ethnicity: reqBody.Ethnicity,
+      Religion: reqBody.Religion,
+      Sex: reqBody.Sex,
+      Sexual_Orientation: reqBody.Sexual_Orientation,
+      Lifestyle: reqBody.Lifestyle,
+      NonCitizen: reqBody.NonCitizen,
+      Veteran_Status: reqBody.Veteran_Status,
+      Dependency_Status: reqBody.Dependency_Status,
+      Disability_Status: reqBody.Disability_Status,
+      Marital_Status: reqBody.Marital_Status,
+    },
+  });
+  console.log("created", discrimination);
+  return discrimination || false;
 }
 async function updateDiscrimination(reqBody) {
-
+  const discrimination = await prisma.patient_descrimination.update({
+    where: {
+      id: reqBody.id,
+    },
+    data: {
+      patient_id: reqBody.patient_id,
+      Age: reqBody.Age,
+      Ethnicity: reqBody.Ethnicity,
+      Religion: reqBody.Religion,
+      Sex: reqBody.Sex,
+      Sexual_Orientation: reqBody.Sexual_Orientation,
+      Lifestyle: reqBody.Lifestyle,
+      NonCitizen: reqBody.NonCitizen,
+      Veteran_Status: reqBody.Veteran_Status,
+      Dependency_Status: reqBody.Dependency_Status,
+      Disability_Status: reqBody.Disability_Status,
+      Marital_Status: reqBody.Marital_Status,
+    },
+  });
+  console.log("updated", discrimination);
+  return discrimination;
 }
-
-
-
-
-
-
 
 module.exports = {
   // interview
@@ -574,5 +603,5 @@ module.exports = {
   // discrimination
   getDiscrimination,
   createDiscrimination,
-  updateDiscrimination
+  updateDiscrimination,
 };

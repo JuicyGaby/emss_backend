@@ -238,7 +238,6 @@ model patient_health_and_mental_health {
 model patient_descrimination {
   id                  Int   @id @default(autoincrement())
   patient_id          Int
-  discrimination_type Json?
   Age                 Json?
   Ethnicity           Json?
   Religion            Json?
