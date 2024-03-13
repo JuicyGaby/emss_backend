@@ -417,7 +417,6 @@ async function getMedicalData(patient_id) {
   });
   return medicalData || false;
 }
-
 async function createMedicalData(reqBody) {
   console.log("reqBody", reqBody);
   const medicalData = await prisma.patient_medical_data.create({
@@ -452,6 +451,62 @@ async function updateMedicalData(reqBody) {
   return medicalData;
 }
 
+// health and mental health
+async function getHealthAndMentalHealth(patient_id) {
+  const healthAndMentalHealth =
+    await prisma.patient_health_and_mental_health.findFirst({
+      where: {
+        patient_id: parseInt(patient_id),
+      },
+    });
+  return healthAndMentalHealth || false;
+}
+async function createHealthAndMentalHealth(reqBody) {
+  const healthAndMentalHealth =
+    await prisma.patient_health_and_mental_health.create({
+      data: {
+        patient_id: data.patient_id,
+        abscence_of_adequate_health_services:
+          reqBody.abscence_of_adequate_health_services,
+        inaccessibility_of_health_services:
+          reqBody.inaccessibility_of_health_services,
+        abscence_of_support_health_services:
+          reqBody.abscence_of_support_health_services,
+        absence_of_adequate_mental_services:
+          reqBody.absence_of_adequate_mental_services,
+        inaccessibility_of_mental_services:
+          reqBody.inaccessibility_of_mental_services,
+        absence_of_support_mental_services:
+          reqBody.absence_of_support_mental_services,
+        remarks: data.remarks,
+      },
+    });
+  return healthAndMentalHealth;
+}
+async function updateHealthAndMentalHealth(reqBody) {
+  const healthAndMentalHealth =
+    await prisma.patient_health_and_mental_health.update({
+      where: {
+        id: reqBody.id,
+      },
+      data: {
+        abscence_of_adequate_health_services:
+          reqBody.abscence_of_adequate_health_services,
+        inaccessibility_of_health_services:
+          reqBody.inaccessibility_of_health_services,
+        abscence_of_support_health_services:
+          reqBody.abscence_of_support_health_services,
+        absence_of_adequate_mental_services:
+          reqBody.absence_of_adequate_mental_services,
+        inaccessibility_of_mental_services:
+          reqBody.inaccessibility_of_mental_services,
+        absence_of_support_mental_services:
+          reqBody.absence_of_support_mental_services,
+        remarks: reqBody.remarks,
+      },
+    });
+}
+
 module.exports = {
   // interview
   createInterview,
@@ -481,4 +536,8 @@ module.exports = {
   getMedicalData,
   createMedicalData,
   updateMedicalData,
+  // health and mental health
+  createHealthAndMentalHealth,
+  updateHealthAndMentalHealth,
+  getHealthAndMentalHealth,
 };

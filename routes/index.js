@@ -66,6 +66,12 @@ router.get('/medical-data/:id', assessmentTool.getMedicalData)
 router.post('/medical-data', assessmentTool.createMedicalData)
 router.put('/medical-data', assessmentTool.updateMedicalData)
 
+
+// ? health and mental health
+router.get('/health-and-mental-health/:id', assessmentTool.getHealthAndMentalHealth)
+router.post('/health-and-mental-health', assessmentTool.createHealthAndMentalHealth)
+router.put('/health-and-mental-health', assessmentTool.updateHealthAndMentalHealth)
+
 // employees 
 router.get('/employees', employees.employeeRights)
 
