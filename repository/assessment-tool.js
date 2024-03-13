@@ -69,7 +69,6 @@ async function getFamilyComposition(patient_id) {
   });
   return familyComposition;
 }
-
 async function getFamilyInfo(patient_id) {
   const familyInfo = await prisma.patient_family_info.findFirst({
     where: {
@@ -159,7 +158,6 @@ async function getMunicipalityByProvinceCode(provCode) {
   });
   return municipality;
 }
-
 async function getBarangayByMunicipalityCode(citymunCode) {
   const barangay = await prisma.ph_barangays.findMany({
     where: {
@@ -171,7 +169,6 @@ async function getBarangayByMunicipalityCode(citymunCode) {
   });
   return barangay;
 }
-
 async function updatePatientAddress(patientAddresses) {
   const updatedAddresses = await Promise.all(
     patientAddresses.map(async (address) => {
@@ -223,7 +220,6 @@ async function getMswdClassification(patient_id) {
   }
   return mswdClassification;
 }
-
 async function createMswdClassification(reqBody) {
   let sectors = reqBody.membership_to_marginalized_sector;
   let marginalizedSectorString = sectors.join(",");
@@ -239,7 +235,6 @@ async function createMswdClassification(reqBody) {
   console.log("mswdClassification", mswdClassification);
   return mswdClassification;
 }
-
 async function updateMswwdClassification(reqBody) {
   let sectors = reqBody.membership_to_marginalized_sector;
   let marginalizedSectorString = sectors.join(",");
@@ -280,7 +275,6 @@ async function getMonthlyExpenses(patient_id) {
   }
   return monthlyExpenses;
 }
-
 async function createMonthlyExpenses(reqBody) {
   console.log("reqBody", reqBody);
   let transportation_type = null;
@@ -370,7 +364,6 @@ async function createSources(id, reqBody) {
     },
   });
 }
-
 async function updateSources(id, reqBody) {
   const waterSourceProfile = await findFirst("patient_water_source", id);
   const lightSourceProfile = await findFirst("patient_light_source", id);
@@ -415,6 +408,34 @@ async function findFirst(model, id) {
   });
 }
 
+// * medical data
+async function getMedicalData(patient_id) {
+  const medicalData = await prisma.patient_medical_data.findFirst({
+    where: {
+      patient_id: parseInt(patient_id),
+    },
+  });
+  return medicalData || false;
+}
+
+async function createMedicalData(reqBody) {
+  console.log("reqBody", reqBody);
+  const medicalData = await prisma.patient_medical_data.create({
+    data: {
+      patient_id: reqBody.patient_id,
+      admitting_diagnosis: reqBody.admitting_diagnosis,
+      final_diagnosis: reqBody.final_diagnosis,
+      duration_of_problems: reqBody.duration_of_problems,
+      previous_treatment: reqBody.previous_treatment,
+      present_treatment_plan: reqBody.present_treatment_plan,
+      health_accessibility_problem: reqBody.health_accessibility_problem,
+    },
+  });
+  console.log("medicalData created", medicalData);
+  return medicalData;
+}
+async function updateMedicalData(reqBody) {}
+
 module.exports = {
   // interview
   createInterview,
@@ -440,4 +461,8 @@ module.exports = {
   getMonthlyExpenses,
   updateMonthlyExpenses,
   createMonthlyExpenses,
+  // medical data
+  getMedicalData,
+  createMedicalData,
+  updateMedicalData,
 };

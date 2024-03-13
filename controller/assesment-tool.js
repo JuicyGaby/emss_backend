@@ -23,6 +23,10 @@ const {
   getMonthlyExpenses,
   updateMonthlyExpenses,
   createMonthlyExpenses,
+  // medical data
+  getMedicalData,
+  createMedicalData,
+  updateMedicalData,
 } = require("../repository/assessment-tool");
 
 const assesmentTool = require("../repository/assessment-tool");
@@ -216,6 +220,35 @@ exports.createMonthlyExpenses = async function (req, res, next) {
   try {
     const newMonthlyExpenses = await createMonthlyExpenses(monthlyExpenses);
     res.send(newMonthlyExpenses);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// * medical data
+exports.getMedicalData = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const medicalData = await getMedicalData(patientId);
+    res.send(medicalData);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createMedicalData = async function (req, res, next) {
+  const medicalData = req.body;
+  try {
+    const newMedicalData = await createMedicalData(medicalData);
+    res.send(newMedicalData);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateMedicalData = async function (req, res, next) {
+  const medicalData = req.body;
+  try {
+    const updatedMedicalData = await updateMedicalData(medicalData);
+    res.send(updatedMedicalData);
   } catch (error) {
     console.error(error);
   }

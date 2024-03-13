@@ -43,7 +43,6 @@ router.post('/family-composition', assessmentTool.createFamilyMember)
 router.put('/family-composition', assessmentTool.updateFamilyMember)
 router.delete('/family-composition/:id', assessmentTool.deleteFamilyMember)
 
-
 // ? address
 router.get('/region', assessmentTool.getRegion)
 router.get('/province/:id', assessmentTool.getProvinceByRegionCode)
@@ -56,12 +55,16 @@ router.get('/mswd-classification/:id', assessmentTool.getMswdClassification)
 router.post('/mswd-classification', assessmentTool.createMswdClassification)
 router.put('/mswd-classification', assessmentTool.updateMswwdClassification)
 
-
 // ? monthly expenses
 
 router.get('/monthly-expenses/:id', assessmentTool.getMonthlyExpenses)
 router.put('/monthly-expenses', assessmentTool.updateMonthlyExpenses)
 router.post('/monthly-expenses', assessmentTool.createMonthlyExpenses)
+
+// ? medical data
+router.get('/medical-data/:id', assessmentTool.getMedicalData)
+router.post('/medical-data', assessmentTool.createMedicalData)
+router.put('/medical-data', assessmentTool.updateMedicalData)
 
 // employees 
 router.get('/employees', employees.employeeRights)
