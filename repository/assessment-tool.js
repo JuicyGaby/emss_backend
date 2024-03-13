@@ -337,10 +337,11 @@ async function updateMonthlyExpenses(reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  console.log("Updated", monthlyExpenses);
   if (monthlyExpenses) {
     const patient_monthly_expenses_id = monthlyExpenses.id;
+    await updateSources(patient_monthly_expenses_id, reqBody);
   }
-  console.log('Updated', monthlyExpenses);
   return monthlyExpenses;
 }
 async function createSources(id, reqBody) {
@@ -369,7 +370,50 @@ async function createSources(id, reqBody) {
     },
   });
 }
-async function updateSources(id, reqBody) {}
+
+async function updateSources(id, reqBody) {
+  const waterSourceProfile = await findFirst("patient_water_source", id);
+  const lightSourceProfile = await findFirst("patient_light_source", id);
+  const fuelSourceProfile = await findFirst("patient_fuel_source", id);
+  const waterSource = await prisma.patient_water_source.update({
+    where: {
+      id: waterSourceProfile.id,
+    },
+    data: {
+      water_district: reqBody.patient_water_source.water_district,
+      private_artesian_well: reqBody.patient_water_source.private_artesian_well,
+      public_artesian_well: reqBody.patient_water_source.public_artesian_well,
+    },
+  });
+  const lightSource = await prisma.patient_light_source.update({
+    where: {
+      id: lightSourceProfile.id,
+    },
+    data: {
+      electric: reqBody.patient_light_source.electric,
+      kerosene: reqBody.patient_light_source.kerosene,
+      candle: reqBody.patient_light_source.candle,
+    },
+  });
+  const fuelSource = await prisma.patient_fuel_source.update({
+    where: {
+      id: fuelSourceProfile.id,
+    },
+    data: {
+      charcoal: reqBody.patient_fuel_source.charcoal,
+      kerosene: reqBody.patient_fuel_source.kerosene,
+      gas: reqBody.patient_fuel_source.gas,
+    },
+  });
+  console.log("updated sources", waterSource, lightSource, fuelSource);
+}
+async function findFirst(model, id) {
+  return await prisma[model].findFirst({
+    where: {
+      patient_monthly_expenses_id: id,
+    },
+  });
+}
 
 module.exports = {
   // interview
