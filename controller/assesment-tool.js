@@ -31,6 +31,10 @@ const {
   getHealthAndMentalHealth,
   createHealthAndMentalHealth,
   updateHealthAndMentalHealth,
+  // discrimination
+  getDiscrimination,
+  createDiscrimination,
+  updateDiscrimination,
 } = require("../repository/assessment-tool");
 
 const assesmentTool = require("../repository/assessment-tool");
@@ -286,6 +290,35 @@ exports.updateHealthAndMentalHealth = async function (req, res, next) {
       healthAndMentalHealth
     );
     res.send(updatedHealthAndMentalHealth);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// discrimination
+exports.getDiscrimination = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const discrimination = await getDiscrimination(patientId);
+    res.send(discrimination);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createDiscrimination = async function (req, res, next) {
+  const discrimination = req.body;
+  try {
+    const newDiscrimination = await createDiscrimination(discrimination);
+    res.send(newDiscrimination);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateDiscrimination = async function (req, res, next) {
+  const discrimination = req.body;
+  try {
+    const updatedDiscrimination = await updateDiscrimination(discrimination);
+    res.send(updatedDiscrimination);
   } catch (error) {
     console.error(error);
   }

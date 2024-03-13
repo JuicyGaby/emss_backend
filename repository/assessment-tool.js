@@ -511,6 +511,33 @@ async function updateHealthAndMentalHealth(reqBody) {
   return healthAndMentalHealth;
 }
 
+
+// discrimination 
+
+async function getDiscrimination(patient_id) {
+  const discrimination = await prisma.patient_descrimination.findFirst({
+    where: {
+      patient_id: parseInt(patient_id)
+    }
+  })
+  return discrimination || false;
+}
+async function createDiscrimination(reqBody) {
+  const discrimination = await prisma.patient_descrimination.create({
+
+  })
+  return discrimination;
+}
+async function updateDiscrimination(reqBody) {
+
+}
+
+
+
+
+
+
+
 module.exports = {
   // interview
   createInterview,
@@ -544,4 +571,8 @@ module.exports = {
   createHealthAndMentalHealth,
   updateHealthAndMentalHealth,
   getHealthAndMentalHealth,
+  // discrimination
+  getDiscrimination,
+  createDiscrimination,
+  updateDiscrimination
 };

@@ -72,6 +72,11 @@ router.get('/health-and-mental-health/:id', assessmentTool.getHealthAndMentalHea
 router.post('/health-and-mental-health', assessmentTool.createHealthAndMentalHealth)
 router.put('/health-and-mental-health', assessmentTool.updateHealthAndMentalHealth)
 
+// ? discrimination
+router.get('/discrimination/:id', assessmentTool.getDiscrimination)
+router.post('/discrimination', assessmentTool.createDiscrimination)
+router.put('/discrimination', assessmentTool.updateDiscrimination)
+
 // employees 
 router.get('/employees', employees.employeeRights)
 
