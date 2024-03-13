@@ -434,7 +434,23 @@ async function createMedicalData(reqBody) {
   console.log("medicalData created", medicalData);
   return medicalData;
 }
-async function updateMedicalData(reqBody) {}
+async function updateMedicalData(reqBody) {
+  const medicalData = await prisma.patient_medical_data.update({
+    where: {
+      id: reqBody.id,
+    },
+    data: {
+      admitting_diagnosis: reqBody.admitting_diagnosis,
+      final_diagnosis: reqBody.final_diagnosis,
+      duration_of_problems: reqBody.duration_of_problems,
+      previous_treatment: reqBody.previous_treatment,
+      present_treatment_plan: reqBody.present_treatment_plan,
+      health_accessibility_problem: reqBody.health_accessibility_problem,
+    },
+  });
+  console.log("medicalData updated", medicalData);
+  return medicalData;
+}
 
 module.exports = {
   // interview
