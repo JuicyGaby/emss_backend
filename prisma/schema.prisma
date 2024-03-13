@@ -154,18 +154,18 @@ model patient_mswd_classification {
 model patient_monthly_expenses {
   id                   Int                    @id @default(autoincrement())
   patient_id           Int                    @unique
-  house_lot_cost       String?                @db.VarChar(255)
-  food_water_cost      String?                @db.VarChar(255)
-  education_cost       String?                @db.VarChar(255)
-  clothing_cost        String?                @db.VarChar(255)
+  house_lot_cost       String?                @db.VarChar(100) @default("0")
+  food_water_cost      String?                @db.VarChar(100) @default("0")
+  education_cost       String?                @db.VarChar(100) @default("0")
+  clothing_cost        String?                @db.VarChar(100) @default("0")
   transportation_type  String?                @db.VarChar(100)
-  transportation_cost  String?                @db.VarChar(255)
-  communication_cost   String?                @db.VarChar(255)
-  house_help_cost      String?                @db.VarChar(255)
-  medical_cost         String?                @db.VarChar(255)
-  others_description   String?                @db.VarChar(255)
-  others_cost          String?                @db.VarChar(255)
-  total_cost           String?                @db.VarChar(255)
+  transportation_cost  String?                @db.VarChar(100) @default("0")
+  communication_cost   String?                @db.VarChar(100) @default("0")
+  house_help_cost      String?                @db.VarChar(100) @default("0")
+  medical_cost         String?                @db.VarChar(100) @default("0")
+  others_description   String?                @db.VarChar(100)
+  others_cost          String?                @db.VarChar(100)
+  total_cost           String?                @db.VarChar(100) @default("0")
   remarks              String?                @db.VarChar(500)
   patients             patients               @relation(fields: [patient_id], references: [id])
   patient_fuel_source  patient_fuel_source[]
@@ -176,27 +176,27 @@ model patient_monthly_expenses {
 model patient_fuel_source {
   id                          Int                      @id @default(autoincrement())
   patient_monthly_expenses_id Int
-  gas                         String?                  @db.VarChar(100)
-  kerosene                    String?                  @db.VarChar(100)
-  charcoal                    String?                  @db.VarChar(100)
+  gas                         String?                  @db.VarChar(100) @default("0")
+  kerosene                    String?                  @db.VarChar(100) @default("0")
+  charcoal                    String?                  @db.VarChar(100) @default("0")
   patient_monthly_expenses    patient_monthly_expenses @relation(fields: [patient_monthly_expenses_id], references: [id])
 }
 
 model patient_light_source {
   id                          Int                      @id @default(autoincrement())
   patient_monthly_expenses_id Int
-  electric                    String?                  @db.VarChar(100)
-  kerosene                    String?                  @db.VarChar(100)
-  candle                      String?                  @db.VarChar(100)
+  electric                    String?                  @db.VarChar(100) @default("0")
+  kerosene                    String?                  @db.VarChar(100) @default("0")
+  candle                      String?                  @db.VarChar(100) @default("0")
   patient_monthly_expenses    patient_monthly_expenses @relation(fields: [patient_monthly_expenses_id], references: [id])
 }
 
 model patient_water_source {
   id                          Int                      @id @default(autoincrement())
   patient_monthly_expenses_id Int
-  public_artesian_well        String?                  @db.VarChar(100)
-  private_artesian_well       String?                  @db.VarChar(100)
-  water_district              String?                  @db.VarChar(100)
+  public_artesian_well        String?                  @db.VarChar(100) @default("0") 
+  private_artesian_well       String?                  @db.VarChar(100) @default("0")
+  water_district              String?                  @db.VarChar(100) @default("0")
   patient_monthly_expenses    patient_monthly_expenses @relation(fields: [patient_monthly_expenses_id], references: [id])
 }
 
