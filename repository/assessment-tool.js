@@ -613,6 +613,86 @@ async function updateSafety(reqBody) {
   return updatedSafetyData;
 }
 
+// social functioning
+async function getSocialFunction(patient_id) {
+  const response =
+    await prisma.patient_assessment_of_social_functioning.findFirst({
+      where: {
+        patient_id: parseInt(patient_id),
+      },
+    });
+  return response || false;
+}
+async function createSocialFunction(reqBody) {
+  const createdSocialFunction =
+    await prisma.patient_assessment_of_social_functioning.create({
+      data: {
+        patient_id: reqBody.patient_id,
+        parent: reqBody.parent,
+        spouse: reqBody.spouse,
+        child: reqBody.child,
+        sibling: reqBody.sibling,
+        other_family_member: reqBody.other_family_member,
+        significant_others: reqBody.significant_others,
+        // interpersonal roles
+        lover: reqBody.lover,
+        friend: reqBody.friend,
+        neighbor: reqBody.neighbor,
+        member: reqBody.member,
+        // occupational roles
+        worker_paid_economy: reqBody.worker_paid_economy,
+        worker_home: reqBody.worker_home,
+        worker_volunteer: reqBody.worker_volunteer,
+        student: reqBody.student,
+        // Special life situation roles
+        consumer: reqBody.consumer,
+        inpatient: reqBody.inpatient,
+        outpatient: reqBody.outpatient,
+        er_patient: reqBody.er_patient,
+        prisoner: reqBody.prisoner,
+        immigrant_legal: reqBody.immigrant_legal,
+        immigrant_undocumented: reqBody.immigrant_undocumented,
+        imigrant_refugee: reqBody.imigrant_refugee,
+      },
+    });
+  console.log("created", createdSocialFunction);
+  return createdSocialFunction;
+}
+async function updateSocialFunction(reqBody) {
+  const updatedSocialFunction =
+    await prisma.patient_assessment_of_social_functioning.update({
+      where: {
+        id: reqBody.id,
+      },
+      data: {
+        parent: reqBody.parent,
+        spouse: reqBody.spouse,
+        child: reqBody.child,
+        sibling: reqBody.sibling,
+        other_family_member: reqBody.other_family_member,
+        significant_others: reqBody.significant_others,
+        // interpersonal roles
+        lover: reqBody.lover,
+        friend: reqBody.friend,
+        neighbor: reqBody.neighbor,
+        member: reqBody.member,
+        // occupational roles
+        worker_paid_economy: reqBody.worker_paid_economy,
+        worker_home: reqBody.worker_home,
+        worker_volunteer: reqBody.worker_volunteer,
+        student: reqBody.student,
+        // Special life situation roles
+        consumer: reqBody.consumer,
+        inpatient: reqBody.inpatient,
+        outpatient: reqBody.outpatient,
+        er_patient: reqBody.er_patient,
+        prisoner: reqBody.prisoner,
+      },
+    });
+  console.log("updated", updatedSocialFunction);
+  return updatedSocialFunction;
+}
+
 module.exports = {
   // interview
   createInterview,
@@ -654,4 +734,8 @@ module.exports = {
   getSafety,
   createSafety,
   updateSafety,
+  // social functioning
+  getSocialFunction,
+  createSocialFunction,
+  updateSocialFunction,
 };

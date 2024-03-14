@@ -39,6 +39,10 @@ const {
   getSafety,
   createSafety,
   updateSafety,
+  // social functioning
+  getSocialFunction,
+  createSocialFunction,
+  updateSocialFunction,
 } = require("../repository/assessment-tool");
 
 const assesmentTool = require("../repository/assessment-tool");
@@ -353,6 +357,36 @@ exports.updateSafety = async function (req, res, next) {
   try {
     const updatedSafety = await updateSafety(safety);
     res.send(updatedSafety);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+// social functioning
+exports.getSocialFunction = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const socialFunction = await getSocialFunction(patientId);
+    res.send(socialFunction);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createSocialFunction = async function (req, res, next) {
+  const socialFunction = req.body;
+  try {
+    const newSocialFunction = await createSocialFunction(socialFunction);
+    res.send(newSocialFunction);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateSocialFunction = async function (req, res, next) {
+  const socialFunction = req.body;
+  try {
+    const updatedSocialFunction = await updateSocialFunction(socialFunction);
+    res.send(updatedSocialFunction);
   } catch (error) {
     console.error(error);
   }

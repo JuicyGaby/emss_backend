@@ -81,7 +81,10 @@ router.put('/discrimination', assessmentTool.updateDiscrimination)
 router.get('/safety/:id', assessmentTool.getSafety)
 router.post('/safety', assessmentTool.createSafety)
 router.put('/safety', assessmentTool.updateSafety)
-
+// ? social functioning
+router.get('/social-functioning/:id', assessmentTool.getSocialFunction)
+router.post('/social-functioning', assessmentTool.createSocialFunction)
+router.put('/social-functioning', assessmentTool.updateSocialFunction)
 
 // employees 
 router.get('/employees', employees.employeeRights)
