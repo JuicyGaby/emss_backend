@@ -38,15 +38,44 @@ router.put('/interview/:id', assessmentTool.updateInterview)
 
 // ? family composition
 router.get('/family-composition/:id', assessmentTool.getFamilyComposition)
+router.get('/family-info/:id', assessmentTool.getFamilyInfo)
+router.post('/family-composition', assessmentTool.createFamilyMember)
+router.put('/family-composition', assessmentTool.updateFamilyMember)
+router.delete('/family-composition/:id', assessmentTool.deleteFamilyMember)
 
 // ? address
 router.get('/region', assessmentTool.getRegion)
 router.get('/province/:id', assessmentTool.getProvinceByRegionCode)
 router.get('/municipality/:id', assessmentTool.getMunicipalityByProvinceCode)
 router.get('/barangay/:id', assessmentTool.getBarangayByMunicipalityCode)
+router.put('/address', assessmentTool.updatePatientAddress)
+
+// ? mswd classification
+router.get('/mswd-classification/:id', assessmentTool.getMswdClassification)
+router.post('/mswd-classification', assessmentTool.createMswdClassification)
+router.put('/mswd-classification', assessmentTool.updateMswwdClassification)
+
+// ? monthly expenses
+
+router.get('/monthly-expenses/:id', assessmentTool.getMonthlyExpenses)
+router.put('/monthly-expenses', assessmentTool.updateMonthlyExpenses)
+router.post('/monthly-expenses', assessmentTool.createMonthlyExpenses)
+
+// ? medical data
+router.get('/medical-data/:id', assessmentTool.getMedicalData)
+router.post('/medical-data', assessmentTool.createMedicalData)
+router.put('/medical-data', assessmentTool.updateMedicalData)
 
 
+// ? health and mental health
+router.get('/health-and-mental-health/:id', assessmentTool.getHealthAndMentalHealth)
+router.post('/health-and-mental-health', assessmentTool.createHealthAndMentalHealth)
+router.put('/health-and-mental-health', assessmentTool.updateHealthAndMentalHealth)
 
+// ? discrimination
+router.get('/discrimination/:id', assessmentTool.getDiscrimination)
+router.post('/discrimination', assessmentTool.createDiscrimination)
+router.put('/discrimination', assessmentTool.updateDiscrimination)
 
 // employees 
 router.get('/employees', employees.employeeRights)

@@ -19,9 +19,7 @@ async function getPatientById(patient_id) {
       patient_id: parseInt(patient_id),
     },
   });
-
   patient.address = address;
-  console.log(patient);
   return patient;
 }
 async function createPatient(reqBody) {
@@ -91,8 +89,6 @@ async function createPatientAddress(addressData, addressType, patientId) {
         })
       : { citymunDesc: null },
   ]);
-
-  console.log(region, province, municipality);
   const newAddress = await prisma.patient_address.create({
     data: {
       patient_id: patientId,
@@ -105,7 +101,7 @@ async function createPatientAddress(addressData, addressType, patientId) {
       address_type: addressType,
     },
   });
-  console.log("Created address", newAddress);
+
 }
 async function createPatientInterview(interview, patientId) {
   const interviewDateTime = moment(interview.interview_date_time);
@@ -133,7 +129,6 @@ async function createPatientInterview(interview, patientId) {
       informant_address: interview.informant_address,
     },
   });
-  console.log("Created interview", newInterview);
 }
 
 async function updatePatient(reqBody) {
@@ -163,7 +158,6 @@ async function updatePatient(reqBody) {
       remarks: reqBody.remarks,
     },
   });
-  console.log("updated", patient);
   return patient;
 } 
 

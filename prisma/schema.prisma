@@ -32,29 +32,29 @@ model employee_access_rights {
 // * I Start of the Demograhic Data
 
 model patients {
-  id                                       Int                                        @id @default(autoincrement())
-  first_name                               String?                                    @db.VarChar(100)
-  middle_name                              String?                                    @db.VarChar(100)
-  last_name                                String?                                    @db.VarChar(100)
-  birth_date                               String?                                    @db.VarChar(100)
-  age                                      String?
-  sex                                      String?                                    @db.VarChar(10)
-  contact_number                           String?                                    @db.VarChar(20)
-  place_of_birth                           String?                                    @db.VarChar(100)
-  gender                                   String?                                    @db.VarChar(100)
-  religion                                 String?                                    @db.VarChar(100)
-  nationality                              String?                                    @db.VarChar(100)
-  civil_status                             String?                                    @db.VarChar(100)
-  living_arrangement                       String?                                    @db.VarChar(100)
-  occupation                               String?                                    @db.VarChar(255)
-  monthly_income                           String?                                    @db.VarChar(100)
-  ph_membership_number                     String?                                    @db.VarChar(100)
-  ph_membership_type                       String?                                    @db.VarChar(100)
-  created_at                               DateTime                                   @default(now()) @db.DateTime(0)
-  created_by                               String?                                    @db.VarChar(100)
-  remarks                                  String?                                    @db.VarChar(255)
-  highest_education_level                  String?                                    @db.VarChar(100)
-  education_status                         String?                                    @db.VarChar(100)
+  id                      Int      @id @default(autoincrement())
+  first_name              String?  @db.VarChar(100)
+  middle_name             String?  @db.VarChar(100)
+  last_name               String?  @db.VarChar(100)
+  birth_date              String?  @db.VarChar(100)
+  age                     String?
+  sex                     String?  @db.VarChar(10)
+  contact_number          String?  @db.VarChar(20)
+  place_of_birth          String?  @db.VarChar(100)
+  gender                  String?  @db.VarChar(100)
+  religion                String?  @db.VarChar(100)
+  nationality             String?  @db.VarChar(100)
+  civil_status            String?  @db.VarChar(100)
+  living_arrangement      String?  @db.VarChar(100)
+  occupation              String?  @db.VarChar(255)
+  monthly_income          String?  @db.VarChar(100)
+  ph_membership_number    String?  @db.VarChar(100)
+  ph_membership_type      String?  @db.VarChar(100)
+  created_at              DateTime @default(now()) @db.DateTime(0)
+  created_by              String?  @db.VarChar(100)
+  remarks                 String?  @db.VarChar(255)
+  highest_education_level String?  @db.VarChar(100)
+  education_status        String?  @db.VarChar(100)
 
   patient_education                        patient_education[]
   addresses                                patient_address[]
@@ -67,6 +67,7 @@ model patients {
   patient_safety                           patient_safety[]
   patient_assessment_of_social_functioning patient_assessment_of_social_functioning[]
   patient_descrimination                   patient_descrimination[]
+  patient_family_info                      patient_family_info[]
 }
 
 model patient_interview {
@@ -111,22 +112,29 @@ model patient_address {
   purok        String?  @db.VarChar(600)
   patients     patients @relation(fields: [patient_id], references: [id])
 }
+
 model patient_family_composition {
-  id                     Int       @id @default(autoincrement())
+  id                     Int      @id @default(autoincrement())
   patient_id             Int
-  full_name              String?   @db.VarChar(200)
-  age                    String?   @db.VarChar(100)
-  birth_date             DateTime? @db.Date
-  civil_status           String?   @db.VarChar(50)
-  relationship           String?   @db.VarChar(150)
-  educational_attainment String?   @db.VarChar(100)
-  occupation             String?   @db.VarChar(150)
-  monthly_income         String?   @db.VarChar(200)
-  other_source_of_income String?   @db.VarChar(200)
-  household_size         Int?
-  total_household_income String?   @db.VarChar(50)
-  per_capita_income      String?   @db.VarChar(50)
-  patients               patients  @relation(fields: [patient_id], references: [id])
+  full_name              String?  @db.VarChar(200)
+  age                    String?  @db.VarChar(100)
+  birth_date             String?  @db.VarChar(50)
+  civil_status           String?  @db.VarChar(50)
+  relationship           String?  @db.VarChar(150)
+  educational_attainment String?  @db.VarChar(100)
+  occupation             String?  @db.VarChar(150)
+  monthly_income         String?  @db.VarChar(200)
+  patients               patients @relation(fields: [patient_id], references: [id])
+}
+
+model patient_family_info {
+  id                     Int      @id @default(autoincrement())
+  patient_id             Int
+  other_source_of_income String?  @db.VarChar(200)
+  household_size         String?  @db.VarChar(50)
+  total_household_income String?  @db.VarChar(50)
+  per_capita_income      String?  @db.VarChar(50)
+  patients               patients @relation(fields: [patient_id], references: [id])
 }
 
 // * II MSWD Classification
@@ -134,7 +142,6 @@ model patient_family_composition {
 model patient_mswd_classification {
   id                                Int      @id @default(autoincrement())
   patient_id                        Int
-  main_classification               String?  @db.VarChar(100)
   main_classification_type          String?  @db.VarChar(100)
   sub_classification_type           String?  @db.VarChar(50)
   membership_to_marginalized_sector String?  @db.VarChar(255)
@@ -145,24 +152,52 @@ model patient_mswd_classification {
 // * III Monthly Expenses
 
 model patient_monthly_expenses {
-  id                  Int      @id @default(autoincrement())
-  patient_id          Int
-  house_lot_cost      Int?
-  food_water_cost     Int?
-  education_cost      Int?
-  clothing_cost       Int?
-  transportation_type String?  @db.VarChar(50)
-  transportation_cost Int?
-  communication_cost  Int?
-  house_help_cost     Int?
-  medical_cost        Int?
-  others_description  String?  @db.VarChar(255)
-  others_cost         Int?
-  light_source        String?  @db.VarChar(50)
-  fuel_source         String?  @db.VarChar(50)
-  total_cost          Int?
-  remarks             String?  @db.VarChar(500)
-  patients            patients @relation(fields: [patient_id], references: [id])
+  id                   Int                    @id @default(autoincrement())
+  patient_id           Int                    @unique
+  house_lot_cost       String?                @default("0") @db.VarChar(100)
+  food_water_cost      String?                @default("0") @db.VarChar(100)
+  education_cost       String?                @default("0") @db.VarChar(100)
+  clothing_cost        String?                @default("0") @db.VarChar(100)
+  transportation_type  String?                @db.VarChar(100)
+  transportation_cost  String?                @default("0") @db.VarChar(100)
+  communication_cost   String?                @default("0") @db.VarChar(100)
+  house_help_cost      String?                @default("0") @db.VarChar(100)
+  medical_cost         String?                @default("0") @db.VarChar(100)
+  others_description   String?                @db.VarChar(100)
+  others_cost          String?                @db.VarChar(100)
+  total_cost           String?                @default("0") @db.VarChar(100)
+  remarks              String?                @db.VarChar(500)
+  patients             patients               @relation(fields: [patient_id], references: [id])
+  patient_fuel_source  patient_fuel_source[]
+  patient_light_source patient_light_source[]
+  patient_water_source patient_water_source[]
+}
+
+model patient_fuel_source {
+  id                          Int                      @id @default(autoincrement())
+  patient_monthly_expenses_id Int
+  gas                         String?                  @default("0") @db.VarChar(100)
+  kerosene                    String?                  @default("0") @db.VarChar(100)
+  charcoal                    String?                  @default("0") @db.VarChar(100)
+  patient_monthly_expenses    patient_monthly_expenses @relation(fields: [patient_monthly_expenses_id], references: [id])
+}
+
+model patient_light_source {
+  id                          Int                      @id @default(autoincrement())
+  patient_monthly_expenses_id Int
+  electric                    String?                  @default("0") @db.VarChar(100)
+  kerosene                    String?                  @default("0") @db.VarChar(100)
+  candle                      String?                  @default("0") @db.VarChar(100)
+  patient_monthly_expenses    patient_monthly_expenses @relation(fields: [patient_monthly_expenses_id], references: [id])
+}
+
+model patient_water_source {
+  id                          Int                      @id @default(autoincrement())
+  patient_monthly_expenses_id Int
+  public_artesian_well        String?                  @default("0") @db.VarChar(100)
+  private_artesian_well       String?                  @default("0") @db.VarChar(100)
+  water_district              String?                  @default("0") @db.VarChar(100)
+  patient_monthly_expenses    patient_monthly_expenses @relation(fields: [patient_monthly_expenses_id], references: [id])
 }
 
 // * IV Medical Data
@@ -197,13 +232,25 @@ model patient_health_and_mental_health {
 }
 
 // * VI Rating and Feedback
+
 // * VI Discrimination
 
 model patient_descrimination {
-  id                  Int      @id @default(autoincrement())
+  id                  Int   @id @default(autoincrement())
   patient_id          Int
-  discrimination_type Json?
-  patients            patients @relation(fields: [patient_id], references: [id])
+  Age                 Json?
+  Ethnicity           Json?
+  Religion            Json?
+  Sex                 Json?
+  Sexual_Orientation  Json?
+  Lifestyle           Json?
+  NonCitizen          Json?
+  Veteran_Status      Json?
+  Dependency_Status   Json?
+  Disability_Status   Json?
+  Marital_Status      Json?
+
+  patients patients @relation(fields: [patient_id], references: [id])
 }
 
 // * VII Safety
