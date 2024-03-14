@@ -567,6 +567,52 @@ async function updateDiscrimination(reqBody) {
   return discrimination;
 }
 
+// safety
+
+async function getSafety(patient_id) {
+  const safety = await prisma.patient_safety.findFirst({
+    where: {
+      patient_id: parseInt(patient_id),
+    },
+  });
+  return safety || false;
+}
+
+async function createSafety(reqBody) {
+  const createdSafetyData = await prisma.patient_safety.create({
+    data: {
+      patient_id: reqBody.patient_id,
+      voice_crime_in_community: reqBody.voice_crime_in_community,
+      unsafe_working_conditions: reqBody.unsafe_working_conditions,
+      unsafe_codition_home: reqBody.unsafe_codition_home,
+      absence_of_adequate_safety_services:
+        reqBody.absence_of_adequate_safety_services,
+      natural_disasters: reqBody.natural_disasters,
+      human_created_disasters: reqBody.human_created_disasters,
+    },
+  });
+  console.log("created", createdSafetyData);
+  return createdSafetyData;
+}
+async function updateSafety(reqBody) {
+  const updatedSafetyData = await prisma.patient_safety.update({
+    where: {
+      id: reqBody.id,
+    },
+    data: {
+      voice_crime_in_community: reqBody.voice_crime_in_community,
+      unsafe_working_conditions: reqBody.unsafe_working_conditions,
+      unsafe_codition_home: reqBody.unsafe_codition_home,
+      absence_of_adequate_safety_services:
+        reqBody.absence_of_adequate_safety_services,
+      natural_disasters: reqBody.natural_disasters,
+      human_created_disasters: reqBody.human_created_disasters,
+    },
+  });
+  console.log("updated", updatedSafetyData);
+  return updatedSafetyData;
+}
+
 module.exports = {
   // interview
   createInterview,
@@ -604,4 +650,8 @@ module.exports = {
   getDiscrimination,
   createDiscrimination,
   updateDiscrimination,
+  // safety
+  getSafety,
+  createSafety,
+  updateSafety,
 };

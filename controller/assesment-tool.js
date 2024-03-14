@@ -35,6 +35,10 @@ const {
   getDiscrimination,
   createDiscrimination,
   updateDiscrimination,
+  // safety
+  getSafety,
+  createSafety,
+  updateSafety,
 } = require("../repository/assessment-tool");
 
 const assesmentTool = require("../repository/assessment-tool");
