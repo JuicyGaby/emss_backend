@@ -85,6 +85,10 @@ router.put('/safety', assessmentTool.updateSafety)
 router.get('/social-functioning/:id', assessmentTool.getSocialFunction)
 router.post('/social-functioning', assessmentTool.createSocialFunction)
 router.put('/social-functioning', assessmentTool.updateSocialFunction)
+// ? problems in environment
+router.get('/problems-in-environment/:id', assessmentTool.getProblemsInEnvironment)
+router.post('/problems-in-environment', assessmentTool.createPatientProblemsEnvironment)
+router.put('/problems-in-environment', assessmentTool.updatePatientProblemsEnvironment)
 
 // employees 
 router.get('/employees', employees.employeeRights)

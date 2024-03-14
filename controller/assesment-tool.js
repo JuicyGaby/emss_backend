@@ -43,6 +43,10 @@ const {
   getSocialFunction,
   createSocialFunction,
   updateSocialFunction,
+  // problems in environment
+  getProblemsInEnvironment,
+  createPatientProblemsEnvironment,
+  updatePatientProblemsEnvironment,
 } = require("../repository/assessment-tool");
 
 const assesmentTool = require("../repository/assessment-tool");
@@ -362,7 +366,6 @@ exports.updateSafety = async function (req, res, next) {
   }
 };
 
-
 // social functioning
 exports.getSocialFunction = async function (req, res, next) {
   const patientId = req.params.id;
@@ -387,6 +390,39 @@ exports.updateSocialFunction = async function (req, res, next) {
   try {
     const updatedSocialFunction = await updateSocialFunction(socialFunction);
     res.send(updatedSocialFunction);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// problems in environment
+exports.getProblemsInEnvironment = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const problemsInEnvironment = await getProblemsInEnvironment(patientId);
+    res.send(problemsInEnvironment);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createPatientProblemsEnvironment = async function (req, res, next) {
+  const problemsInEnvironment = req.body;
+  try {
+    const newProblemsInEnvironment = await createPatientProblemsEnvironment(
+      problemsInEnvironment
+    );
+    res.send(newProblemsInEnvironment);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updatePatientProblemsEnvironment = async function (req, res, next) {
+  const problemsInEnvironment = req.body;
+  try {
+    const updatedProblemsInEnvironment = await updatePatientProblemsEnvironment(
+      problemsInEnvironment
+    );
+    res.send(updatedProblemsInEnvironment);
   } catch (error) {
     console.error(error);
   }
