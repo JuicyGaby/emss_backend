@@ -327,3 +327,33 @@ exports.updateDiscrimination = async function (req, res, next) {
     console.error(error);
   }
 };
+
+// safety
+
+exports.getSafety = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const safety = await getSafety(patientId);
+    res.send(safety);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createSafety = async function (req, res, next) {
+  const safety = req.body;
+  try {
+    const newSafety = await createSafety(safety);
+    res.send(newSafety);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateSafety = async function (req, res, next) {
+  const safety = req.body;
+  try {
+    const updatedSafety = await updateSafety(safety);
+    res.send(updatedSafety);
+  } catch (error) {
+    console.error(error);
+  }
+};

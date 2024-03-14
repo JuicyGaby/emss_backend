@@ -77,6 +77,12 @@ router.get('/discrimination/:id', assessmentTool.getDiscrimination)
 router.post('/discrimination', assessmentTool.createDiscrimination)
 router.put('/discrimination', assessmentTool.updateDiscrimination)
 
+// ? safety
+router.get('/safety/:id', assessmentTool.getSafety)
+router.post('/safety', assessmentTool.createSafety)
+router.put('/safety', assessmentTool.updateSafety)
+
+
 // employees 
 router.get('/employees', employees.employeeRights)
 
