@@ -68,6 +68,7 @@ model patients {
   patient_assessment_of_social_functioning patient_assessment_of_social_functioning[]
   patient_descrimination                   patient_descrimination[]
   patient_family_info                      patient_family_info[]
+  patient_problems_environment             patient_problems_environment[]
 }
 
 model patient_interview {
@@ -236,19 +237,19 @@ model patient_health_and_mental_health {
 // * VI Discrimination
 
 model patient_descrimination {
-  id                  Int   @id @default(autoincrement())
-  patient_id          Int
-  Age                 Json?
-  Ethnicity           Json?
-  Religion            Json?
-  Sex                 Json?
-  Sexual_Orientation  Json?
-  Lifestyle           Json?
-  NonCitizen          Json?
-  Veteran_Status      Json?
-  Dependency_Status   Json?
-  Disability_Status   Json?
-  Marital_Status      Json?
+  id                 Int   @id @default(autoincrement())
+  patient_id         Int
+  Age                Json?
+  Ethnicity          Json?
+  Religion           Json?
+  Sex                Json?
+  Sexual_Orientation Json?
+  Lifestyle          Json?
+  NonCitizen         Json?
+  Veteran_Status     Json?
+  Dependency_Status  Json?
+  Disability_Status  Json?
+  Marital_Status     Json?
 
   patients patients @relation(fields: [patient_id], references: [id])
 }
@@ -304,29 +305,46 @@ model patient_assessment_of_social_functioning {
 
 // * VIII Assesment of Social Functioning
 
-// * IX Problems in the environment
-// model patient_problems_in_the_environment {
-//   id                   Int      @id @default(autoincrement())
-//   patient_id           Int
-//   // food and nutrition
-//   lack_of_regular_food_supply Json?
-//   nutritionally_Inadequate_food_supply       Json?
-//   documented_malnutrition                   Json?
-//   // shelter
-//   absence_of_shelter                        Json?
-//   substandard_shelter                       Json?
-//   // employment
-//   unemployment_not_available_in_community   Json?
-//   underemployment_not_available_in_community Json?
-//   inappropiate_employment_acceptable_in_community Json?
-//   // economic resources
+// problems in the environment
+model patient_problems_environment {
+  id                               Int     @id @default(autoincrement())
+  patient_id                       Int
+  // food and nutrition
+  lack_regular_food                Json?
+  nutritionally_inadequate_food    Json?
+  documented_malnutrition          Json?
+  // shelter
+  absence_of_shelter               Json?
+  inadequate_shelter               Json?
+  // employment
+  unemployment                     Json?
+  underemployment                  Json?
+  inappropiate_employment          Json?
+  // economic resource
+  insufficient_community_resources Json?
+  insufficient_provide_resources   Json?
+  // transportation
+  no_personal_transportation       Json?
+  // no problems
+  no_problems                      Json?
+  // affectional support system
+  absence_of_affectional_support   Json?
+  inadequate_support_system        Json?
+  excessive_support_system         Json?
+  problems_presented               String? @db.VarChar(255)
+  reasons_psychosocial_counselling String  @db.VarChar(255)
+  assesment_findings               String  @db.VarChar(255)
+  recommended_intervention         String  @db.VarChar(255)
+  action_taken                     String  @db.VarChar(255)
+  person_emergency                 String  @db.VarChar(255)
+  relationship_to_patient          String  @db.VarChar(255)
+  address                          String  @db.VarChar(255)
+  contact_number                   String  @db.VarChar(255)
+  interviewed_by                   String  @db.VarChar(255)
+  remarks                          String  @db.VarChar(255)
 
-//   // transportation
-
-//   patients             patients @relation(fields: [patient_id], references: [id])
-// }
-
-// * IX Problems in the environment
+  patients patients @relation(fields: [patient_id], references: [id])
+}
 
 model ph_regions {
   id        Int            @id @default(autoincrement())
