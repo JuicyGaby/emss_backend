@@ -401,6 +401,7 @@ exports.getProblemsInEnvironment = async function (req, res, next) {
   try {
     const problemsInEnvironment = await getProblemsInEnvironment(patientId);
     res.send(problemsInEnvironment);
+    console.log(patientId);
   } catch (error) {
     console.error(error);
   }

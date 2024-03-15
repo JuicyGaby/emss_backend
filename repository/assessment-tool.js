@@ -695,14 +695,35 @@ async function updateSocialFunction(reqBody) {
 
 // problems in environment
 async function getProblemsInEnvironment(patient_id) {
-  const response = await prisma.patient_problems_in_environment.findFirst({
+  console.log("patient_id", patient_id);
+  const response = await prisma.patient_problems_environment.findFirst({
     where: {
       patient_id: parseInt(patient_id),
     },
   });
+  if (response.problems_presented) {
+    response.problems_presented = response.problems_presented.split(",");
+  }
+  if (response.reasons_psychosocial_counselling) {
+    response.reasons_psychosocial_counselling =
+      response.reasons_psychosocial_counselling.split(",");
+  }
   return response || false;
 }
 async function createPatientProblemsEnvironment(reqBody) {
+  let problems_presented = "";
+  let reasons_psychosocial_counselling = "";
+
+  if (reqBody.problems_presented) {
+    if (reqBody.problems_presented) {
+      let problems = reqBody.problems_presented;
+      problems_presented = problems.join(",");
+    }
+    if (reqBody.reasons_psychosocial_counselling) {
+      let reasons = reqBody.reasons_psychosocial_counselling;
+      reasons_psychosocial_counselling = reasons.join(",");
+    }
+  }
   const newRecord = await prisma.patient_problems_environment.create({
     data: {
       patient_id: reqBody.patient_id,
@@ -722,10 +743,11 @@ async function createPatientProblemsEnvironment(reqBody) {
       absence_of_affectional_support: reqBody.absence_of_affectional_support,
       inadequate_support_system: reqBody.inadequate_support_system,
       excessive_support_system: reqBody.excessive_support_system,
-      problems_presented: reqBody.problems_presented,
-      reasons_psychosocial_counselling:
-        reqBody.reasons_psychosocial_counselling,
-      assesment_findings: reqBody.assesment_findings,
+      // array
+      problems_presented: problems_presented,
+      reasons_psychosocial_counselling: reasons_psychosocial_counselling,
+      // end of array
+      assesment_findings: reasons_psychosocial_counselling,
       recommended_intervention: reqBody.recommended_intervention,
       action_taken: reqBody.action_taken,
       person_emergency: reqBody.person_emergency,
@@ -740,43 +762,19 @@ async function createPatientProblemsEnvironment(reqBody) {
   return newRecord;
 }
 async function updatePatientProblemsEnvironment(reqBody) {
-  const updatedRecord = await prisma.patient_problems_environment.update({
-    where: {
-      id: reqBody.id,
-    },
-    data: {
-      lack_regular_food: reqBody.lack_regular_food,
-      nutritionally_inadequate_food: reqBody.nutritionally_inadequate_food,
-      documented_malnutrition: reqBody.documented_malnutrition,
-      absence_of_shelter: reqBody.absence_of_shelter,
-      inadequate_shelter: reqBody.inadequate_shelter,
-      unemployment: reqBody.unemployment,
-      underemployment: reqBody.underemployment,
-      inappropiate_employment: reqBody.inappropiate_employment,
-      insufficient_community_resources:
-        reqBody.insufficient_community_resources,
-      insufficient_provide_resources: reqBody.insufficient_provide_resources,
-      no_personal_transportation: reqBody.no_personal_transportation,
-      no_problems: reqBody.no_problems,
-      absence_of_affectional_support: reqBody.absence_of_affectional_support,
-      inadequate_support_system: reqBody.inadequate_support_system,
-      excessive_support_system: reqBody.excessive_support_system,
-      problems_presented: reqBody.problems_presented,
-      reasons_psychosocial_counselling:
-        reqBody.reasons_psychosocial_counselling,
-      assesment_findings: reqBody.assesment_findings,
-      recommended_intervention: reqBody.recommended_intervention,
-      action_taken: reqBody.action_taken,
-      person_emergency: reqBody.person_emergency,
-      relationship_to_patient: reqBody.relationship_to_patient,
-      address: reqBody.address,
-      contact_number: reqBody.contact_number,
-      interviewed_by: reqBody.interviewed_by,
-      remarks: reqBody.remarks,
-    },
-  });
-  console.log("updated", updatedRecord);
-  return updatedRecord;
+  let problems_presented = "";
+  let reasons_psychosocial_counselling = "";
+
+  if (reqBody.problems_presented) {
+    if (reqBody.problems_presented) {
+      let problems = reqBody.problems_presented;
+      problems_presented = problems.join(",");
+    }
+    if (reqBody.reasons_psychosocial_counselling) {
+      let reasons = reqBody.reasons_psychosocial_counselling;
+      reasons_psychosocial_counselling = reasons.join(",");
+    }
+  }
 }
 
 module.exports = {
