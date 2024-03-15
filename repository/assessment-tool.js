@@ -567,6 +567,255 @@ async function updateDiscrimination(reqBody) {
   return discrimination;
 }
 
+// safety
+
+async function getSafety(patient_id) {
+  const safety = await prisma.patient_safety.findFirst({
+    where: {
+      patient_id: parseInt(patient_id),
+    },
+  });
+  return safety || false;
+}
+
+async function createSafety(reqBody) {
+  const createdSafetyData = await prisma.patient_safety.create({
+    data: {
+      patient_id: reqBody.patient_id,
+      voice_crime_in_community: reqBody.voice_crime_in_community,
+      unsafe_working_conditions: reqBody.unsafe_working_conditions,
+      unsafe_codition_home: reqBody.unsafe_codition_home,
+      absence_of_adequate_safety_services:
+        reqBody.absence_of_adequate_safety_services,
+      natural_disasters: reqBody.natural_disasters,
+      human_created_disasters: reqBody.human_created_disasters,
+    },
+  });
+  console.log("created", createdSafetyData);
+  return createdSafetyData;
+}
+async function updateSafety(reqBody) {
+  const updatedSafetyData = await prisma.patient_safety.update({
+    where: {
+      id: reqBody.id,
+    },
+    data: {
+      voice_crime_in_community: reqBody.voice_crime_in_community,
+      unsafe_working_conditions: reqBody.unsafe_working_conditions,
+      unsafe_codition_home: reqBody.unsafe_codition_home,
+      absence_of_adequate_safety_services:
+        reqBody.absence_of_adequate_safety_services,
+      natural_disasters: reqBody.natural_disasters,
+      human_created_disasters: reqBody.human_created_disasters,
+    },
+  });
+  console.log("updated", updatedSafetyData);
+  return updatedSafetyData;
+}
+
+// social functioning
+async function getSocialFunction(patient_id) {
+  const response =
+    await prisma.patient_assessment_of_social_functioning.findFirst({
+      where: {
+        patient_id: parseInt(patient_id),
+      },
+    });
+  return response || false;
+}
+async function createSocialFunction(reqBody) {
+  const createdSocialFunction =
+    await prisma.patient_assessment_of_social_functioning.create({
+      data: {
+        patient_id: reqBody.patient_id,
+        parent: reqBody.parent,
+        spouse: reqBody.spouse,
+        child: reqBody.child,
+        sibling: reqBody.sibling,
+        other_family_member: reqBody.other_family_member,
+        significant_others: reqBody.significant_others,
+        // interpersonal roles
+        lover: reqBody.lover,
+        friend: reqBody.friend,
+        neighbor: reqBody.neighbor,
+        member: reqBody.member,
+        // occupational roles
+        worker_paid_economy: reqBody.worker_paid_economy,
+        worker_home: reqBody.worker_home,
+        worker_volunteer: reqBody.worker_volunteer,
+        student: reqBody.student,
+        // Special life situation roles
+        consumer: reqBody.consumer,
+        inpatient: reqBody.inpatient,
+        outpatient: reqBody.outpatient,
+        er_patient: reqBody.er_patient,
+        prisoner: reqBody.prisoner,
+        immigrant_legal: reqBody.immigrant_legal,
+        immigrant_undocumented: reqBody.immigrant_undocumented,
+        imigrant_refugee: reqBody.imigrant_refugee,
+      },
+    });
+  console.log("created", createdSocialFunction);
+  return createdSocialFunction;
+}
+async function updateSocialFunction(reqBody) {
+  const updatedSocialFunction =
+    await prisma.patient_assessment_of_social_functioning.update({
+      where: {
+        id: reqBody.id,
+      },
+      data: {
+        parent: reqBody.parent,
+        spouse: reqBody.spouse,
+        child: reqBody.child,
+        sibling: reqBody.sibling,
+        other_family_member: reqBody.other_family_member,
+        significant_others: reqBody.significant_others,
+        // interpersonal roles
+        lover: reqBody.lover,
+        friend: reqBody.friend,
+        neighbor: reqBody.neighbor,
+        member: reqBody.member,
+        // occupational roles
+        worker_paid_economy: reqBody.worker_paid_economy,
+        worker_home: reqBody.worker_home,
+        worker_volunteer: reqBody.worker_volunteer,
+        student: reqBody.student,
+        // Special life situation roles
+        consumer: reqBody.consumer,
+        inpatient: reqBody.inpatient,
+        outpatient: reqBody.outpatient,
+        er_patient: reqBody.er_patient,
+        prisoner: reqBody.prisoner,
+      },
+    });
+  console.log("updated", updatedSocialFunction);
+  return updatedSocialFunction;
+}
+
+// problems in environment
+async function getProblemsInEnvironment(patient_id) {
+  console.log("patient_id", patient_id);
+  const response = await prisma.patient_problems_environment.findFirst({
+    where: {
+      patient_id: parseInt(patient_id),
+    },
+  });
+  if (response.problems_presented) {
+    response.problems_presented = response.problems_presented.split(",");
+  }
+  if (response.reasons_psychosocial_counselling) {
+    response.reasons_psychosocial_counselling =
+      response.reasons_psychosocial_counselling.split(",");
+  }
+  return response || false;
+}
+
+async function createPatientProblemsEnvironment(reqBody) {
+  let problems_presented = "";
+  let reasons_psychosocial_counselling = "";
+
+  if (reqBody.problems_presented) {
+    if (reqBody.problems_presented) {
+      let problems = reqBody.problems_presented;
+      problems_presented = problems.join(",");
+    }
+    if (reqBody.reasons_psychosocial_counselling) {
+      let reasons = reqBody.reasons_psychosocial_counselling;
+      reasons_psychosocial_counselling = reasons.join(",");
+    }
+  }
+  const newRecord = await prisma.patient_problems_environment.create({
+    data: {
+      patient_id: reqBody.patient_id,
+      lack_regular_food: reqBody.lack_regular_food,
+      nutritionally_inadequate_food: reqBody.nutritionally_inadequate_food,
+      documented_malnutrition: reqBody.documented_malnutrition,
+      absence_of_shelter: reqBody.absence_of_shelter,
+      inadequate_shelter: reqBody.inadequate_shelter,
+      unemployment: reqBody.unemployment,
+      underemployment: reqBody.underemployment,
+      inappropiate_employment: reqBody.inappropiate_employment,
+      insufficient_community_resources:
+        reqBody.insufficient_community_resources,
+      insufficient_provide_resources: reqBody.insufficient_provide_resources,
+      no_personal_transportation: reqBody.no_personal_transportation,
+      no_problems: reqBody.no_problems,
+      absence_of_affectional_support: reqBody.absence_of_affectional_support,
+      inadequate_support_system: reqBody.inadequate_support_system,
+      excessive_support_system: reqBody.excessive_support_system,
+      // array
+      problems_presented: problems_presented,
+      reasons_psychosocial_counselling: reasons_psychosocial_counselling,
+      // end of array
+      assesment_findings: reasons_psychosocial_counselling,
+      recommended_intervention: reqBody.recommended_intervention,
+      action_taken: reqBody.action_taken,
+      person_emergency: reqBody.person_emergency,
+      relationship_to_patient: reqBody.relationship_to_patient,
+      address: reqBody.address,
+      contact_number: reqBody.contact_number,
+      interviewed_by: reqBody.interviewed_by,
+      remarks: reqBody.remarks,
+    },
+  });
+  console.log("created", newRecord);
+  return newRecord;
+}
+async function updatePatientProblemsEnvironment(reqBody) {
+  let problems_presented = "";
+  let reasons_psychosocial_counselling = "";
+  if (reqBody.problems_presented) {
+    if (reqBody.problems_presented) {
+      let problems = reqBody.problems_presented;
+      problems_presented = problems.join(",");
+    }
+    if (reqBody.reasons_psychosocial_counselling) {
+      let reasons = reqBody.reasons_psychosocial_counselling;
+      reasons_psychosocial_counselling = reasons.join(",");
+    }
+  }
+  const updatedRecord = await prisma.patient_problems_environment.update({
+    where: {
+      id: reqBody.id,
+    },
+    data: {
+      patient_id: reqBody.patient_id,
+      lack_regular_food: reqBody.lack_regular_food,
+      nutritionally_inadequate_food: reqBody.nutritionally_inadequate_food,
+      documented_malnutrition: reqBody.documented_malnutrition,
+      absence_of_shelter: reqBody.absence_of_shelter,
+      inadequate_shelter: reqBody.inadequate_shelter,
+      unemployment: reqBody.unemployment,
+      underemployment: reqBody.underemployment,
+      inappropiate_employment: reqBody.inappropiate_employment,
+      insufficient_community_resources:
+        reqBody.insufficient_community_resources,
+      insufficient_provide_resources: reqBody.insufficient_provide_resources,
+      no_personal_transportation: reqBody.no_personal_transportation,
+      no_problems: reqBody.no_problems,
+      absence_of_affectional_support: reqBody.absence_of_affectional_support,
+      inadequate_support_system: reqBody.inadequate_support_system,
+      excessive_support_system: reqBody.excessive_support_system,
+      // array
+      problems_presented: problems_presented,
+      reasons_psychosocial_counselling: reasons_psychosocial_counselling,
+      // end of array
+      assesment_findings: reasons_psychosocial_counselling,
+      recommended_intervention: reqBody.recommended_intervention,
+      action_taken: reqBody.action_taken,
+      person_emergency: reqBody.person_emergency,
+      relationship_to_patient: reqBody.relationship_to_patient,
+      address: reqBody.address,
+      contact_number: reqBody.contact_number,
+      interviewed_by: reqBody.interviewed_by,
+      remarks: reqBody.remarks,
+    },
+  });
+  console.log("updated", updatedRecord);
+  return updatedRecord;
+}
+
 module.exports = {
   // interview
   createInterview,
@@ -604,4 +853,16 @@ module.exports = {
   getDiscrimination,
   createDiscrimination,
   updateDiscrimination,
+  // safety
+  getSafety,
+  createSafety,
+  updateSafety,
+  // social functioning
+  getSocialFunction,
+  createSocialFunction,
+  updateSocialFunction,
+  // problems in environment
+  getProblemsInEnvironment,
+  createPatientProblemsEnvironment,
+  updatePatientProblemsEnvironment,
 };

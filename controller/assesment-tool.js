@@ -35,6 +35,18 @@ const {
   getDiscrimination,
   createDiscrimination,
   updateDiscrimination,
+  // safety
+  getSafety,
+  createSafety,
+  updateSafety,
+  // social functioning
+  getSocialFunction,
+  createSocialFunction,
+  updateSocialFunction,
+  // problems in environment
+  getProblemsInEnvironment,
+  createPatientProblemsEnvironment,
+  updatePatientProblemsEnvironment,
 } = require("../repository/assessment-tool");
 
 const assesmentTool = require("../repository/assessment-tool");
@@ -319,6 +331,99 @@ exports.updateDiscrimination = async function (req, res, next) {
   try {
     const updatedDiscrimination = await updateDiscrimination(discrimination);
     res.send(updatedDiscrimination);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// safety
+
+exports.getSafety = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const safety = await getSafety(patientId);
+    res.send(safety);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createSafety = async function (req, res, next) {
+  const safety = req.body;
+  try {
+    const newSafety = await createSafety(safety);
+    res.send(newSafety);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateSafety = async function (req, res, next) {
+  const safety = req.body;
+  try {
+    const updatedSafety = await updateSafety(safety);
+    res.send(updatedSafety);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// social functioning
+exports.getSocialFunction = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const socialFunction = await getSocialFunction(patientId);
+    res.send(socialFunction);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createSocialFunction = async function (req, res, next) {
+  const socialFunction = req.body;
+  try {
+    const newSocialFunction = await createSocialFunction(socialFunction);
+    res.send(newSocialFunction);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateSocialFunction = async function (req, res, next) {
+  const socialFunction = req.body;
+  try {
+    const updatedSocialFunction = await updateSocialFunction(socialFunction);
+    res.send(updatedSocialFunction);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// problems in environment
+exports.getProblemsInEnvironment = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const problemsInEnvironment = await getProblemsInEnvironment(patientId);
+    res.send(problemsInEnvironment);
+    console.log(patientId);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.createPatientProblemsEnvironment = async function (req, res, next) {
+  const problemsInEnvironment = req.body;
+  try {
+    const newProblemsInEnvironment = await createPatientProblemsEnvironment(
+      problemsInEnvironment
+    );
+    res.send(newProblemsInEnvironment);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updatePatientProblemsEnvironment = async function (req, res, next) {
+  const problemsInEnvironment = req.body;
+  try {
+    const updatedProblemsInEnvironment = await updatePatientProblemsEnvironment(
+      problemsInEnvironment
+    );
+    res.send(updatedProblemsInEnvironment);
   } catch (error) {
     console.error(error);
   }
