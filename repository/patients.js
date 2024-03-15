@@ -24,6 +24,7 @@ async function getPatientById(patient_id) {
 }
 async function createPatient(reqBody) {
   const { interview, demographicData } = reqBody;
+  console.log(interview, demographicData);
   const patient = await prisma.patients.create({
     data: {
       first_name: demographicData.first_name,
@@ -46,13 +47,7 @@ async function createPatient(reqBody) {
     },
   });
   const patientId = patient.id;
-  for (let addressType in demographicData.address) {
-    await createPatientAddress(
-      demographicData.address[addressType],
-      addressType,
-      patientId
-    );
-  }
+  console.log('created', patientId);
   await createPatientInterview(interview, patientId);
   return patient;
 }
@@ -129,6 +124,7 @@ async function createPatientInterview(interview, patientId) {
       informant_address: interview.informant_address,
     },
   });
+  console.log('created interview', newInterview);
 }
 
 async function updatePatient(reqBody) {
