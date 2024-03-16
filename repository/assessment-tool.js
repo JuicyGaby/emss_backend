@@ -170,28 +170,32 @@ async function getBarangayByMunicipalityCode(citymunCode) {
   return barangay;
 }
 async function updatePatientAddress(patientAddresses) {
-  const updatedAddresses = await Promise.all(
-    patientAddresses.map(async (address) => {
-      const updatedAddress = await prisma.patient_address.update({
-        where: {
-          id: address.id,
-          address_type: address.address_type,
-        },
-        data: {
-          region: address.region,
-          province: address.province,
-          district: address.district,
-          municipality: address.municipality,
-          barangay: address.barangay,
-          purok: address.purok,
-        },
-      });
-      return updatedAddress;
-    })
-  );
-  console.log("address updated", updatedAddresses);
-  return updatedAddresses;
+  patientAddresses[0].address_type = "permanent";
+  patientAddresses[1].address_type = "temporary";
+  console.log("patientAddresses", patientAddresses);
+  // const updatedAddresses = await Promise.all(
+  //   patientAddresses.map(async (address) => {
+  //     const updatedAddress = await prisma.patient_address.update({
+  //       where: {
+  //         id: address.id,
+  //         address_type: address.address_type,
+  //       },
+  //       data: {
+  //         region: address.region,
+  //         province: address.province,
+  //         district: address.district,
+  //         municipality: address.municipality,
+  //         barangay: address.barangay,
+  //         purok: address.purok,
+  //       },
+  //     });
+  //     return updatedAddress;
+  //   })
+  // );
+  // console.log("address updated", updatedAddresses);
+  // return updatedAddresses;
 }
+
 
 // * mswd classfication
 

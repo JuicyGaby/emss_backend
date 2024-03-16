@@ -3,9 +3,7 @@ const prisma = new PrismaClient();
 const moment = require("moment");
 
 async function getPatients() {
-  const patients = await prisma.patients.findMany({
-    take: 10,
-  });
+  const patients = await prisma.patients.findMany({});
   return patients;
 }
 async function getPatientById(patient_id) {
@@ -14,14 +12,20 @@ async function getPatientById(patient_id) {
       id: parseInt(patient_id),
     },
   });
+  return patient;
+}
+async function getPatientAddress(patient_id) {
   const address = await prisma.patient_address.findMany({
     where: {
       patient_id: parseInt(patient_id),
     },
   });
-  patient.address = address;
-  return patient;
+  if (address.length <= 0) {
+    return false;
+  }
+  return address;
 }
+
 async function createPatient(reqBody) {
   const { interview, demographicData } = reqBody;
   console.log(interview, demographicData);
@@ -47,7 +51,7 @@ async function createPatient(reqBody) {
     },
   });
   const patientId = patient.id;
-  console.log('created', patientId);
+  console.log("created", patientId);
   await createPatientInterview(interview, patientId);
   return patient;
 }
@@ -96,7 +100,6 @@ async function createPatientAddress(addressData, addressType, patientId) {
       address_type: addressType,
     },
   });
-
 }
 async function createPatientInterview(interview, patientId) {
   const interviewDateTime = moment(interview.interview_date_time);
@@ -124,7 +127,7 @@ async function createPatientInterview(interview, patientId) {
       informant_address: interview.informant_address,
     },
   });
-  console.log('created interview', newInterview);
+  console.log("created interview", newInterview);
 }
 
 async function updatePatient(reqBody) {
@@ -155,11 +158,12 @@ async function updatePatient(reqBody) {
     },
   });
   return patient;
-} 
+}
 
 module.exports = {
   getPatients,
   getPatientById,
   createPatient,
-  updatePatient
+  updatePatient,
+  getPatientAddress,
 };

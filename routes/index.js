@@ -48,12 +48,14 @@ router.get('/region', assessmentTool.getRegion)
 router.get('/province/:id', assessmentTool.getProvinceByRegionCode)
 router.get('/municipality/:id', assessmentTool.getMunicipalityByProvinceCode)
 router.get('/barangay/:id', assessmentTool.getBarangayByMunicipalityCode)
+router.get('/address/:id', patients.getPatientAddress)
 router.put('/address', assessmentTool.updatePatientAddress)
 
 // ? mswd classification
 router.get('/mswd-classification/:id', assessmentTool.getMswdClassification)
 router.post('/mswd-classification', assessmentTool.createMswdClassification)
 router.put('/mswd-classification', assessmentTool.updateMswwdClassification)
+
 
 // ? monthly expenses
 

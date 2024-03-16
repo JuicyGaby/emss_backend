@@ -3,6 +3,7 @@ const {
   getPatientById,
   createPatient,
   updatePatient,
+  getPatientAddress,
 } = require("../repository/patients");
 
 exports.getPatients = async function (req, res, next) {
@@ -37,6 +38,16 @@ exports.updatePatient = async function (req, res, next) {
   try {
     const patient = await updatePatient(req.body);
     res.send(patient);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+exports.getPatientAddress = async function (req, res, next) {
+  const patient_id = req.params.id;
+  try {
+    const address = await getPatientAddress(patient_id);
+    res.send(address);
   } catch (error) {
     console.error(error);
   }
