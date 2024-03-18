@@ -186,6 +186,35 @@ async function getBarangayByMunicipalityCode(citymunDesc) {
 }
 async function createPatientAddress(reqBody) {
   console.log("reqBody", reqBody);
+  const permanent = reqBody[0];
+  const temporary = reqBody[1];
+  const permanentAddress = await prisma.patient_address.create({
+    data: {
+      patient_id: parseInt(permanent.patient_id),
+      region: permanent.region,
+      province: permanent.province,
+      district: permanent.district,
+      municipality: permanent.municipality,
+      barangay: permanent.barangay,
+      purok: permanent.purok,
+      address_type: "permanent",
+    },
+  });
+  const temporaryAddress = await prisma.patient_address.create({
+    data: {
+      patient_id: parseInt(temporary.patient_id),
+      region: temporary.region,
+      province: temporary.province,
+      district: temporary.district,
+      municipality: temporary.municipality,
+      barangay: temporary.barangay,
+      purok: temporary.purok,
+      address_type: "temporary",
+    },
+  });
+  console.log("permanentAddress", permanentAddress);
+  console.log("temporaryAddress", temporaryAddress);
+  return [permanentAddress, temporaryAddress];
 }
 
 async function updatePatientAddress(patientAddresses) {
