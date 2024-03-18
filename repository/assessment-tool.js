@@ -212,36 +212,40 @@ async function createPatientAddress(reqBody) {
       address_type: "temporary",
     },
   });
-  console.log("permanentAddress", permanentAddress);
-  console.log("temporaryAddress", temporaryAddress);
   return [permanentAddress, temporaryAddress];
 }
 
 async function updatePatientAddress(patientAddresses) {
-  patientAddresses[0].address_type = "permanent";
-  patientAddresses[1].address_type = "temporary";
   console.log("patientAddresses", patientAddresses);
-  // const updatedAddresses = await Promise.all(
-  //   patientAddresses.map(async (address) => {
-  //     const updatedAddress = await prisma.patient_address.update({
-  //       where: {
-  //         id: address.id,
-  //         address_type: address.address_type,
-  //       },
-  //       data: {
-  //         region: address.region,
-  //         province: address.province,
-  //         district: address.district,
-  //         municipality: address.municipality,
-  //         barangay: address.barangay,
-  //         purok: address.purok,
-  //       },
-  //     });
-  //     return updatedAddress;
-  //   })
-  // );
-  // console.log("address updated", updatedAddresses);
-  // return updatedAddresses;
+  const permanent = patientAddresses[0];
+  const temporary = patientAddresses[1];
+  const permanentAddress = await prisma.patient_address.update({
+    where: {
+      id: parseInt(permanent.id),
+    },
+    data: {
+      region: permanent.region,
+      province: permanent.province,
+      district: permanent.district,
+      municipality: permanent.municipality,
+      barangay: permanent.barangay,
+      purok: permanent.purok,
+    },
+  });
+  const temporaryAddress = await prisma.patient_address.update({
+    where: {
+      id: parseInt(temporary.id),
+    },
+    data: {
+      region: temporary.region,
+      province: temporary.province,
+      district: temporary.district,
+      municipality: temporary.municipality,
+      barangay: temporary.barangay,
+      purok: temporary.purok,
+    },
+  });
+  return [permanentAddress, temporaryAddress];
 }
 
 // * mswd classfication
