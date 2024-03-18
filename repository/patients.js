@@ -3,7 +3,9 @@ const prisma = new PrismaClient();
 const moment = require("moment");
 
 async function getPatients() {
-  const patients = await prisma.patients.findMany({});
+  const patients = await prisma.patients.findMany({
+    // take: 10,
+  });
   return patients;
 }
 async function getPatientById(patient_id) {

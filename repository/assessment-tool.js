@@ -134,10 +134,15 @@ async function getRegion() {
   });
   return region;
 }
-async function getProvinceByRegionCode(regCode) {
+async function getProvinceByRegionCode(regDesc) {
+  const region = await prisma.ph_regions.findFirst({
+    where: {
+      regDesc,
+    },
+  });
   const province = await prisma.ph_provinces.findMany({
     where: {
-      regCode,
+      regCode: region.regCode,
     },
     select: {
       provDesc: true,
@@ -146,10 +151,15 @@ async function getProvinceByRegionCode(regCode) {
   });
   return province;
 }
-async function getMunicipalityByProvinceCode(provCode) {
+async function getMunicipalityByProvinceCode(provDesc) {
+  const province = await prisma.ph_provinces.findFirst({
+    where: {
+      provDesc,
+    },
+  });
   const municipality = await prisma.ph_city_mun.findMany({
     where: {
-      provCode,
+      provCode: province.provCode,
     },
     select: {
       citymunDesc: true,
@@ -158,10 +168,15 @@ async function getMunicipalityByProvinceCode(provCode) {
   });
   return municipality;
 }
-async function getBarangayByMunicipalityCode(citymunCode) {
+async function getBarangayByMunicipalityCode(citymunDesc) {
+  const municipality = await prisma.ph_city_mun.findFirst({
+    where: {
+      citymunDesc,
+    },
+  });
   const barangay = await prisma.ph_barangays.findMany({
     where: {
-      citymunCode,
+      citymunCode: municipality.citymunCode,
     },
     select: {
       brgyDesc: true,
@@ -169,6 +184,10 @@ async function getBarangayByMunicipalityCode(citymunCode) {
   });
   return barangay;
 }
+async function createPatientAddress(reqBody) {
+  console.log("reqBody", reqBody);
+}
+
 async function updatePatientAddress(patientAddresses) {
   patientAddresses[0].address_type = "permanent";
   patientAddresses[1].address_type = "temporary";
@@ -195,7 +214,6 @@ async function updatePatientAddress(patientAddresses) {
   // console.log("address updated", updatedAddresses);
   // return updatedAddresses;
 }
-
 
 // * mswd classfication
 
@@ -830,6 +848,7 @@ module.exports = {
   getProvinceByRegionCode,
   getMunicipalityByProvinceCode,
   getBarangayByMunicipalityCode,
+  createPatientAddress,
   updatePatientAddress,
   // family composition
   getFamilyComposition,
