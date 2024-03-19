@@ -31,7 +31,7 @@ async function getInterviewById(patient_id) {
       patient_id: parseInt(patient_id),
     },
   });
-  return interview;
+  return interview || false;
 }
 async function updateInterviewById(patient_id, reqBody) {
   const interview = await prisma.patient_interview.update({

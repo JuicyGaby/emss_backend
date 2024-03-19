@@ -4,9 +4,9 @@ const moment = require("moment");
 
 async function getPatients() {
   const patients = await prisma.patients.findMany({
-    // take: 10,
+    take: 10,
   });
-  return patients;
+  return patients || [];
 }
 async function getPatientById(patient_id) {
   const patient = await prisma.patients.findUnique({
@@ -14,7 +14,7 @@ async function getPatientById(patient_id) {
       id: parseInt(patient_id),
     },
   });
-  return patient;
+  return patient || {};
 }
 async function getPatientAddress(patient_id) {
   const address = await prisma.patient_address.findMany({
