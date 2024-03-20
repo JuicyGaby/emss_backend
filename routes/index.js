@@ -7,6 +7,7 @@ const authentication = require('../controller/authentication')
 const patients = require('../controller/patients')
 const assessmentTool = require('../controller/assesment-tool')
 const employees = require('../controller/employees')
+const dailyActivityReport = require('../controller/daily-activity-report')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -96,3 +97,7 @@ router.put('/problems-in-environment', assessmentTool.updatePatientProblemsEnvir
 // employees 
 router.get('/employees', employees.employeeRights)
 
+
+// * DAR
+
+router.post('/daily-activity-report', dailyActivityReport.createDailyActivityReport)
