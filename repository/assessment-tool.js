@@ -742,6 +742,9 @@ async function updateSocialFunction(reqBody) {
         outpatient: reqBody.outpatient,
         er_patient: reqBody.er_patient,
         prisoner: reqBody.prisoner,
+        immigrant_legal: reqBody.immigrant_legal,       
+        immigrant_undocumented: reqBody.immigrant_undocumented,
+        imigrant_refugee: reqBody.imigrant_refugee,
       },
     });
   console.log("updated", updatedSocialFunction);
