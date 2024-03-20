@@ -101,3 +101,25 @@ router.get('/employees', employees.employeeRights)
 // * DAR
 
 router.post('/daily-activity-report', dailyActivityReport.createDailyActivityReport)
+router.get('/daily-activity-report', dailyActivityReport.getDailyActivityReport)
+router.get('/daily-activity-report/:id', dailyActivityReport.getDailyActivityReportById)
+router.put('/daily-activity-report', dailyActivityReport.updateDailyActivityReport)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

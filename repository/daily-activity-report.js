@@ -12,6 +12,7 @@ exports.createDailyActivityReport = async function (reqBody) {
       patient_name,
       age,
       address,
+      sex,
     },
   });
   console.log("Created", patientDar);
@@ -19,16 +20,19 @@ exports.createDailyActivityReport = async function (reqBody) {
 };
 exports.getDailyActivityReport = async function (reqBody) {
   const dar = await prisma.daily_activity_report.findMany({
-    where: {
-        date_created: reqBody.date_created
-    }
+    select: {
+      id: true,
+      admission_date: true,
+      patient_name: true,
+      age: true,
+      sex: true,
+    },
   });
-  return dar;
+  return dar || [];
 };
 exports.getDailyActivityReportById = async function (reqBody) {
-    console.log(reqBody);
-}
+  console.log(reqBody);
+};
 exports.updateDailyActivityReport = async function (reqBody) {
-    console.log(reqBody);
-}
-
+  console.log(reqBody);
+};
