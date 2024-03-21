@@ -375,8 +375,7 @@ model daily_activity_report {
   civil_status            String?  @db.VarChar(50)
   area                    String?  @db.VarChar(50)
   case_type               String?  @db.VarChar(50)
-  indirect_contributor    String?  @db.VarChar(100)
-  direct_contributor      String?  @db.VarChar(100)
+  contributor_type        String?  @db.VarChar(50)
   phic_classification     String?  @db.VarChar(50)
   non_phic_classification String?  @db.VarChar(50)
   interview_start_time    String?  @db.VarChar(50)
@@ -393,3 +392,90 @@ model daily_activity_report {
   relationship_to_patient String?  @db.VarChar(50)
   date_created            DateTime @default(now()) @db.DateTime(0)
 }
+
+// model dar_services {
+//   id                         Int                          @id @default(autoincrement())
+//   date_created               DateTime                     @default(now()) @db.DateTime(0)
+//   dar_services_sw_assessment dar_services_sw_assessment[]
+// }
+
+// model dar_services_sw_assessment {
+//   id                      Int          @id @default(autoincrement())
+//   dar_services_id         Int
+//   psychosocial_assessment Boolean      @db.TinyInt
+//   risk_assessment         Boolean      @db.TinyInt
+//   social_care_plan        Boolean      @db.TinyInt
+//   psychosocial_casework   Boolean      @db.TinyInt
+//   crisis_intervention     Boolean      @db.TinyInt
+//   trauma_informed_case    Boolean      @db.TinyInt
+//   protective_services     Boolean      @db.TinyInt
+//   remarks                 String?      @db.VarChar(255)
+//   date_created            DateTime     @default(now()) @db.DateTime(0)
+//   dar_services            dar_services @relation(fields: [dar_services_id], references: [id])
+// }
+
+// model dar_services_multi_disciplinary_case_consultation {
+//   id Int @id @default(autoincrement())
+
+//   date_created   DateTime         @default(now()) @db.DateTime(0)
+//   mdcs_physician mdcs_physician[]
+// }
+
+// model mdcs_physician {
+//   id                   Int                                               @id @default(autoincrement())
+//   dar_services_mdcs_id Int
+//   attending_physician  Boolean                                           @db.TinyInt
+//   consultant           Boolean                                           @db.TinyInt
+//   date_created         DateTime                                          @default(now()) @db.DateTime(0)
+//   remarks              String?                                           @db.VarChar(255)
+//   dar_services_mdcs    dar_services_multi_disciplinary_case_consultation @relation(fields: [dar_services_mdcs_id], references: [id])
+// }
+
+
+// model social_work_administration {
+//   id           Int      @id @default(autoincrement())
+//   date_created DateTime @default(now()) @db.DateTime(0)
+// }
+
+// model swa_documentation {
+//   id           Int      @id @default(autoincrement())
+//   date_created DateTime @default(now()) @db.DateTime(0)
+//   remarks      String?  @db.VarChar(255)
+// }
+
+// model swa_program_management {
+//   id                         Int      @id @default(autoincrement())
+//   mswd_fund_raising_activity String?  @db.VarChar(255)
+//   date_created               DateTime @default(now()) @db.DateTime(0)
+//   remarks                    String?  @db.VarChar(255)
+// }
+
+// model pm_committee_meetings {
+//   id           Int      @id @default(autoincrement())
+//   date_created DateTime @default(now()) @db.DateTime(0)
+//   remarks      String?  @db.VarChar(255)
+// }
+
+// model swa_staff_meetings {
+//   id           Int      @id @default(autoincrement())
+//   date_created DateTime @default(now()) @db.DateTime(0)
+//   remarks      String?  @db.VarChar(255)
+// }
+
+// model swa_affliation_programs {
+//   id           Int      @id @default(autoincrement())
+//   date_created DateTime @default(now()) @db.DateTime(0)
+//   remarks      String?  @db.VarChar(255)
+// }
+
+// model swa_staff_development {
+//   id           Int      @id @default(autoincrement())
+//   date_created DateTime @default(now()) @db.DateTime(0)
+//   remarks      String?  @db.VarChar(255)
+// }
+
+// model swa_reporting {
+//   id           Int      @id @default(autoincrement())
+//   date_created DateTime @default(now()) @db.DateTime(0)
+//   remarks      String?  @db.VarChar(255)
+// }

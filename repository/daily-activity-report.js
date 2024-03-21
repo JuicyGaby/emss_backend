@@ -30,8 +30,14 @@ exports.getDailyActivityReport = async function (reqBody) {
   });
   return dar || [];
 };
-exports.getDailyActivityReportById = async function (reqBody) {
-  console.log(reqBody);
+exports.getDailyActivityReportById = async function (dar_id) {
+  const dar = await prisma.daily_activity_report.findUnique({
+    where: {
+      id: parseInt(dar_id),
+    },
+  });
+  console.log(dar);
+  return dar || false;
 };
 exports.updateDailyActivityReport = async function (reqBody) {
   console.log(reqBody);
