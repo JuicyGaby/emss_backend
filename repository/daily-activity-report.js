@@ -36,9 +36,41 @@ exports.getDailyActivityReportById = async function (dar_id) {
       id: parseInt(dar_id),
     },
   });
-  console.log(dar);
   return dar || false;
 };
 exports.updateDailyActivityReport = async function (reqBody) {
-  console.log(reqBody);
+  const darItem = await prisma.daily_activity_report.update({
+    where: {
+      id: reqBody.id,
+    },
+    data: {
+      admission_date: moment
+        .tz(reqBody.admission_date, "Asia/Manila")
+        .format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
+      patient_name: reqBody.patient_name,
+      age: reqBody.age,
+      sex: reqBody.sex,
+      address: reqBody.address,
+      civil_status: reqBody.civil_status,
+      area: reqBody.area,
+      case_type: reqBody.case_type,
+      contributor_type: reqBody.contributor_type,
+      phic_classification: reqBody.phic_classification,
+      non_phic_classification: reqBody.non_phic_classification,
+      interview_start_time: reqBody.interview_start_time,
+      interview_end_time: reqBody.interview_end_time,
+      sectoral_grouping: reqBody.sectoral_grouping,
+      educational_attainment: reqBody.educational_attainment,
+      religion: reqBody.religion,
+      occupation: reqBody.occupation,
+      household_size: reqBody.household_size,
+      monthly_income: reqBody.monthly_income,
+      referral_source: reqBody.referral_source,
+      diagnosis: reqBody.diagnosis,
+      informant_name: reqBody.informant_name,
+      relationship_to_patient: reqBody.relationship_to_patient,
+    },
+  });
+  console.log("Updated", darItem);
+  return darItem;
 };

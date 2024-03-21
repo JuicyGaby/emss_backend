@@ -742,7 +742,7 @@ async function updateSocialFunction(reqBody) {
         outpatient: reqBody.outpatient,
         er_patient: reqBody.er_patient,
         prisoner: reqBody.prisoner,
-        immigrant_legal: reqBody.immigrant_legal,       
+        immigrant_legal: reqBody.immigrant_legal,
         immigrant_undocumented: reqBody.immigrant_undocumented,
         imigrant_refugee: reqBody.imigrant_refugee,
       },
@@ -753,22 +753,23 @@ async function updateSocialFunction(reqBody) {
 
 // problems in environment
 async function getProblemsInEnvironment(patient_id) {
-  console.log("patient_id", patient_id);
   const response = await prisma.patient_problems_environment.findFirst({
     where: {
       patient_id: parseInt(patient_id),
     },
   });
-  if (response.problems_presented) {
+  if (!response) {
+    return false;
+  }
+  if (response.problems_presented !== null) {
     response.problems_presented = response.problems_presented.split(",");
   }
-  if (response.reasons_psychosocial_counselling) {
+  if (response.reasons_psychosocial_counselling !== null) {
     response.reasons_psychosocial_counselling =
       response.reasons_psychosocial_counselling.split(",");
   }
-  return response || false;
+  return response;
 }
-
 async function createPatientProblemsEnvironment(reqBody) {
   let problems_presented = "";
   let reasons_psychosocial_counselling = "";
@@ -873,7 +874,6 @@ async function updatePatientProblemsEnvironment(reqBody) {
   console.log("updated", updatedRecord);
   return updatedRecord;
 }
-
 module.exports = {
   // interview
   createInterview,

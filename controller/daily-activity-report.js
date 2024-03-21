@@ -29,8 +29,8 @@ exports.updateDailyActivityReport = async function (req, res, next) {
   try {
     const darItem = await repository.updateDailyActivityReport(req.body);
     res.send(darItem);
+    // console.log(req.body);
   } catch (error) {
     console.error(error);
   }
 };
-``
