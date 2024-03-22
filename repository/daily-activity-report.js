@@ -74,3 +74,11 @@ exports.updateDailyActivityReport = async function (reqBody) {
   console.log("Updated", darItem);
   return darItem;
 };
+
+exports.createSocialWorkAdministration = async function (reqBody) {
+  // const swa = await prisma.dar_swa.create({
+  // })
+};
+exports.getSocialWorkAdministration = async function (reqBody) {};
+exports.getSocialWorkAdministrationById = async function (reqBody) {};
+exports.updateSocialWorkAdministration = async function (reqBody) {};

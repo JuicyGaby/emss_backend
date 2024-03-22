@@ -34,3 +34,37 @@ exports.updateDailyActivityReport = async function (req, res, next) {
     console.error(error);
   }
 };
+// SWA
+exports.createSocialWorkAdministration = async function (req, res, next) {
+  try {
+    const darItem = await repository.createSocialWorkAdministration(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getSocialWorkAdministration = async function (req, res, next) {
+  try {
+    const darItem = await repository.getSocialWorkAdministration(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getSocialWorkAdministrationById = async function (req, res, next) {
+  try {
+    const darId = req.params.id;
+    const darItem = await repository.getSocialWorkAdministrationById(darId);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateSocialWorkAdministration = async function (req, res, next) {
+  try {
+    const darItem = await repository.updateSocialWorkAdministration(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};

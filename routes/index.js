@@ -105,6 +105,12 @@ router.get('/daily-activity-report', dailyActivityReport.getDailyActivityReport)
 router.get('/daily-activity-report/:id', dailyActivityReport.getDailyActivityReportById)
 router.put('/daily-activity-report', dailyActivityReport.updateDailyActivityReport)
 
+// * SWA
+router.post('/social-work-administration', dailyActivityReport.createSocialWorkAdministration)
+router.get('/social-work-administration', dailyActivityReport.getSocialWorkAdministration)
+router.get('/social-work-administration/:id', dailyActivityReport.getSocialWorkAdministrationById)
+router.put('/social-work-administration', dailyActivityReport.updateSocialWorkAdministration)
+
 
 
 
