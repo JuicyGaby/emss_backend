@@ -76,9 +76,26 @@ exports.updateDailyActivityReport = async function (reqBody) {
 };
 
 exports.createSocialWorkAdministration = async function (reqBody) {
-  // const swa = await prisma.dar_swa.create({
-  // })
+  const formattedDate = moment(reqBody.admission_date).toISOString();
+  const swaItem = await prisma.dar_swa.create({
+    data: {
+      admission_date: formattedDate,
+    },
+  });
+  console.log("Created", swaItem);
+  return swaItem;
 };
-exports.getSocialWorkAdministration = async function (reqBody) {};
-exports.getSocialWorkAdministrationById = async function (reqBody) {};
+exports.getSocialWorkAdministration = async function (reqBody) {
+  const swa = await prisma.dar_swa.findMany();
+  
+  const swaLocalTime = swa.map(item => {
+    return {
+      ...item,
+      admission_date: moment(item.admission_date).local().format('YYYY-MM-DD hh:mm:ss A'),
+    };
+  });
+
+  return swaLocalTime || [];
+};
+exports.getSocialWorkAdministrationById = async function (swa_id) {};
 exports.updateSocialWorkAdministration = async function (reqBody) {};
