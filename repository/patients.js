@@ -4,7 +4,10 @@ const moment = require("moment");
 
 async function getPatients() {
   const patients = await prisma.patients.findMany({
-    take: 10,
+
+  });
+  patients.map((patient) => {
+    patient.fullname = `${patient.first_name} ${patient.last_name}`.toUpperCase();
   });
   return patients || [];
 }

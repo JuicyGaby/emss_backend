@@ -101,4 +101,7 @@ exports.getSocialWorkAdministration = async function (reqBody) {
   return swaLocalTime || [];
 };
 exports.getSocialWorkAdministrationById = async function (swa_id) {};
-exports.updateSocialWorkAdministration = async function (reqBody) {};
+exports.updateSocialWorkAdministration = async function (reqBody) {
+  // const { documentation,  } = reqBody;
+  console.log(reqBody);
+};
