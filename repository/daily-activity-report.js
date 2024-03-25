@@ -83,6 +83,7 @@ exports.createSocialWorkAdministration = async function (reqBody) {
     },
   });
   console.log("Created", swaItem);
+  swaItem.admission_date = moment(swaItem.admission_date).local().format('YYYY-MM-DD hh:mm A');
   return swaItem;
 };
 exports.getSocialWorkAdministration = async function (reqBody) {
@@ -91,7 +92,7 @@ exports.getSocialWorkAdministration = async function (reqBody) {
   const swaLocalTime = swa.map(item => {
     return {
       ...item,
-      admission_date: moment(item.admission_date).local().format('YYYY-MM-DD hh:mm:ss A'),
+      admission_date: moment(item.admission_date).local().format('YYYY-MM-DD hh:mm A'),
     };
   });
 
