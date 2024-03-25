@@ -421,5 +421,6 @@ model dar_swa {
   id             Int       @id @default(autoincrement())
   admission_date DateTime?
   created_by     String?   @db.VarChar(100)
+  creator_name   String?   @db.VarChar(100)
   date_created   DateTime  @default(now()) @db.DateTime(0)
 }
