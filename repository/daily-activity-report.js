@@ -79,6 +79,8 @@ exports.createSocialWorkAdministration = async function (reqBody) {
   const formattedDate = moment(reqBody.admission_date).toISOString();
   const swaItem = await prisma.dar_swa.create({
     data: {
+      created_by: reqBody.id.toString(),
+      creator_name: reqBody.fullname,
       admission_date: formattedDate,
     },
   });
