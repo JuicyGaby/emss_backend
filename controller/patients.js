@@ -4,7 +4,9 @@ const {
   createPatient,
   updatePatient,
   getPatientAddress,
+  searchPatient,
 } = require("../repository/patients");
+const querystring = require("querystring");
 
 exports.getPatients = async function (req, res, next) {
   try {
@@ -48,6 +50,16 @@ exports.getPatientAddress = async function (req, res, next) {
   try {
     const address = await getPatientAddress(patient_id);
     res.send(address);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.searchPatient = async function (req, res, next) {
+  const search = req.params.search;
+  const searchObject = querystring.parse(search);
+  try {
+    const patient = await searchPatient(searchObject);
+    res.send(patient);
   } catch (error) {
     console.error(error);
   }

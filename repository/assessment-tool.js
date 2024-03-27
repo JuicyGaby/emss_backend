@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const moment = require("moment-timezone");
 
 // * interview
 
@@ -26,11 +27,23 @@ async function createInterview(reqBody) {
   return interview;
 }
 async function getInterviewById(patient_id) {
-  const interview = await prisma.patient_interview.findFirst({
+  let interview = await prisma.patient_interview.findFirst({
     where: {
       patient_id: parseInt(patient_id),
     },
   });
+
+  if (interview) {
+    interview = {
+      ...interview,
+      interview_date: moment(interview.interview_date)
+        .local()
+        .format("YYYY-MM-DD"),
+      admission_date_and_time: moment(interview.admission_date)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  }
   return interview || false;
 }
 async function updateInterviewById(patient_id, reqBody) {

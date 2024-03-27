@@ -4,10 +4,14 @@ const moment = require("moment");
 
 async function getPatients() {
   const patients = await prisma.patients.findMany({
-
+    orderBy: {
+      last_name: "asc",
+    },
+    take: 15,
   });
   patients.map((patient) => {
-    patient.fullname = `${patient.first_name} ${patient.last_name}`.toUpperCase();
+    patient.fullname =
+      `${patient.first_name} ${patient.last_name}`.toUpperCase();
   });
   return patients || [];
 }
@@ -29,6 +33,29 @@ async function getPatientAddress(patient_id) {
     return false;
   }
   return address;
+}
+
+async function searchPatient(search) {
+  console.log(search.first_name, search.last_name);
+  const patients = await prisma.patients.findMany({
+    where: {
+      first_name: {
+        contains: search.first_name,
+      },
+      last_name: {
+        contains: search.last_name,
+      },
+    },
+    orderBy: {
+      last_name: "asc",
+    },
+    take: 5,
+  });
+  patients.map((patient) => {
+    patient.fullname =
+      `${patient.first_name} ${patient.last_name}`.toUpperCase();
+  });
+  return patients || [];
 }
 
 async function createPatient(reqBody) {
@@ -134,7 +161,6 @@ async function createPatientInterview(interview, patientId) {
   });
   console.log("created interview", newInterview);
 }
-
 async function updatePatient(reqBody) {
   const patient = await prisma.patients.update({
     where: {
@@ -171,4 +197,5 @@ module.exports = {
   createPatient,
   updatePatient,
   getPatientAddress,
+  searchPatient,
 };

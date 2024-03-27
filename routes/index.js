@@ -24,12 +24,11 @@ module.exports = router;
 
 
 // * patients
-
 router.get('/patients', patients.getPatients)
 router.get('/patients/:id', patients.getPatientById)
 router.post('/patients', patients.createPatient)
 router.put('/patients', patients.updatePatient)
-
+router.get('/search-patient/:search', patients.searchPatient)
 // * assesment-tool
 
 // ? interview
