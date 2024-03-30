@@ -393,6 +393,7 @@ model daily_activity_report {
   created_by              String?             @db.VarChar(100)
   date_created            DateTime            @default(now()) @db.DateTime(0)
   dar_case_services       dar_case_services[]
+  dar_notes               dar_notes[]
 }
 
 model dar_services {
@@ -408,6 +409,15 @@ model dar_case_services {
 
   dar_services          dar_services          @relation(fields: [dar_service_id], references: [id])
   daily_activity_report daily_activity_report @relation(fields: [dar_id], references: [id])
+}
+
+model dar_notes {
+  id         Int                   @id @default(autoincrement())
+  dar_id     Int
+  note       String?               @db.VarChar(255)
+  created_by String?               @db.VarChar(100)
+  date       DateTime              @default(now()) @db.DateTime(0)
+  dar        daily_activity_report @relation(fields: [dar_id], references: [id])
 }
 
 model dar_swa {

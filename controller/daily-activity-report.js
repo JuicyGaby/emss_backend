@@ -34,6 +34,17 @@ exports.updateDailyActivityReport = async function (req, res, next) {
     console.error(error);
   }
 };
+
+exports.darCreatePatient = async function (req, res, next) {
+  const body = req.body;
+  try {
+    const darItem = await repository.darCreatePatient(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 // SWA
 exports.createSocialWorkAdministration = async function (req, res, next) {
   try {
@@ -63,6 +74,15 @@ exports.getSocialWorkAdministrationById = async function (req, res, next) {
 exports.updateSocialWorkAdministration = async function (req, res, next) {
   try {
     const darItem = await repository.updateSocialWorkAdministration(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+exports.getDarServices = async function (req, res, next) {
+  try {
+    const darItem = await repository.getDarServices();
     res.send(darItem);
   } catch (error) {
     console.error(error);

@@ -49,11 +49,11 @@ async function searchPatient(search) {
     orderBy: {
       last_name: "asc",
     },
-    take: 5,
+    take: 20,
   });
   patients.map((patient) => {
     patient.fullname =
-      `${patient.first_name} ${patient.last_name}`.toUpperCase();
+      `${patient.first_name} ${patient.middle_name} ${patient.last_name}`.toUpperCase();
   });
   return patients || [];
 }

@@ -75,6 +75,19 @@ exports.updateDailyActivityReport = async function (reqBody) {
   return darItem;
 };
 
+exports.darCreatePatient = async function (reqBody) {
+  // const patient = await prisma.patient.create({
+  //   data: {
+  //     first_name: reqBody.first_name,
+  //     middle_name: reqBody.middle_name,
+  //     last_name: reqBody.last_name,
+  //     age: reqBody.age,
+  //     civil_status: reqBody.civil_status,
+  //   },
+  // });
+  // return patient;
+};
+
 exports.createSocialWorkAdministration = async function (reqBody) {
   const formattedDate = moment(reqBody.admission_date).toISOString();
   const swaItem = await prisma.dar_swa.create({
@@ -85,16 +98,20 @@ exports.createSocialWorkAdministration = async function (reqBody) {
     },
   });
   console.log("Created", swaItem);
-  swaItem.admission_date = moment(swaItem.admission_date).local().format('YYYY-MM-DD hh:mm A');
+  swaItem.admission_date = moment(swaItem.admission_date)
+    .local()
+    .format("YYYY-MM-DD hh:mm A");
   return swaItem;
 };
 exports.getSocialWorkAdministration = async function (reqBody) {
   const swa = await prisma.dar_swa.findMany();
-  
-  const swaLocalTime = swa.map(item => {
+
+  const swaLocalTime = swa.map((item) => {
     return {
       ...item,
-      admission_date: moment(item.admission_date).local().format('YYYY-MM-DD hh:mm A'),
+      admission_date: moment(item.admission_date)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
     };
   });
 
@@ -102,6 +119,10 @@ exports.getSocialWorkAdministration = async function (reqBody) {
 };
 exports.getSocialWorkAdministrationById = async function (swa_id) {};
 exports.updateSocialWorkAdministration = async function (reqBody) {
-  // const { documentation,  } = reqBody;
   console.log(reqBody);
+};
+
+exports.getDarServices = async function () {
+  const services = await prisma.dar_services.findMany();
+  return services || [];
 };
