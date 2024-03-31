@@ -5,7 +5,9 @@ const moment = require("moment-timezone");
 exports.createDailyActivityReport = async function (reqBody) {
   const { isExisting } = reqBody;
   if (isExisting) {
-    const darItem = await updateDailyActivityReport(reqBody);
+    console.log("Existing", reqBody);
+    const darItem = await createDarItem(reqBody);
+    const services = await createDarServicesItem(darItem.id, reqBody.services);
     return darItem;
   }
   const patient = await createPatientItem(reqBody);
@@ -33,6 +35,19 @@ async function createDarItem(reqBody) {
       created_by: reqBody.creatorFullName,
     },
   });
+}
+async function createDarServicesItem(darId, services) {
+  const darServices = await Promise.all(
+    services.map((serviceId) => {
+      return prisma.dar_case_services.create({
+        data: {
+          dar_service_id: serviceId,
+          dar_id: darId,
+        },
+      });
+    })
+  );
+  return darServices;
 }
 
 exports.getDailyActivityReport = async function (reqBody) {
