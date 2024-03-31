@@ -3,7 +3,18 @@ const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
 exports.createDailyActivityReport = async function (reqBody) {
-  const patient = await prisma.patients.create({
+  const { isExisting } = reqBody;
+  if (isExisting) {
+    const darItem = await updateDailyActivityReport(reqBody);
+    return darItem;
+  }
+  const patient = await createPatientItem(reqBody);
+  reqBody.patient_id = patient.id;
+  const darItem = await createDarItem(reqBody);
+  return darItem;
+};
+async function createPatientItem(reqBody) {
+  return await prisma.patients.create({
     data: {
       first_name: reqBody.first_name,
       middle_name: reqBody.middle_name,
@@ -13,19 +24,16 @@ exports.createDailyActivityReport = async function (reqBody) {
       civil_status: reqBody.civil_status,
     },
   });
-  if (!patient) return false;
-  console.log("Patient created", patient);
-  const darItem = await prisma.daily_activity_report.create({
+}
+async function createDarItem(reqBody) {
+  return await prisma.daily_activity_report.create({
     data: {
-      patient_id: patient.id,
+      patient_id: reqBody.patient_id,
       creator_id: reqBody.creatorId,
       created_by: reqBody.creatorFullName,
-      date_created: moment().format("YYYY-MM-DDTHH:mm:ss.sssZ"),
     },
   });
-  console.log("Created", darItem);
-  return darItem;
-};
+}
 
 exports.getDailyActivityReport = async function (reqBody) {
   const dar = await prisma.daily_activity_report.findMany({
