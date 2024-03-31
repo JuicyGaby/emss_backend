@@ -76,16 +76,7 @@ exports.updateDailyActivityReport = async function (reqBody) {
 };
 
 exports.darCreatePatient = async function (reqBody) {
-  // const patient = await prisma.patient.create({
-  //   data: {
-  //     first_name: reqBody.first_name,
-  //     middle_name: reqBody.middle_name,
-  //     last_name: reqBody.last_name,
-  //     age: reqBody.age,
-  //     civil_status: reqBody.civil_status,
-  //   },
-  // });
-  // return patient;
+  console.log(reqBody);
 };
 
 exports.createSocialWorkAdministration = async function (reqBody) {
