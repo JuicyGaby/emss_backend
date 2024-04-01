@@ -28,13 +28,21 @@ async function createPatientItem(reqBody) {
   });
 }
 async function createDarItem(reqBody) {
-  return await prisma.daily_activity_report.create({
+  const darItem = await prisma.daily_activity_report.create({
     data: {
       patient_id: reqBody.patient_id,
       creator_id: reqBody.creatorId,
       created_by: reqBody.creatorFullName,
     },
   });
+  const patient = await prisma.patients.findUnique({
+    where: {
+      id: reqBody.patient_id,
+    },
+  });
+  darItem.fullname =
+    `${patient.first_name} ${patient.middle_name} ${patient.last_name}`.toUpperCase();
+  return darItem;
 }
 async function createDarServicesItem(darId, services) {
   const darServices = await Promise.all(
@@ -51,21 +59,30 @@ async function createDarServicesItem(darId, services) {
 }
 
 exports.getDailyActivityReport = async function (reqBody) {
-  const dar = await prisma.daily_activity_report.findMany({
-    select: {
-      id: true,
-      admission_date: true,
-      patient_name: true,
-      age: true,
-      sex: true,
+  let dar = await prisma.daily_activity_report.findMany({
+    include: {
+      patients: true,
     },
   });
-  return dar || [];
+  const darLocalTime = dar.map((item) => {
+    return {
+      ...item,
+      fullname:
+        `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return darLocalTime || [];
 };
 exports.getDailyActivityReportById = async function (dar_id) {
   const dar = await prisma.daily_activity_report.findUnique({
     where: {
       id: parseInt(dar_id),
+    },
+    include: {
+      patients: true,
     },
   });
   return dar || false;

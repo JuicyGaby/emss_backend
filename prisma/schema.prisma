@@ -392,12 +392,13 @@ model dar_case_services {
 }
 
 model dar_notes {
-  id         Int                   @id @default(autoincrement())
-  dar_id     Int
-  note       String?               @db.VarChar(255)
-  created_by String?               @db.VarChar(100)
-  date       DateTime              @default(now()) @db.DateTime(0)
-  dar        daily_activity_report @relation(fields: [dar_id], references: [id])
+  id           Int                   @id @default(autoincrement())
+  dar_id       Int
+  note_title   String?               @db.VarChar(100)
+  note_body    String?               @db.VarChar(500)
+  created_by   String?               @db.VarChar(100)
+  date_created DateTime              @default(now()) @db.DateTime(0)
+  dar          daily_activity_report @relation(fields: [dar_id], references: [id])
 }
 
 model dar_swa {
