@@ -164,12 +164,14 @@ exports.getDarServices = async function () {
 };
 
 exports.createDarNote = async function (reqBody) {
+  console.log(reqBody);
   const darNote = await prisma.dar_notes.create({
     data: {
       dar_id: reqBody.dar_id,
       note_title: reqBody.note_title,
       note_body: reqBody.note_body,
       created_by: reqBody.created_by,
+      creator_id: reqBody.creator_id,
     },
   });
   return darNote;

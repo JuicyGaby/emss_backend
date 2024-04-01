@@ -397,6 +397,7 @@ model dar_notes {
   note_title   String?               @db.VarChar(100)
   note_body    String?               @db.VarChar(500)
   created_by   String?               @db.VarChar(100)
+  creator_id   Int?
   date_created DateTime              @default(now()) @db.DateTime(0)
   dar          daily_activity_report @relation(fields: [dar_id], references: [id])
 }
