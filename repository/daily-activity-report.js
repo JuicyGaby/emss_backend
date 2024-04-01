@@ -7,12 +7,15 @@ exports.createDailyActivityReport = async function (reqBody) {
   if (isExisting) {
     console.log("Existing", reqBody);
     const darItem = await createDarItem(reqBody);
-    const services = await createDarServicesItem(darItem.id, reqBody.services);
+    await createDarServicesItem(darItem.id, reqBody.services);
     return darItem;
   }
   const patient = await createPatientItem(reqBody);
   reqBody.patient_id = patient.id;
   const darItem = await createDarItem(reqBody);
+  const services = await createDarServicesItem(darItem.id, reqBody.services);
+  console.log("Created", darItem);
+  console.log("services", services);
   return darItem;
 };
 async function createPatientItem(reqBody) {
@@ -158,11 +161,64 @@ exports.updateSocialWorkAdministration = async function (reqBody) {
   console.log(reqBody);
 };
 
+// DAR services
 exports.getDarServices = async function () {
   const services = await prisma.dar_services.findMany();
   return services || [];
 };
+exports.getDarServicesByDarId = async function (dar_id) {
+  const services = await prisma.dar_case_services.findMany({
+    where: {
+      dar_id: parseInt(dar_id),
+    },
+    include: {
+      dar_services: true,
+    },
+  });
+  const servicesArray = services.map((item) => {
+    return item.dar_services;
+  });
+  return servicesArray || [];
+};
+exports.createDarServicesItem = async function (reqBody) {
+  console.log(reqBody);
+  const darServices = await Promise.all(
+    reqBody.services.map(async (serviceId) => {
+      // Check if a dar_case_services item with the same dar_service_id and dar_id already exists
+      const existingService = await prisma.dar_case_services.findUnique({
+        where: {
+          dar_service_id: parseInt(serviceId),
+          dar_id: parseInt(reqBody.dar_id),
+        },
+      });
 
+      // If it doesn't exist, create a new one
+      if (!existingService) {
+        const createdService = await prisma.dar_case_services.create({
+          data: {
+            dar_service_id: parseInt(serviceId),
+            dar_id: parseInt(reqBody.dar_id),
+          },
+          include: {
+            dar_services: true,
+          },
+        });
+
+        console.log(createdService);
+        return createdService;
+      }
+    })
+  );
+
+  // Filter out undefined values (services that already existed and were not created)
+  const filteredDarServices = darServices.filter(Boolean);
+ 
+  // log all created services
+  const servicesArray = filteredDarServices.map((item) => {
+    return item.dar_services;
+  });
+  return servicesArray;
+};
 exports.createDarNote = async function (reqBody) {
   console.log(reqBody);
   const darNote = await prisma.dar_notes.create({

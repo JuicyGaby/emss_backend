@@ -102,8 +102,12 @@ router.get('/employees', employees.employeeRights)
 router.post('/daily-activity-report', dailyActivityReport.createDailyActivityReport)
 router.get('/daily-activity-report', dailyActivityReport.getDailyActivityReport)
 router.get('/daily-activity-report/:id', dailyActivityReport.getDailyActivityReportById)
-router.get('/dar-services', dailyActivityReport.getDarServices)
 router.put('/daily-activity-report', dailyActivityReport.updateDailyActivityReport)
+
+// * DAR SERVICES
+router.get('/dar-services', dailyActivityReport.getDarServices)
+router.get('/dar-services/:id', dailyActivityReport.getDarServicesByDarId)
+router.post('/dar-services', dailyActivityReport.createDarServicesItem)
 
 //  * DAR NOTES
 router.post('/dar-notes', dailyActivityReport.createDarNote)
