@@ -124,10 +124,6 @@ exports.updateDailyActivityReport = async function (reqBody) {
   return darItem;
 };
 
-exports.darCreatePatient = async function (reqBody) {
-  console.log(reqBody);
-};
-
 exports.createSocialWorkAdministration = async function (reqBody) {
   const formattedDate = moment(reqBody.admission_date).toISOString();
   const swaItem = await prisma.dar_swa.create({
@@ -165,4 +161,52 @@ exports.updateSocialWorkAdministration = async function (reqBody) {
 exports.getDarServices = async function () {
   const services = await prisma.dar_services.findMany();
   return services || [];
+};
+
+exports.createDarNote = async function (reqBody) {
+  const darNote = await prisma.dar_notes.create({
+    data: {
+      dar_id: reqBody.dar_id,
+      note_title: reqBody.note_title,
+      note_body: reqBody.note_body,
+      created_by: reqBody.created_by,
+    },
+  });
+  return darNote;
+};
+exports.getDarNotes = async function (dar_id) {
+  const darNotes = await prisma.dar_notes.findMany({
+    where: {
+      dar_id: dar_id,
+    },
+  });
+  return darNotes;
+};
+exports.getDarNoteById = async function (note_id) {
+  const darNote = await prisma.dar_notes.findUnique({
+    where: {
+      id: note_id,
+    },
+  });
+  return darNote;
+};
+exports.updateDarNote = async function (reqBody) {
+  const darNote = await prisma.dar_notes.update({
+    where: {
+      id: reqBody.id,
+    },
+    data: {
+      note_title: reqBody.note_title,
+      note_body: reqBody.note_body,
+    },
+  });
+  return darNote;
+};
+exports.deleteDarNote = async function (note_id) {
+  const darNote = await prisma.dar_notes.delete({
+    where: {
+      id: note_id,
+    },
+  });
+  return darNote;
 };

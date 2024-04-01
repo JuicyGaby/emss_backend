@@ -35,16 +35,6 @@ exports.updateDailyActivityReport = async function (req, res, next) {
   }
 };
 
-exports.darCreatePatient = async function (req, res, next) {
-  const body = req.body;
-  try {
-    const darItem = await repository.darCreatePatient(req.body);
-    res.send(darItem);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 // SWA
 exports.createSocialWorkAdministration = async function (req, res, next) {
   try {
@@ -83,6 +73,49 @@ exports.updateSocialWorkAdministration = async function (req, res, next) {
 exports.getDarServices = async function (req, res, next) {
   try {
     const darItem = await repository.getDarServices();
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+exports.createDarNote = async function (req, res, next) {
+  try {
+    const darItem = await repository.createDarNote(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getDarNotes = async function (req, res, next) {
+  try {
+    const darItem = await repository.getDarNotes(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getDarNoteById = async function (req, res, next) {
+  try {
+    const darId = req.params.id;
+    const darItem = await repository.getDarNoteById(darId);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateDarNote = async function (req, res, next) {
+  try {
+    const darItem = await repository.updateDarNote(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.deleteDarNote = async function (req, res, next) {
+  try {
+    const darId = req.params.id;
+    const darItem = await repository.deleteDarNote(darId);
     res.send(darItem);
   } catch (error) {
     console.error(error);
