@@ -89,7 +89,8 @@ exports.createDarNote = async function (req, res, next) {
 };
 exports.getDarNotes = async function (req, res, next) {
   try {
-    const darItem = await repository.getDarNotes(req.body);
+    const dar_id = req.params.id;
+    const darItem = await repository.getDarNotes(dar_id);
     res.send(darItem);
   } catch (error) {
     console.error(error);
@@ -97,9 +98,9 @@ exports.getDarNotes = async function (req, res, next) {
 };
 exports.getDarNoteById = async function (req, res, next) {
   try {
-    const darId = req.params.id;
-    const darItem = await repository.getDarNoteById(darId);
-    res.send(darItem);
+    const noteId = req.params.id;
+    const noteItem = await repository.getDarNoteById(noteId);
+    res.send(noteItem);
   } catch (error) {
     console.error(error);
   }

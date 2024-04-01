@@ -174,22 +174,39 @@ exports.createDarNote = async function (reqBody) {
       creator_id: reqBody.creator_id,
     },
   });
-  return darNote;
+  const updatedDarNote = {
+    ...darNote,
+    date_created: moment(darNote.date_created)
+      .local()
+      .format("YYYY-MM-DD hh:mm A"),
+  };
+
+  return updatedDarNote;
 };
 exports.getDarNotes = async function (dar_id) {
   const darNotes = await prisma.dar_notes.findMany({
     where: {
-      dar_id: dar_id,
+      dar_id: parseInt(dar_id),
     },
   });
-  return darNotes;
+  const updatedDarNOtes = darNotes.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return updatedDarNOtes || [];
 };
 exports.getDarNoteById = async function (note_id) {
+  console.log(note_id);
   const darNote = await prisma.dar_notes.findUnique({
     where: {
-      id: note_id,
+      id: parseInt(note_id),
     },
   });
+  console.log(darNote);
   return darNote;
 };
 exports.updateDarNote = async function (reqBody) {

@@ -107,7 +107,7 @@ router.put('/daily-activity-report', dailyActivityReport.updateDailyActivityRepo
 
 //  * DAR NOTES
 router.post('/dar-notes', dailyActivityReport.createDarNote)
-router.get('/dar-notes', dailyActivityReport.getDarNotes)
+router.get('/user-dar-notes/:id', dailyActivityReport.getDarNotes)
 router.get('/dar-notes/:id', dailyActivityReport.getDarNoteById)
 router.put('/dar-notes', dailyActivityReport.updateDarNote)
 router.delete('/dar-notes/:id', dailyActivityReport.deleteDarNote)
