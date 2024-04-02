@@ -119,7 +119,15 @@ router.delete('/dar-notes/:id', dailyActivityReport.deleteDarNote)
 // * SWA
 router.post('/swa', dailyActivityReport.createSwaItem)
 router.get('/swa', dailyActivityReport.getSwaServices)
+router.get('/swa-services', dailyActivityReport.getDarSwaServices)
+router.get('/swa/:id', dailyActivityReport.getDarSwaServicesById)
 
+// * SWA NOTES
+router.post('/swa-notes', dailyActivityReport.createSwaNote)
+router.get('/swa-notes/:id', dailyActivityReport.getSwaNotes)
+router.get('/swa-note/:id', dailyActivityReport.getSwaNoteById)
+router.put('/swa-note', dailyActivityReport.updateSwaNote)
+router.delete('/swa-note/:id', dailyActivityReport.deleteSwaNote)
 
 
 

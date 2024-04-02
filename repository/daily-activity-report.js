@@ -3,6 +3,7 @@ const { parse } = require("dotenv");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
+// DAR
 exports.createDailyActivityReport = async function (reqBody) {
   const { isExisting } = reqBody;
   if (isExisting) {
@@ -164,20 +165,36 @@ exports.getSwaServices = async function () {
   const services = await prisma.swa_services.findMany();
   return services || [];
 };
-exports.getSwaServicesBySwaId = async function (dar_swa_id) {
-  const services = await prisma.dar_swa.findUnique({
+exports.getDarSwaServices = async function (reqBody) {
+  const services = await prisma.dar_swa_services.findMany({});
+  const updatedServices = services.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return services || [];
+};
+exports.getDarSwaServicesById = async function (swa_id) {
+  const darSwa = await prisma.dar_swa.findUnique({
     where: {
-      dar_swa_id: parseInt(dar_swa_id),
+      id: parseInt(swa_id),
     },
     include: {
-      swa_services: true,
+      dar_swa_services: true,
     },
   });
-  const servicesArray = services.map((item) => {
-    return item.swa_services;
-  });
-  return servicesArray || [];
+  return darSwa || false;
 };
+
+// SWA notes
+exports.createSwaNote = async function (reqBody) {};
+exports.getSwaNotes = async function (dar_swa_id) {};
+exports.getSwaNoteById = async function (note_id) {};
+exports.updateSwaNote = async function (reqBody) {};
+exports.deleteSwaNote = async function (note_id) {};
 
 // DAR services
 exports.getDarServices = async function () {

@@ -52,6 +52,69 @@ exports.getSwaServices = async function (req, res, next) {
     console.error(error);
   }
 };
+exports.getDarSwaServices = async function (req, res, next) {
+  try {
+    const darId = req.params.id;
+    const darItem = await repository.getDarSwaServices(darId);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getDarSwaServicesById = async function (req, res, next) {
+  try {
+    const swaId = req.params.id;
+    const darItem = await repository.getDarSwaServicesById(swaId);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+// SWA NOTES
+
+exports.createSwaNote = async function (req, res, next) {
+  try {
+    const darItem = await repository.createSwaNote(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getSwaNotes = async function (req, res, next) {
+  try {
+    const darId = req.params.id;
+    const darItem = await repository.getSwaNotes(darId);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getSwaNoteById = async function (req, res, next) {
+  try {
+    const noteId = req.params.id;
+    const noteItem = await repository.getSwaNoteById(noteId);
+    res.send(noteItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.updateSwaNote = async function (req, res, next) {
+  try {
+    const darItem = await repository.updateSwaNote(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.deleteSwaNote = async function (req, res, next) {
+  try {
+    const noteId = req.params.id;
+    const darItem = await repository.deleteSwaNoteById(noteId);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // DAR SERVICES
 exports.getDarServices = async function (req, res, next) {
