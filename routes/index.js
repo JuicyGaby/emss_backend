@@ -117,14 +117,8 @@ router.put('/dar-notes', dailyActivityReport.updateDarNote)
 router.delete('/dar-notes/:id', dailyActivityReport.deleteDarNote)
 
 // * SWA
-router.post('/social-work-administration', dailyActivityReport.createSocialWorkAdministration)
-router.get('/social-work-administration', dailyActivityReport.getSocialWorkAdministration)
-router.get('/social-work-administration/:id', dailyActivityReport.getSocialWorkAdministrationById)
-router.put('/social-work-administration', dailyActivityReport.updateSocialWorkAdministration)
-
-
-
-
+router.post('/swa', dailyActivityReport.createSwaItem)
+router.get('/swa', dailyActivityReport.getSwaServices)
 
 
 

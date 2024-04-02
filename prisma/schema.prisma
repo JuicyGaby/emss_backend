@@ -406,6 +406,7 @@ model dar_swa {
   id               Int                @id @default(autoincrement())
   created_by       String?            @db.VarChar(100)
   creator_name     String?            @db.VarChar(100)
+  creator_id       Int?
   date_created     DateTime           @default(now()) @db.DateTime(0)
   dar_swa_services dar_swa_services[]
   dar_swa_notes    dar_swa_notes[]
@@ -421,7 +422,6 @@ model dar_swa_services {
   id         Int          @id @default(autoincrement())
   dar_swa_id Int
   service_id Int
-  created_by String?      @db.VarChar(100)
   dar_swa    dar_swa      @relation(fields: [dar_swa_id], references: [id])
   services   swa_services @relation(fields: [service_id], references: [id])
 }

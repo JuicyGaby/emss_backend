@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { parse } = require("dotenv");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
@@ -127,38 +128,55 @@ exports.updateDailyActivityReport = async function (reqBody) {
   return darItem;
 };
 
-exports.createSocialWorkAdministration = async function (reqBody) {
-  const formattedDate = moment(reqBody.admission_date).toISOString();
+// SWA
+exports.createSwaItem = async function (reqBody) {
   const swaItem = await prisma.dar_swa.create({
     data: {
-      created_by: reqBody.id.toString(),
-      creator_name: reqBody.fullname,
-      admission_date: formattedDate,
+      creator_name: reqBody.creator_fullname,
+      creator_id: reqBody.creator_id,
     },
   });
-  console.log("Created", swaItem);
-  swaItem.admission_date = moment(swaItem.admission_date)
-    .local()
-    .format("YYYY-MM-DD hh:mm A");
-  return swaItem;
-};
-exports.getSocialWorkAdministration = async function (reqBody) {
-  const swa = await prisma.dar_swa.findMany();
-
-  const swaLocalTime = swa.map((item) => {
-    return {
-      ...item,
-      admission_date: moment(item.admission_date)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
-    };
-  });
-
-  return swaLocalTime || [];
-};
-exports.getSocialWorkAdministrationById = async function (swa_id) {};
-exports.updateSocialWorkAdministration = async function (reqBody) {
   console.log(reqBody);
+  const services = await createSwaServicesItem(swaItem.id, reqBody.services);
+  const updatedSwaItem = {
+    ...swaItem,
+    date_created: moment(swaItem.date_created)
+      .local()
+      .format("YYYY-MM-DD hh:mm A"),
+  };
+  console.log("Created", updatedSwaItem);
+  return updatedSwaItem;
+};
+async function createSwaServicesItem(swaId, services) {
+  const swaServices = await Promise.all(
+    services.map((serviceId) => {
+      return prisma.dar_swa_services.create({
+        data: {
+          dar_swa_id: parseInt(swaId),
+          service_id: parseInt(serviceId),
+        },
+      });
+    })
+  );
+  console.log(swaServices);
+}
+exports.getSwaServices = async function () {
+  const services = await prisma.swa_services.findMany();
+  return services || [];
+};
+exports.getSwaServicesBySwaId = async function (dar_swa_id) {
+  const services = await prisma.dar_swa.findUnique({
+    where: {
+      dar_swa_id: parseInt(dar_swa_id),
+    },
+    include: {
+      swa_services: true,
+    },
+  });
+  const servicesArray = services.map((item) => {
+    return item.swa_services;
+  });
+  return servicesArray || [];
 };
 
 // DAR services

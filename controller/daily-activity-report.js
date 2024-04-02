@@ -36,40 +36,24 @@ exports.updateDailyActivityReport = async function (req, res, next) {
 };
 
 // SWA
-exports.createSocialWorkAdministration = async function (req, res, next) {
+exports.createSwaItem = async function (req, res, next) {
   try {
-    const darItem = await repository.createSocialWorkAdministration(req.body);
-    res.send(darItem);
+    const swaItem = await repository.createSwaItem(req.body);
+    res.send(swaItem);
   } catch (error) {
     console.error(error);
   }
 };
-exports.getSocialWorkAdministration = async function (req, res, next) {
+exports.getSwaServices = async function (req, res, next) {
   try {
-    const darItem = await repository.getSocialWorkAdministration(req.body);
-    res.send(darItem);
-  } catch (error) {
-    console.error(error);
-  }
-};
-exports.getSocialWorkAdministrationById = async function (req, res, next) {
-  try {
-    const darId = req.params.id;
-    const darItem = await repository.getSocialWorkAdministrationById(darId);
-    res.send(darItem);
-  } catch (error) {
-    console.error(error);
-  }
-};
-exports.updateSocialWorkAdministration = async function (req, res, next) {
-  try {
-    const darItem = await repository.updateSocialWorkAdministration(req.body);
-    res.send(darItem);
+    const swaItem = await repository.getSwaServices();
+    res.send(swaItem);
   } catch (error) {
     console.error(error);
   }
 };
 
+// DAR SERVICES
 exports.getDarServices = async function (req, res, next) {
   try {
     const darItem = await repository.getDarServices();
@@ -87,7 +71,6 @@ exports.getDarServicesByDarId = async function (req, res, next) {
     console.error(error);
   }
 };
-
 exports.createDarServicesItem = async function (req, res, next) {
   try {
     const darItem = await repository.createDarServicesItem(req.body);
@@ -97,6 +80,7 @@ exports.createDarServicesItem = async function (req, res, next) {
   }
 };
 
+// DAR NOTES
 exports.createDarNote = async function (req, res, next) {
   try {
     const darItem = await repository.createDarNote(req.body);
