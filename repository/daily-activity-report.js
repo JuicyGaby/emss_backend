@@ -212,13 +212,15 @@ exports.createDarServicesItem = async function (reqBody) {
 
   // Filter out undefined values (services that already existed and were not created)
   const filteredDarServices = darServices.filter(Boolean);
- 
+
   // log all created services
   const servicesArray = filteredDarServices.map((item) => {
     return item.dar_services;
   });
   return servicesArray;
 };
+
+// DAR Notes
 exports.createDarNote = async function (reqBody) {
   console.log(reqBody);
   const darNote = await prisma.dar_notes.create({
@@ -280,7 +282,7 @@ exports.updateDarNote = async function (reqBody) {
 exports.deleteDarNote = async function (note_id) {
   const darNote = await prisma.dar_notes.delete({
     where: {
-      id: note_id,
+      id: parseInt(note_id),
     },
   });
   return darNote;
