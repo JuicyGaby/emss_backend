@@ -69,6 +69,15 @@ exports.getDarSwaId = async function (req, res, next) {
     console.error(error);
   }
 };
+exports.createSwaServicesItem = async function (req, res, next) {
+  try {
+    const darItem = await repository.createSwaServicesItem(req.body);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 // SWA NOTES
 
 exports.createSwaNote = async function (req, res, next) {

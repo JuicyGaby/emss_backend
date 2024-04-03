@@ -121,6 +121,8 @@ router.post('/swa', dailyActivityReport.createSwaItem)
 router.get('/swa', dailyActivityReport.getSwaServices)
 router.get('/dar_swa', dailyActivityReport.getDarSwa)
 router.get('/dar_swa/:id', dailyActivityReport.getDarSwaId)
+// createSwaServicesItem
+router.post('/swa-services', dailyActivityReport.createSwaServicesItem)
 
 // * SWA NOTES
 router.post('/swa-notes', dailyActivityReport.createSwaNote)

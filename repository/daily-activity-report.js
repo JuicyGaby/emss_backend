@@ -191,8 +191,47 @@ exports.getDarSwaId = async function (dar_swa_id) {
   });
   return servicesArray || [];
 };
+
+exports.createSwaServicesItem = async function (reqBody) {
+  const swaServices = await Promise.all(
+    reqBody.services.map(async (serviceId) => {
+      // Check if a dar_swa_services item with the same service_id and dar_swa_id already exists
+      const existingService = await prisma.dar_swa_services.findUnique({
+        where: {
+          service_id: parseInt(serviceId),
+          dar_swa_id: parseInt(reqBody.dar_swa_id),
+        },
+      });
+
+      // If it doesn't exist, create a new one
+      if (!existingService) {
+        const createdService = await prisma.dar_swa_services.create({
+          data: {
+            service_id: parseInt(serviceId),
+            dar_swa_id: parseInt(reqBody.dar_swa_id),
+          },
+          include: {
+            services: true,
+          },
+        });
+
+        console.log(createdService);
+        return createdService;
+      }
+    })
+  );
+  // Filter out undefined values (services that already existed and were not created)
+  const filteredSwaServices = swaServices.filter(Boolean);
+  // log all created services
+  const servicesArray = filteredSwaServices.map((item) => {
+    return item.services;
+  });
+  return servicesArray;
+}
+
 // SWA notes
-exports.createSwaNote = async function (reqBody) {};
+exports.createSwaNote = async function (reqBody) {
+};
 exports.getSwaNotes = async function (dar_swa_id) {};
 exports.getSwaNoteById = async function (note_id) {};
 exports.updateSwaNote = async function (reqBody) {};
