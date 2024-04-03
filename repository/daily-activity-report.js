@@ -166,8 +166,8 @@ exports.getSwaServices = async function () {
   return services || [];
 };
 exports.getDarSwaServices = async function (reqBody) {
-  const services = await prisma.dar_swa_services.findMany({});
-  const updatedServices = services.map((item) => {
+  const dar_swa = await prisma.dar_swa.findMany({});
+  const updated_dar_swa = dar_swa.map((item) => {
     return {
       ...item,
       date_created: moment(item.date_created)
@@ -175,7 +175,7 @@ exports.getDarSwaServices = async function (reqBody) {
         .format("YYYY-MM-DD hh:mm A"),
     };
   });
-  return services || [];
+  return updated_dar_swa || [];
 };
 exports.getDarSwaServicesById = async function (swa_id) {
   const darSwa = await prisma.dar_swa.findUnique({
