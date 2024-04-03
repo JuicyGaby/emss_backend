@@ -165,7 +165,7 @@ exports.getSwaServices = async function () {
   const services = await prisma.swa_services.findMany();
   return services || [];
 };
-exports.getDarSwaServices = async function (reqBody) {
+exports.getDarSwa = async function (reqBody) {
   const dar_swa = await prisma.dar_swa.findMany({});
   const updated_dar_swa = dar_swa.map((item) => {
     return {
@@ -177,18 +177,20 @@ exports.getDarSwaServices = async function (reqBody) {
   });
   return updated_dar_swa || [];
 };
-exports.getDarSwaServicesById = async function (swa_id) {
-  const darSwa = await prisma.dar_swa.findUnique({
+exports.getDarSwaId = async function (dar_swa_id) {
+  const darSwaServices = await prisma.dar_swa_services.findMany({
     where: {
-      id: parseInt(swa_id),
+      dar_swa_id: parseInt(dar_swa_id),
     },
     include: {
-      dar_swa_services: true,
+      services: true,
     },
   });
-  return darSwa || false;
+  const servicesArray = darSwaServices.map((item) => {
+    return item.services;
+  });
+  return servicesArray || [];
 };
-
 // SWA notes
 exports.createSwaNote = async function (reqBody) {};
 exports.getSwaNotes = async function (dar_swa_id) {};

@@ -54,7 +54,7 @@ exports.getSwaServices = async function (req, res, next) {
 };
 exports.getDarSwa = async function (req, res, next) {
   try {
-    const darItem = await repository.getDarSwaServices();
+    const darItem = await repository.getDarSwa();
     res.send(darItem);
   } catch (error) {
     console.error(error);
@@ -63,7 +63,7 @@ exports.getDarSwa = async function (req, res, next) {
 exports.getDarSwaId = async function (req, res, next) {
   try {
     const swaId = req.params.id;
-    const darItem = await repository.getDarSwaServicesById(swaId);
+    const darItem = await repository.getDarSwaId(swaId);
     res.send(darItem);
   } catch (error) {
     console.error(error);
