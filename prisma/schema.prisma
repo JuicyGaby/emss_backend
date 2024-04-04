@@ -367,11 +367,26 @@ model ph_barangays {
 // DAR 
 
 model daily_activity_report {
-  id                Int                 @id @default(autoincrement())
-  patient_id        Int
-  creator_id        Int?
-  created_by        String?             @db.VarChar(100)
-  date_created      DateTime            @default(now()) @db.DateTime(0)
+  id                      Int      @id @default(autoincrement())
+  patient_id              Int
+  creator_id              Int?
+  created_by              String?  @db.VarChar(100)
+  date_created            DateTime @default(now()) @db.DateTime(0)
+  area                    String?  @db.VarChar(100)
+  case_type               String?  @db.VarChar(100)
+  indirect_contributor    String?  @db.VarChar(100)
+  phic_classification     String?  @db.VarChar(100)
+  non_phic_classification String?  @db.VarChar(100)
+  sectoral_grouping       String?  @db.VarChar(100)
+  house_hold_size         String?  @db.VarChar(100)
+  source_of_referral      String?  @db.VarChar(100)
+  diagnosis               String?  @db.VarChar(100)
+  informant               String?  @db.VarChar(100)
+  relationship_to_patient String?  @db.VarChar(100)
+  interview_start_time    String?  @db.VarChar(100)
+  interview_end_time      String?  @db.VarChar(100)
+  remarks                 String?  @db.VarChar(255)
+
   dar_case_services dar_case_services[]
   dar_notes         dar_notes[]
   patients          patients            @relation(fields: [patient_id], references: [id])

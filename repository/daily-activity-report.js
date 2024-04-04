@@ -29,6 +29,8 @@ async function createPatientItem(reqBody) {
       age: reqBody.age,
       sex: reqBody.sex,
       civil_status: reqBody.civil_status,
+      occupation: reqBody.occupation,
+      highest_education_level: reqBody.highest_education_level,
     },
   });
 }
@@ -82,7 +84,7 @@ exports.getDailyActivityReport = async function (reqBody) {
   return darLocalTime || [];
 };
 exports.getDailyActivityReportById = async function (dar_id) {
-  const dar = await prisma.daily_activity_report.findUnique({
+  let dar = await prisma.daily_activity_report.findUnique({
     where: {
       id: parseInt(dar_id),
     },
@@ -90,6 +92,9 @@ exports.getDailyActivityReportById = async function (dar_id) {
       patients: true,
     },
   });
+  dar.date_created = moment(dar.date_created)
+    .local()
+    .format("YYYY-MM-DD hh:mm A");
   return dar || false;
 };
 exports.updateDailyActivityReport = async function (reqBody) {
