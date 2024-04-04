@@ -117,7 +117,7 @@ exports.updateSwaNote = async function (req, res, next) {
 exports.deleteSwaNote = async function (req, res, next) {
   try {
     const noteId = req.params.id;
-    const darItem = await repository.deleteSwaNoteById(noteId);
+    const darItem = await repository.deleteSwaNote(noteId);
     res.send(darItem);
   } catch (error) {
     console.error(error);
