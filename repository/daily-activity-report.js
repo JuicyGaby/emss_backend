@@ -193,22 +193,23 @@ exports.getDarSwaId = async function (dar_swa_id) {
 };
 
 exports.createSwaServicesItem = async function (reqBody) {
+  console.log(reqBody);
   const swaServices = await Promise.all(
     reqBody.services.map(async (serviceId) => {
       // Check if a dar_swa_services item with the same service_id and dar_swa_id already exists
-      const existingService = await prisma.dar_swa_services.findUnique({
+      const existingServices = await prisma.dar_swa_services.findMany({
         where: {
           service_id: parseInt(serviceId),
-          dar_swa_id: parseInt(reqBody.dar_swa_id),
+          dar_swa_id: parseInt(reqBody.swa_id),
         },
       });
 
       // If it doesn't exist, create a new one
-      if (!existingService) {
+      if (existingServices.length === 0) {
         const createdService = await prisma.dar_swa_services.create({
           data: {
             service_id: parseInt(serviceId),
-            dar_swa_id: parseInt(reqBody.dar_swa_id),
+            dar_swa_id: parseInt(reqBody.swa_id),
           },
           include: {
             services: true,
@@ -227,15 +228,79 @@ exports.createSwaServicesItem = async function (reqBody) {
     return item.services;
   });
   return servicesArray;
-}
+};
 
 // SWA notes
 exports.createSwaNote = async function (reqBody) {
+  console.log(reqBody);
+  const swaNote = await prisma.dar_swa_notes.create({
+    data: {
+      dar_swa_id: reqBody.dar_swa_id,
+      note_title: reqBody.note_title,
+      note_body: reqBody.note_body,
+      created_by: reqBody.created_by,
+      creator_id: reqBody.creator_id,
+    },
+  });
+  const updatedSwaNote = {
+    ...swaNote,
+    date_created: moment(swaNote.date_created)
+      .local()
+      .format("YYYY-MM-DD hh:mm A"),
+  };
+  return updatedSwaNote;
 };
-exports.getSwaNotes = async function (dar_swa_id) {};
-exports.getSwaNoteById = async function (note_id) {};
-exports.updateSwaNote = async function (reqBody) {};
-exports.deleteSwaNote = async function (note_id) {};
+exports.getSwaNotes = async function (dar_swa_id) {
+  const swaNotes = await prisma.dar_swa_notes.findMany({
+    where: {
+      dar_swa_id: parseInt(dar_swa_id),
+    },
+  });
+  const updatedSwaNotes = swaNotes.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return updatedSwaNotes || [];
+};
+exports.getSwaNoteById = async function (note_id) {
+  const swaNote = await prisma.dar_swa_notes.findUnique({
+    where: {
+      id: parseInt(note_id),
+    },
+  });
+  console.log(swaNote);
+  return swaNote;
+};
+exports.updateSwaNote = async function (reqBody) {
+  let swaNote = await prisma.dar_swa_notes.update({
+    where: {
+      id: reqBody.id,
+    },
+    data: {
+      note_title: reqBody.note_title,
+      note_body: reqBody.note_body,
+    },
+  });
+  swaNote = {
+    ...swaNote,
+    date_created: moment(swaNote.date_created)
+      .local()
+      .format("YYYY-MM-DD hh:mm A"),
+  };
+  return swaNote;
+};
+exports.deleteSwaNote = async function (note_id) {
+  const swaNote = await prisma.dar_swa_notes.delete({
+    where: {
+      id: parseInt(note_id),
+    },
+  });
+  return swaNote;
+};
 
 // DAR services
 exports.getDarServices = async function () {
