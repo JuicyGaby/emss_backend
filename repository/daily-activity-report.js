@@ -137,41 +137,52 @@ exports.getDailyActivityReportByDate = async function (date) {
   return darLocalTime || [];
 };
 exports.updateDailyActivityReport = async function (reqBody) {
+  const { patients } = reqBody;
+  await updateDarPatientItem(patients);
   const darItem = await prisma.daily_activity_report.update({
     where: {
-      id: reqBody.id,
+      id: parseInt(reqBody.id),
     },
     data: {
-      admission_date: moment
-        .tz(reqBody.admission_date, "Asia/Manila")
-        .format("YYYY-MM-DDTHH:mm:ss.SSSZ"),
-      patient_name: reqBody.patient_name,
-      age: reqBody.age,
-      sex: reqBody.sex,
-      address: reqBody.address,
-      civil_status: reqBody.civil_status,
       area: reqBody.area,
       case_type: reqBody.case_type,
-      contributor_type: reqBody.contributor_type,
+      indirect_contributor: reqBody.indirect_contributor,
       phic_classification: reqBody.phic_classification,
       non_phic_classification: reqBody.non_phic_classification,
+      sectoral_grouping: reqBody.sectoral_grouping,
+      house_hold_size: reqBody.house_hold_size,
+      source_of_referral: reqBody.source_of_referral,
+      diagnosis: reqBody.diagnosis,
+      informant: reqBody.informant,
+      relationship_to_patient: reqBody.relationship_to_patient,
       interview_start_time: reqBody.interview_start_time,
       interview_end_time: reqBody.interview_end_time,
-      sectoral_grouping: reqBody.sectoral_grouping,
-      educational_attainment: reqBody.educational_attainment,
-      religion: reqBody.religion,
-      occupation: reqBody.occupation,
-      household_size: reqBody.household_size,
-      monthly_income: reqBody.monthly_income,
-      referral_source: reqBody.referral_source,
-      diagnosis: reqBody.diagnosis,
-      informant_name: reqBody.informant_name,
-      relationship_to_patient: reqBody.relationship_to_patient,
+      remarks: reqBody.remarks,
     },
   });
-  console.log("Updated", darItem);
+  console.log("Updated DAR", darItem);
   return darItem;
 };
+async function updateDarPatientItem(patientData) {
+  const patient = await prisma.patients.update({
+    where: {
+      id: parseInt(patientData.id),
+    },
+    data: {
+      first_name: patientData.first_name,
+      middle_name: patientData.middle_name,
+      last_name: patientData.last_name,
+      age: patientData.age,
+      sex: patientData.sex,
+      religion: patientData.religion,
+      civil_status: patientData.civil_status,
+      occupation: patientData.occupation,
+      monthly_income: patientData.monthly_income,
+      highest_education_level: patientData.highest_education_level,
+    },
+  });
+  console.log("Updated Patient", patient);
+}
 
 // SWA
 exports.createSwaItem = async function (reqBody) {
