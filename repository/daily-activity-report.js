@@ -170,8 +170,21 @@ exports.getSwaServices = async function () {
   const services = await prisma.swa_services.findMany();
   return services || [];
 };
-exports.getDarSwa = async function (reqBody) {
-  const dar_swa = await prisma.dar_swa.findMany({});
+exports.getDarSwa = async function () {
+  // Set 'today' to April 4, 2024
+  //const today = moment("2024-04-04").startOf('day');
+  const today = moment().startOf("day");
+  const tomorrow = moment(today).add(1, "days");
+
+  const dar_swa = await prisma.dar_swa.findMany({
+    where: {
+      date_created: {
+        gte: today.toDate(),
+        lt: tomorrow.toDate(),
+      },
+    },
+  });
+
   const updated_dar_swa = dar_swa.map((item) => {
     return {
       ...item,
@@ -180,6 +193,31 @@ exports.getDarSwa = async function (reqBody) {
         .format("YYYY-MM-DD hh:mm A"),
     };
   });
+
+  return updated_dar_swa || [];
+};
+exports.getDarSwaByDate = async function (date) {
+  const today = moment(date).startOf("day");
+  const tomorrow = moment(today).add(1, "days");
+
+  const dar_swa = await prisma.dar_swa.findMany({
+    where: {
+      date_created: {
+        gte: today.toDate(),
+        lt: tomorrow.toDate(),
+      },
+    },
+  });
+
+  const updated_dar_swa = dar_swa.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+
   return updated_dar_swa || [];
 };
 exports.getDarSwaId = async function (dar_swa_id) {

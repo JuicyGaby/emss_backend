@@ -60,6 +60,15 @@ exports.getDarSwa = async function (req, res, next) {
     console.error(error);
   }
 };
+exports.getDarSwaByDate = async function (req, res, next) {
+  try {
+    const date = req.params.date;
+    const darItem = await repository.getDarSwaByDate(date);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
 exports.getDarSwaId = async function (req, res, next) {
   try {
     const swaId = req.params.id;
