@@ -25,6 +25,16 @@ exports.getDailyActivityReportById = async function (req, res, next) {
     console.error(error);
   }
 };
+// getDailyActivityReportByDate
+exports.getDailyActivityReportByDate = async function (req, res, next) {
+  try {
+    const date = req.params.date;
+    const darItem = await repository.getDailyActivityReportByDate(date);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
 exports.updateDailyActivityReport = async function (req, res, next) {
   try {
     const darItem = await repository.updateDailyActivityReport(req.body);

@@ -66,11 +66,21 @@ async function createDarServicesItem(darId, services) {
 }
 
 exports.getDailyActivityReport = async function (reqBody) {
+  const today = moment().startOf("day");
+  const tomorrow = moment(today).add(1, "days");
+
   let dar = await prisma.daily_activity_report.findMany({
+    where: {
+      date_created: {
+        gte: today.toDate(),
+        lt: tomorrow.toDate(),
+      },
+    },
     include: {
       patients: true,
     },
   });
+
   const darLocalTime = dar.map((item) => {
     return {
       ...item,
@@ -81,6 +91,7 @@ exports.getDailyActivityReport = async function (reqBody) {
         .format("YYYY-MM-DD hh:mm A"),
     };
   });
+
   return darLocalTime || [];
 };
 exports.getDailyActivityReportById = async function (dar_id) {
@@ -96,6 +107,34 @@ exports.getDailyActivityReportById = async function (dar_id) {
     .local()
     .format("YYYY-MM-DD hh:mm A");
   return dar || false;
+};
+exports.getDailyActivityReportByDate = async function (date) {
+  const today = moment(date).startOf("day");
+  const tomorrow = moment(today).add(1, "days");
+
+  let dar = await prisma.daily_activity_report.findMany({
+    where: {
+      date_created: {
+        gte: today.toDate(),
+        lt: tomorrow.toDate(),
+      },
+    },
+    include: {
+      patients: true,
+    },
+  });
+
+  const darLocalTime = dar.map((item) => {
+    return {
+      ...item,
+      fullname:
+        `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return darLocalTime || [];
 };
 exports.updateDailyActivityReport = async function (reqBody) {
   const darItem = await prisma.daily_activity_report.update({

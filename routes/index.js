@@ -103,6 +103,7 @@ router.post('/daily-activity-report', dailyActivityReport.createDailyActivityRep
 router.get('/daily-activity-report', dailyActivityReport.getDailyActivityReport)
 router.get('/daily-activity-report/:id', dailyActivityReport.getDailyActivityReportById)
 router.put('/daily-activity-report', dailyActivityReport.updateDailyActivityReport)
+router.get('/daily-activity-report-by-date/:date', dailyActivityReport.getDailyActivityReportByDate)
 
 // * DAR SERVICES
 router.get('/dar-services', dailyActivityReport.getDarServices)
@@ -121,9 +122,7 @@ router.post('/swa', dailyActivityReport.createSwaItem)
 router.get('/swa', dailyActivityReport.getSwaServices)
 router.get('/dar_swa', dailyActivityReport.getDarSwa)
 router.get('/dar_swa/:id', dailyActivityReport.getDarSwaId)
-// getDarSwaByDate
 router.get('/dar_swa_by_date/:date', dailyActivityReport.getDarSwaByDate)
-// createSwaServicesItem
 router.post('/swa-services', dailyActivityReport.createSwaServicesItem)
 
 // * SWA NOTES
