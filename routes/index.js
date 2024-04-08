@@ -104,6 +104,7 @@ router.get('/daily-activity-report', dailyActivityReport.getDailyActivityReport)
 router.get('/daily-activity-report/:id', dailyActivityReport.getDailyActivityReportById)
 router.put('/daily-activity-report', dailyActivityReport.updateDailyActivityReport)
 router.get('/daily-activity-report-by-date/:date', dailyActivityReport.getDailyActivityReportByDate)
+router.get('/dar-by-month/:month', dailyActivityReport.getDarByMonth)
 
 // * DAR SERVICES
 router.get('/dar-services', dailyActivityReport.getDarServices)

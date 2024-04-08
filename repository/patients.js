@@ -9,11 +9,14 @@ async function getPatients() {
     },
     take: 15,
   });
-  patients.map((patient) => {
-    patient.fullname =
-      `${patient.first_name} ${patient.last_name}`.toUpperCase();
+
+  const updatedPatient = patients.map((patient) => {
+    return {
+      ...patient,
+      fullname: `${patient.first_name} ${patient.last_name}`.toUpperCase(),
+    };
   });
-  return patients || [];
+  return updatedPatient || [];
 }
 async function getPatientById(patient_id) {
   const patient = await prisma.patients.findUnique({
@@ -36,7 +39,6 @@ async function getPatientAddress(patient_id) {
 }
 
 async function searchPatient(search) {
-  console.log(search.first_name, search.last_name);
   const patients = await prisma.patients.findMany({
     where: {
       first_name: {

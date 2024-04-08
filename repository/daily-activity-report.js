@@ -521,3 +521,26 @@ exports.deleteDarNote = async function (note_id) {
   });
   return darNote;
 };
+
+// Statistical Report
+
+exports.getDarByMonth = async function (month) {
+  // Parse the month name into a date
+  const startOfMonth = moment(month, "MMMM")
+    .startOf("month")
+    .format("YYYY-MM-DD HH:mm:ss");
+  const endOfMonth = moment(month, "MMMM")
+    .endOf("month")
+    .format("YYYY-MM-DD HH:mm:ss");
+
+  const result = await prisma.$queryRaw`
+    SELECT dcs.dar_service_id, ds.service_name, COUNT(*)
+    FROM emss_system.dar_case_services AS dcs
+    LEFT JOIN emss_system.daily_activity_report AS dar ON dcs.dar_id = dar.id
+    LEFT JOIN emss_system.dar_services AS ds ON dcs.dar_service_id = ds.id
+    WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth}
+    GROUP BY dcs.dar_service_id
+  `;
+
+  return result;
+};

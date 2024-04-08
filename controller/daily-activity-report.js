@@ -25,7 +25,17 @@ exports.getDailyActivityReportById = async function (req, res, next) {
     console.error(error);
   }
 };
-// getDailyActivityReportByDate
+// getDarByMonth
+exports.getDarByMonth = async function (req, res, next) {
+  try {
+    const month = req.params.month;
+    const darItem = await repository.getDarByMonth(month);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 exports.getDailyActivityReportByDate = async function (req, res, next) {
   try {
     const date = req.params.date;
