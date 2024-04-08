@@ -4,9 +4,19 @@ const moment = require("moment");
 
 async function getPatients() {
   const patients = await prisma.patients.findMany({
-    take: 10,
+    orderBy: {
+      last_name: "asc",
+    },
+    take: 15,
   });
-  return patients;
+
+  const updatedPatient = patients.map((patient) => {
+    return {
+      ...patient,
+      fullname: `${patient.first_name} ${patient.last_name}`.toUpperCase(),
+    };
+  });
+  return updatedPatient || [];
 }
 async function getPatientById(patient_id) {
   const patient = await prisma.patients.findUnique({
@@ -14,14 +24,42 @@ async function getPatientById(patient_id) {
       id: parseInt(patient_id),
     },
   });
+  return patient || {};
+}
+async function getPatientAddress(patient_id) {
   const address = await prisma.patient_address.findMany({
     where: {
       patient_id: parseInt(patient_id),
     },
   });
-  patient.address = address;
-  return patient;
+  if (address.length <= 0) {
+    return false;
+  }
+  return address;
 }
+
+async function searchPatient(search) {
+  const patients = await prisma.patients.findMany({
+    where: {
+      first_name: {
+        contains: search.first_name,
+      },
+      last_name: {
+        contains: search.last_name,
+      },
+    },
+    orderBy: {
+      last_name: "asc",
+    },
+    take: 20,
+  });
+  patients.map((patient) => {
+    patient.fullname =
+      `${patient.first_name} ${patient.middle_name} ${patient.last_name}`.toUpperCase();
+  });
+  return patients || [];
+}
+
 async function createPatient(reqBody) {
   const { interview, demographicData } = reqBody;
   console.log(interview, demographicData);
@@ -47,7 +85,7 @@ async function createPatient(reqBody) {
     },
   });
   const patientId = patient.id;
-  console.log('created', patientId);
+  console.log("created", patientId);
   await createPatientInterview(interview, patientId);
   return patient;
 }
@@ -96,7 +134,6 @@ async function createPatientAddress(addressData, addressType, patientId) {
       address_type: addressType,
     },
   });
-
 }
 async function createPatientInterview(interview, patientId) {
   const interviewDateTime = moment(interview.interview_date_time);
@@ -124,9 +161,8 @@ async function createPatientInterview(interview, patientId) {
       informant_address: interview.informant_address,
     },
   });
-  console.log('created interview', newInterview);
+  console.log("created interview", newInterview);
 }
-
 async function updatePatient(reqBody) {
   const patient = await prisma.patients.update({
     where: {
@@ -155,11 +191,13 @@ async function updatePatient(reqBody) {
     },
   });
   return patient;
-} 
+}
 
 module.exports = {
   getPatients,
   getPatientById,
   createPatient,
-  updatePatient
+  updatePatient,
+  getPatientAddress,
+  searchPatient,
 };

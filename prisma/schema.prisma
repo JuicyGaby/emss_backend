@@ -29,8 +29,6 @@ model employee_access_rights {
   access_rights       access_rights @relation(fields: [access_right_id], references: [id])
 }
 
-// * I Start of the Demograhic Data
-
 model patients {
   id                      Int      @id @default(autoincrement())
   first_name              String?  @db.VarChar(100)
@@ -69,6 +67,7 @@ model patients {
   patient_descrimination                   patient_descrimination[]
   patient_family_info                      patient_family_info[]
   patient_problems_environment             patient_problems_environment[]
+  daily_activity_report                    daily_activity_report[]
 }
 
 model patient_interview {
@@ -138,8 +137,6 @@ model patient_family_info {
   patients               patients @relation(fields: [patient_id], references: [id])
 }
 
-// * II MSWD Classification
-
 model patient_mswd_classification {
   id                                Int      @id @default(autoincrement())
   patient_id                        Int
@@ -149,8 +146,6 @@ model patient_mswd_classification {
   remarks                           String?  @db.VarChar(255)
   patients                          patients @relation(fields: [patient_id], references: [id])
 }
-
-// * III Monthly Expenses
 
 model patient_monthly_expenses {
   id                   Int                    @id @default(autoincrement())
@@ -201,8 +196,6 @@ model patient_water_source {
   patient_monthly_expenses    patient_monthly_expenses @relation(fields: [patient_monthly_expenses_id], references: [id])
 }
 
-// * IV Medical Data
-
 model patient_medical_data {
   id                           Int      @id @default(autoincrement())
   patient_id                   Int
@@ -215,8 +208,6 @@ model patient_medical_data {
   remarks                      String?  @db.VarChar(255)
   patients                     patients @relation(fields: [patient_id], references: [id])
 }
-
-// * V Health and Mental health
 
 model patient_health_and_mental_health {
   id                                   Int     @id @default(autoincrement())
@@ -231,10 +222,6 @@ model patient_health_and_mental_health {
 
   patients patients @relation(fields: [patient_id], references: [id])
 }
-
-// * VI Rating and Feedback
-
-// * VI Discrimination
 
 model patient_descrimination {
   id                 Int   @id @default(autoincrement())
@@ -254,8 +241,6 @@ model patient_descrimination {
   patients patients @relation(fields: [patient_id], references: [id])
 }
 
-// * VII Safety
-
 model patient_safety {
   id                                  Int      @id @default(autoincrement())
   patient_id                          Int
@@ -268,9 +253,6 @@ model patient_safety {
   patients                            patients @relation(fields: [patient_id], references: [id])
 }
 
-// * VII Safety
-
-// * VIII Assesment of Social Functioning
 model patient_assessment_of_social_functioning {
   // familial roles
   id                     Int      @id @default(autoincrement())
@@ -303,9 +285,6 @@ model patient_assessment_of_social_functioning {
   patients               patients @relation(fields: [patient_id], references: [id])
 }
 
-// * VIII Assesment of Social Functioning
-
-// problems in the environment
 model patient_problems_environment {
   id                               Int     @id @default(autoincrement())
   patient_id                       Int
@@ -332,16 +311,16 @@ model patient_problems_environment {
   inadequate_support_system        Json?
   excessive_support_system         Json?
   problems_presented               String? @db.VarChar(1000)
-  reasons_psychosocial_counselling String?  @db.VarChar(1000)
-  assesment_findings               String?  @db.VarChar(500)
-  recommended_intervention         String?  @db.VarChar(500)
-  action_taken                     String?  @db.VarChar(500)
-  person_emergency                 String?  @db.VarChar(100)
-  relationship_to_patient          String?  @db.VarChar(100)
-  address                          String?  @db.VarChar(100)
-  contact_number                   String?  @db.VarChar(100)
-  interviewed_by                   String?  @db.VarChar(100)
-  remarks                          String?  @db.VarChar(255)
+  reasons_psychosocial_counselling String? @db.VarChar(1000)
+  assesment_findings               String? @db.VarChar(500)
+  recommended_intervention         String? @db.VarChar(500)
+  action_taken                     String? @db.VarChar(500)
+  person_emergency                 String? @db.VarChar(100)
+  relationship_to_patient          String? @db.VarChar(100)
+  address                          String? @db.VarChar(100)
+  contact_number                   String? @db.VarChar(100)
+  interviewed_by                   String? @db.VarChar(100)
+  remarks                          String? @db.VarChar(255)
 
   patients patients @relation(fields: [patient_id], references: [id])
 }
@@ -383,4 +362,92 @@ model ph_barangays {
   citymunCode String      @db.VarChar(50)
   brgyCode    String      @unique @db.VarChar(50)
   city        ph_city_mun @relation(fields: [citymunCode], references: [citymunCode]) // Add this line
+}
+
+// DAR 
+
+model daily_activity_report {
+  id                      Int      @id @default(autoincrement())
+  patient_id              Int
+  creator_id              Int?
+  created_by              String?  @db.VarChar(100)
+  date_created            DateTime @default(now()) @db.DateTime(0)
+  area                    String?  @db.VarChar(100)
+  case_type               String?  @db.VarChar(100)
+  indirect_contributor    String?  @db.VarChar(100)
+  phic_classification     String?  @db.VarChar(100)
+  non_phic_classification String?  @db.VarChar(100)
+  sectoral_grouping       String?  @db.VarChar(100)
+  house_hold_size         String?  @db.VarChar(100)
+  source_of_referral      String?  @db.VarChar(100)
+  diagnosis               String?  @db.VarChar(100)
+  informant               String?  @db.VarChar(100)
+  relationship_to_patient String?  @db.VarChar(100)
+  interview_start_time    String?  @db.VarChar(100)
+  interview_end_time      String?  @db.VarChar(100)
+  remarks                 String?  @db.VarChar(255)
+
+  dar_case_services dar_case_services[]
+  dar_notes         dar_notes[]
+  patients          patients            @relation(fields: [patient_id], references: [id])
+}
+
+model dar_services {
+  id                Int                 @id @default(autoincrement())
+  service_name      String?             @db.VarChar(100)
+  dar_case_services dar_case_services[]
+}
+
+model dar_case_services {
+  id                    Int                   @id @default(autoincrement())
+  dar_service_id        Int
+  dar_id                Int
+  dar_services          dar_services          @relation(fields: [dar_service_id], references: [id])
+  daily_activity_report daily_activity_report @relation(fields: [dar_id], references: [id])
+}
+
+model dar_notes {
+  id           Int                   @id @default(autoincrement())
+  dar_id       Int
+  note_title   String?               @db.VarChar(100)
+  note_body    String?               @db.VarChar(500)
+  created_by   String?               @db.VarChar(100)
+  creator_id   Int?
+  date_created DateTime              @default(now()) @db.DateTime(0)
+  dar          daily_activity_report @relation(fields: [dar_id], references: [id])
+}
+
+model dar_swa {
+  id               Int                @id @default(autoincrement())
+  created_by       String?            @db.VarChar(100)
+  creator_name     String?            @db.VarChar(100)
+  creator_id       Int?
+  date_created     DateTime           @default(now()) @db.DateTime(0)
+  dar_swa_services dar_swa_services[]
+  dar_swa_notes    dar_swa_notes[]
+}
+
+model swa_services {
+  id               Int                @id @default(autoincrement())
+  service_name     String?            @db.VarChar(100)
+  dar_swa_services dar_swa_services[]
+}
+
+model dar_swa_services {
+  id         Int          @id @default(autoincrement())
+  dar_swa_id Int
+  service_id Int
+  dar_swa    dar_swa      @relation(fields: [dar_swa_id], references: [id])
+  services   swa_services @relation(fields: [service_id], references: [id])
+}
+
+model dar_swa_notes {
+  id           Int      @id @default(autoincrement())
+  dar_swa_id   Int
+  note_title   String?  @db.VarChar(100)
+  note_body    String?  @db.VarChar(500)
+  created_by   String?  @db.VarChar(100)
+  creator_id   Int?
+  date_created DateTime @default(now()) @db.DateTime(0)
+  dar_swa      dar_swa  @relation(fields: [dar_swa_id], references: [id])
 }

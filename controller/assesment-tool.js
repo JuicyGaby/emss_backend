@@ -8,6 +8,7 @@ const {
   getProvinceByRegionCode,
   getMunicipalityByProvinceCode,
   getBarangayByMunicipalityCode,
+  createPatientAddress,
   updatePatientAddress,
   // family composition
   getFamilyComposition,
@@ -132,8 +133,6 @@ exports.deleteFamilyMember = async function (req, res, next) {
 };
 
 // *address
-
-// ? get
 exports.getRegion = async function (req, res, next) {
   try {
     const region = await getRegion();
@@ -169,7 +168,15 @@ exports.getBarangayByMunicipalityCode = async function (req, res, next) {
     console.error(error);
   }
 };
-// ? put
+exports.createPatientAddress = async function (req, res, next) {
+  const patientAddress = req.body;
+  try {
+    const newPatientAddress = await createPatientAddress(patientAddress);
+    res.send(newPatientAddress);
+  } catch (error) {
+    console.error(error);
+  }
+};
 exports.updatePatientAddress = async function (req, res, next) {
   const patientAddress = req.body;
   try {

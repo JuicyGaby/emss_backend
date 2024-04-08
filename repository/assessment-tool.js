@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const moment = require("moment-timezone");
 
 // * interview
 
@@ -26,12 +27,24 @@ async function createInterview(reqBody) {
   return interview;
 }
 async function getInterviewById(patient_id) {
-  const interview = await prisma.patient_interview.findFirst({
+  let interview = await prisma.patient_interview.findFirst({
     where: {
       patient_id: parseInt(patient_id),
     },
   });
-  return interview;
+
+  if (interview) {
+    interview = {
+      ...interview,
+      interview_date: moment(interview.interview_date)
+        .local()
+        .format("YYYY-MM-DD"),
+      admission_date_and_time: moment(interview.admission_date)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  }
+  return interview || false;
 }
 async function updateInterviewById(patient_id, reqBody) {
   const interview = await prisma.patient_interview.update({
@@ -134,10 +147,15 @@ async function getRegion() {
   });
   return region;
 }
-async function getProvinceByRegionCode(regCode) {
+async function getProvinceByRegionCode(regDesc) {
+  const region = await prisma.ph_regions.findFirst({
+    where: {
+      regDesc,
+    },
+  });
   const province = await prisma.ph_provinces.findMany({
     where: {
-      regCode,
+      regCode: region.regCode,
     },
     select: {
       provDesc: true,
@@ -146,10 +164,15 @@ async function getProvinceByRegionCode(regCode) {
   });
   return province;
 }
-async function getMunicipalityByProvinceCode(provCode) {
+async function getMunicipalityByProvinceCode(provDesc) {
+  const province = await prisma.ph_provinces.findFirst({
+    where: {
+      provDesc,
+    },
+  });
   const municipality = await prisma.ph_city_mun.findMany({
     where: {
-      provCode,
+      provCode: province.provCode,
     },
     select: {
       citymunDesc: true,
@@ -158,10 +181,15 @@ async function getMunicipalityByProvinceCode(provCode) {
   });
   return municipality;
 }
-async function getBarangayByMunicipalityCode(citymunCode) {
+async function getBarangayByMunicipalityCode(citymunDesc) {
+  const municipality = await prisma.ph_city_mun.findFirst({
+    where: {
+      citymunDesc,
+    },
+  });
   const barangay = await prisma.ph_barangays.findMany({
     where: {
-      citymunCode,
+      citymunCode: municipality.citymunCode,
     },
     select: {
       brgyDesc: true,
@@ -169,28 +197,68 @@ async function getBarangayByMunicipalityCode(citymunCode) {
   });
   return barangay;
 }
+async function createPatientAddress(reqBody) {
+  console.log("reqBody", reqBody);
+  const permanent = reqBody[0];
+  const temporary = reqBody[1];
+  const permanentAddress = await prisma.patient_address.create({
+    data: {
+      patient_id: parseInt(permanent.patient_id),
+      region: permanent.region,
+      province: permanent.province,
+      district: permanent.district,
+      municipality: permanent.municipality,
+      barangay: permanent.barangay,
+      purok: permanent.purok,
+      address_type: "permanent",
+    },
+  });
+  const temporaryAddress = await prisma.patient_address.create({
+    data: {
+      patient_id: parseInt(temporary.patient_id),
+      region: temporary.region,
+      province: temporary.province,
+      district: temporary.district,
+      municipality: temporary.municipality,
+      barangay: temporary.barangay,
+      purok: temporary.purok,
+      address_type: "temporary",
+    },
+  });
+  return [permanentAddress, temporaryAddress];
+}
+
 async function updatePatientAddress(patientAddresses) {
-  const updatedAddresses = await Promise.all(
-    patientAddresses.map(async (address) => {
-      const updatedAddress = await prisma.patient_address.update({
-        where: {
-          id: address.id,
-          address_type: address.address_type,
-        },
-        data: {
-          region: address.region,
-          province: address.province,
-          district: address.district,
-          municipality: address.municipality,
-          barangay: address.barangay,
-          purok: address.purok,
-        },
-      });
-      return updatedAddress;
-    })
-  );
-  console.log("address updated", updatedAddresses);
-  return updatedAddresses;
+  console.log("patientAddresses", patientAddresses);
+  const permanent = patientAddresses[0];
+  const temporary = patientAddresses[1];
+  const permanentAddress = await prisma.patient_address.update({
+    where: {
+      id: parseInt(permanent.id),
+    },
+    data: {
+      region: permanent.region,
+      province: permanent.province,
+      district: permanent.district,
+      municipality: permanent.municipality,
+      barangay: permanent.barangay,
+      purok: permanent.purok,
+    },
+  });
+  const temporaryAddress = await prisma.patient_address.update({
+    where: {
+      id: parseInt(temporary.id),
+    },
+    data: {
+      region: temporary.region,
+      province: temporary.province,
+      district: temporary.district,
+      municipality: temporary.municipality,
+      barangay: temporary.barangay,
+      purok: temporary.purok,
+    },
+  });
+  return [permanentAddress, temporaryAddress];
 }
 
 // * mswd classfication
@@ -203,17 +271,11 @@ async function getMswdClassification(patient_id) {
       },
     }
   );
-  // return something if the mswdclassification is null
+
   if (!mswdClassification) {
-    return {
-      haveClassification: false,
-      main_classification_type: null,
-      sub_classification_type: null,
-      membership_to_marginalized_sector: null,
-      remarks: null,
-    };
+    return false;
   }
-  mswdClassification.haveClassification = true;
+  console.log("mswdClassification", mswdClassification);
   if (mswdClassification.membership_to_marginalized_sector) {
     mswdClassification.membership_to_marginalized_sector =
       mswdClassification.membership_to_marginalized_sector.split(",");
@@ -221,8 +283,11 @@ async function getMswdClassification(patient_id) {
   return mswdClassification;
 }
 async function createMswdClassification(reqBody) {
-  let sectors = reqBody.membership_to_marginalized_sector;
-  let marginalizedSectorString = sectors.join(",");
+  let marginalizedSectorString = null;
+  if (reqBody.membership_to_marginalized_sector) {
+    let sectors = reqBody.membership_to_marginalized_sector;
+    marginalizedSectorString = sectors.join(",");
+  }
   const mswdClassification = await prisma.patient_mswd_classification.create({
     data: {
       patient_id: parseInt(reqBody.patient_id),
@@ -236,8 +301,11 @@ async function createMswdClassification(reqBody) {
   return mswdClassification;
 }
 async function updateMswwdClassification(reqBody) {
-  let sectors = reqBody.membership_to_marginalized_sector;
-  let marginalizedSectorString = sectors.join(",");
+  let marginalizedSectorString = null;
+  if (reqBody.membership_to_marginalized_sector) {
+    let sectors = reqBody.membership_to_marginalized_sector;
+    marginalizedSectorString = sectors.join(",");
+  }
   const mswdClassification = await prisma.patient_mswd_classification.update({
     where: {
       id: parseInt(reqBody.id),
@@ -687,6 +755,9 @@ async function updateSocialFunction(reqBody) {
         outpatient: reqBody.outpatient,
         er_patient: reqBody.er_patient,
         prisoner: reqBody.prisoner,
+        immigrant_legal: reqBody.immigrant_legal,
+        immigrant_undocumented: reqBody.immigrant_undocumented,
+        imigrant_refugee: reqBody.imigrant_refugee,
       },
     });
   console.log("updated", updatedSocialFunction);
@@ -695,22 +766,23 @@ async function updateSocialFunction(reqBody) {
 
 // problems in environment
 async function getProblemsInEnvironment(patient_id) {
-  console.log("patient_id", patient_id);
   const response = await prisma.patient_problems_environment.findFirst({
     where: {
       patient_id: parseInt(patient_id),
     },
   });
-  if (response.problems_presented) {
+  if (!response) {
+    return false;
+  }
+  if (response.problems_presented !== null) {
     response.problems_presented = response.problems_presented.split(",");
   }
-  if (response.reasons_psychosocial_counselling) {
+  if (response.reasons_psychosocial_counselling !== null) {
     response.reasons_psychosocial_counselling =
       response.reasons_psychosocial_counselling.split(",");
   }
-  return response || false;
+  return response;
 }
-
 async function createPatientProblemsEnvironment(reqBody) {
   let problems_presented = "";
   let reasons_psychosocial_counselling = "";
@@ -815,7 +887,6 @@ async function updatePatientProblemsEnvironment(reqBody) {
   console.log("updated", updatedRecord);
   return updatedRecord;
 }
-
 module.exports = {
   // interview
   createInterview,
@@ -826,6 +897,7 @@ module.exports = {
   getProvinceByRegionCode,
   getMunicipalityByProvinceCode,
   getBarangayByMunicipalityCode,
+  createPatientAddress,
   updatePatientAddress,
   // family composition
   getFamilyComposition,
