@@ -375,6 +375,8 @@ model daily_activity_report {
   area                    String?  @db.VarChar(100)
   case_type               String?  @db.VarChar(100)
   indirect_contributor    String?  @db.VarChar(100)
+  // use tinyint
+  is_phic_member          Int?     @db.TinyInt
   phic_classification     String?  @db.VarChar(100)
   non_phic_classification String?  @db.VarChar(100)
   sectoral_grouping       String?  @db.VarChar(100)

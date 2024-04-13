@@ -12,6 +12,7 @@ exports.createDailyActivityReport = async function (reqBody) {
     await createDarServicesItem(darItem.id, reqBody.services);
     return darItem;
   }
+  console.log("New", reqBody);
   const patient = await createPatientItem(reqBody);
   reqBody.patient_id = patient.id;
   const darItem = await createDarItem(reqBody);
@@ -40,6 +41,11 @@ async function createDarItem(reqBody) {
       patient_id: reqBody.patient_id,
       creator_id: reqBody.creatorId,
       created_by: reqBody.creatorFullName,
+      is_phic_member: reqBody.phic_member === "Yes" ? 1 : 0,
+      non_phic_classification:
+        reqBody.phic_member === "No" ? reqBody.phic_classification : null,
+      phic_classification:
+        reqBody.phic_member === "Yes" ? reqBody.phic_classification : null,
     },
   });
   const patient = await prisma.patients.findUnique({
@@ -103,9 +109,19 @@ exports.getDailyActivityReportById = async function (dar_id) {
       patients: true,
     },
   });
-  dar.date_created = moment(dar.date_created)
-    .local()
-    .format("YYYY-MM-DD hh:mm A");
+
+  if (dar) {
+    dar.date_created = moment(dar.date_created)
+      .local()
+      .format("YYYY-MM-DD hh:mm A");
+
+    if (dar.phic_classification !== null) {
+      dar.classification = dar.phic_classification;
+    } else if (dar.non_phic_classification !== null) {
+      dar.classification = dar.non_phic_classification;
+    }
+  }
+  console.log(dar);
   return dar || false;
 };
 exports.getDailyActivityReportByDate = async function (date) {
@@ -534,7 +550,7 @@ exports.getDarByMonth = async function (month) {
     .format("YYYY-MM-DD HH:mm:ss");
 
   const result = await prisma.$queryRaw`
-    SELECT dcs.dar_service_id, ds.service_name, COUNT(*)
+    SELECT dcs.dar_service_id, ds.service_name, COUNT(*) as count
     FROM emss_system.dar_case_services AS dcs
     LEFT JOIN emss_system.daily_activity_report AS dar ON dcs.dar_id = dar.id
     LEFT JOIN emss_system.dar_services AS ds ON dcs.dar_service_id = ds.id
@@ -542,5 +558,10 @@ exports.getDarByMonth = async function (month) {
     GROUP BY dcs.dar_service_id
   `;
 
-  return result;
+  // Convert BigInt values to strings
+  const resultWithStrings = result.map((row) => ({
+    ...row,
+    count: row.count.toString(),
+  }));
+  return resultWithStrings;
 };
