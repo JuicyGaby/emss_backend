@@ -111,10 +111,13 @@ exports.getDailyActivityReportById = async function (dar_id) {
   });
 
   if (dar) {
-    dar.date_created = moment(dar.date_created)
-      .local()
-      .format("YYYY-MM-DD hh:mm A");
-
+    if (dar.admission_date) {
+      dar.admission_date = moment(dar.admission_date)
+        .local()
+        .format("YYYY-MM-DD hh:mm");
+    } else {
+      dar.admission_date = moment().local().format("YYYY-MM-DD hh:mm");
+    }
     if (dar.phic_classification !== null) {
       dar.classification = dar.phic_classification;
     } else if (dar.non_phic_classification !== null) {
@@ -163,8 +166,10 @@ exports.updateDailyActivityReport = async function (reqBody) {
       area: reqBody.area,
       case_type: reqBody.case_type,
       indirect_contributor: reqBody.indirect_contributor,
-      phic_classification: reqBody.phic_classification,
-      non_phic_classification: reqBody.non_phic_classification,
+      phic_classification:
+        reqBody.is_phic_member === 1 ? reqBody.phic_classification : null,
+      non_phic_classification:
+        reqBody.is_phic_member === 0 ? reqBody.phic_classification : null,
       sectoral_grouping: reqBody.sectoral_grouping,
       house_hold_size: reqBody.house_hold_size,
       source_of_referral: reqBody.source_of_referral,
@@ -173,6 +178,7 @@ exports.updateDailyActivityReport = async function (reqBody) {
       relationship_to_patient: reqBody.relationship_to_patient,
       interview_start_time: reqBody.interview_start_time,
       interview_end_time: reqBody.interview_end_time,
+      admission_date: new Date(reqBody.admission_date).toISOString(),
       remarks: reqBody.remarks,
     },
   });
