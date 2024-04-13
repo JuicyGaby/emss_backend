@@ -54,6 +54,15 @@ exports.updateDailyActivityReport = async function (req, res, next) {
     console.error(error);
   }
 };
+exports.updateDarStatus = async function (req, res, next) {
+  try {
+    const dar_id = req.params.id;
+    const darItem = await repository.updateDarStatus(dar_id);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // SWA
 exports.createSwaItem = async function (req, res, next) {

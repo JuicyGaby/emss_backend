@@ -81,6 +81,7 @@ exports.getDailyActivityReport = async function (reqBody) {
         gte: today.toDate(),
         lt: tomorrow.toDate(),
       },
+      is_active: 1,
     },
     include: {
       patients: true,
@@ -205,6 +206,17 @@ async function updateDarPatientItem(patientData) {
   });
   console.log("Updated Patient", patient);
 }
+exports.updateDarStatus = async function (dar_id) {
+  const dar = await prisma.daily_activity_report.update({
+    where: {
+      id: parseInt(dar_id),
+    },
+    data: {
+      is_active: 0,
+    },
+  });
+  return dar;
+};
 
 // SWA
 exports.createSwaItem = async function (reqBody) {
