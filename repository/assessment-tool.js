@@ -328,82 +328,104 @@ async function getMonthlyExpenses(patient_id) {
     where: {
       patient_id: parseInt(patient_id),
     },
-    include: {
-      patient_water_source: true,
-      patient_light_source: true,
-      patient_fuel_source: true,
-    },
   });
+  console.log("monthlyExpenses", monthlyExpenses);
   if (!monthlyExpenses) {
     return false;
   }
-  if (monthlyExpenses.transportation_type) {
-    monthlyExpenses.transportation_type =
-      monthlyExpenses.transportation_type.split(",");
-  }
+  const listTypes = [
+    "transportation_type",
+    "light_source_type",
+    "water_source_type",
+    "fuel_source_type",
+    "others_description",
+  ];
+  listTypes.forEach((type) => {
+    if (monthlyExpenses[type]) {
+      monthlyExpenses[type] = monthlyExpenses[type].split(",");
+    }
+  });
   return monthlyExpenses;
 }
 async function createMonthlyExpenses(reqBody) {
-  console.log("reqBody", reqBody);
-  let transportation_type = null;
-  if (reqBody.transportation_type) {
-    let transpo = reqBody.transportation_type;
-    transportation_type = transpo.join(",");
-  }
+  const { number, text } = reqBody;
+  console.log(reqBody);
+  const listTypes = [
+    "transportation_type",
+    "light_source_type",
+    "water_source_type",
+    "fuel_source_type",
+    "others_description",
+  ];
+  const joinedTypes = {};
+  listTypes.forEach((type) => {
+    if (text[type]) {
+      joinedTypes[type] = text[type].join(",");
+    }
+  });
   const monthlyExpenses = await prisma.patient_monthly_expenses.create({
     data: {
-      patient_id: reqBody.patient_id,
-      house_lot_cost: reqBody.house_lot_cost || "0",
-      food_water_cost: reqBody.food_water_cost || "0",
-      education_cost: reqBody.education_cost || "0",
-      clothing_cost: reqBody.clothing_cost || "0",
-      transportation_type: transportation_type,
-      transportation_cost: reqBody.transportation_cost || "0",
-      communication_cost: reqBody.communication_cost || "0",
-      house_help_cost: reqBody.house_help_cost || "0",
-      medical_cost: reqBody.medical_cost || "0",
-      others_description: reqBody.others_description || "",
-      others_cost: reqBody.others_cost || "0",
-      total_cost: reqBody.total_cost || "0",
-      remarks: reqBody.remarks || "",
+      house_lot_cost: number.house_lot_cost,
+      food_water_cost: number.food_water_cost,
+      education_cost: number.education_cost,
+      clothing_cost: number.clothing_cost,
+      transportation_type: joinedTypes.transportation_type,
+      light_source_type: joinedTypes.light_source_type,
+      water_source_type: joinedTypes.water_source_type,
+      fuel_source_type: joinedTypes.fuel_source_type,
+      others_description: joinedTypes.others_description,
+      others_cost: number.others_cost,
+      transportation_cost: number.transportation_cost,
+      light_source_cost: number.light_source_cost,
+      water_source_cost: number.water_source_cost,
+      fuel_source_cost: number.fuel_source_cost,
+      communication_cost: number.communication_cost,
+      house_help_cost: number.house_help_cost,
+      medical_cost: number.medical_cost,
+      total_cost: reqBody.total_cost.toString(),
+      patient_id: reqBody.id,
     },
   });
-  patient_monthly_expenses_id = monthlyExpenses.id;
-  await createSources(patient_monthly_expenses_id, reqBody);
-  console.log("Created", monthlyExpenses);
   return monthlyExpenses;
 }
 async function updateMonthlyExpenses(reqBody) {
-  let transportation_type = null;
-  if (reqBody.transportation_type) {
-    let transpo = reqBody.transportation_type;
-    transportation_type = transpo.join(",");
-  }
+  const { number, text, id } = reqBody;
+  const listTypes = [
+    "transportation_type",
+    "light_source_type",
+    "water_source_type",
+    "fuel_source_type",
+    "others_description",
+  ];
+  const joinedTypes = {};
+  listTypes.forEach((type) => {
+    if (text[type]) {
+      joinedTypes[type] = text[type].join(",");
+    }
+  });
   const monthlyExpenses = await prisma.patient_monthly_expenses.update({
-    where: {
-      id: reqBody.id,
-    },
+    where: { id: id },
     data: {
-      house_lot_cost: reqBody.house_lot_cost,
-      food_water_cost: reqBody.food_water_cost,
-      education_cost: reqBody.education_cost,
-      clothing_cost: reqBody.clothing_cost,
-      transportation_type: transportation_type,
-      transportation_cost: reqBody.transportation_cost,
-      communication_cost: reqBody.communication_cost,
-      house_help_cost: reqBody.house_help_cost,
-      medical_cost: reqBody.medical_cost,
-      others_description: reqBody.others_description,
-      others_cost: reqBody.others_cost,
-      total_cost: reqBody.total_cost,
-      remarks: reqBody.remarks,
+      house_lot_cost: number.house_lot_cost,
+      food_water_cost: number.food_water_cost,
+      education_cost: number.education_cost,
+      clothing_cost: number.clothing_cost,
+      transportation_type: joinedTypes.transportation_type,
+      light_source_type: joinedTypes.light_source_type,
+      water_source_type: joinedTypes.water_source_type,
+      fuel_source_type: joinedTypes.fuel_source_type,
+      others_description: joinedTypes.others_description,
+      others_cost: number.others_cost,
+      transportation_cost: number.transportation_cost,
+      light_source_cost: number.light_source_cost,
+      water_source_cost: number.water_source_cost,
+      fuel_source_cost: number.fuel_source_cost,
+      communication_cost: number.communication_cost,
+      house_help_cost: number.house_help_cost,
+      medical_cost: number.medical_cost,
+      total_cost: reqBody.total_cost.toString(),
     },
   });
-  console.log("Updated", monthlyExpenses);
-  if (monthlyExpenses) {
-    const patient_monthly_expenses_id = monthlyExpenses.id;
-    await updateSources(patient_monthly_expenses_id, reqBody);
-  }
   return monthlyExpenses;
 }
 async function createSources(id, reqBody) {
