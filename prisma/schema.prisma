@@ -148,21 +148,28 @@ model patient_mswd_classification {
 }
 
 model patient_monthly_expenses {
-  id                   Int                    @id @default(autoincrement())
-  patient_id           Int                    @unique
-  house_lot_cost       String?                @default("0") @db.VarChar(100)
-  food_water_cost      String?                @default("0") @db.VarChar(100)
-  education_cost       String?                @default("0") @db.VarChar(100)
-  clothing_cost        String?                @default("0") @db.VarChar(100)
-  transportation_type  String?                @db.VarChar(100)
-  transportation_cost  String?                @default("0") @db.VarChar(100)
-  communication_cost   String?                @default("0") @db.VarChar(100)
-  house_help_cost      String?                @default("0") @db.VarChar(100)
-  medical_cost         String?                @default("0") @db.VarChar(100)
-  others_description   String?                @db.VarChar(100)
-  others_cost          String?                @db.VarChar(100)
-  total_cost           String?                @default("0") @db.VarChar(100)
-  remarks              String?                @db.VarChar(500)
+  id                  Int     @id @default(autoincrement())
+  patient_id          Int     @unique
+  house_lot_cost      String? @default("0") @db.VarChar(100)
+  food_water_cost     String? @default("0") @db.VarChar(100)
+  education_cost      String? @default("0") @db.VarChar(100)
+  clothing_cost       String? @default("0") @db.VarChar(100)
+  transportation_type String? @db.VarChar(300)
+  transportation_cost String? @default("0") @db.VarChar(100)
+  light_source_type   String? @default("0") @db.VarChar(255)
+  water_source_type   String? @default("0") @db.VarChar(255)
+  fuel_source_type    String? @default("0") @db.VarChar(255)
+  light_source_cost   String? @default("0") @db.VarChar(100)
+  water_source_cost   String? @default("0") @db.VarChar(100)
+  fuel_source_cost    String? @default("0") @db.VarChar(100)
+  communication_cost  String? @default("0") @db.VarChar(100)
+  house_help_cost     String? @default("0") @db.VarChar(100)
+  medical_cost        String? @default("0") @db.VarChar(100)
+  others_description  String? @db.VarChar(100)
+  others_cost         String? @db.VarChar(100)
+  total_cost          String? @default("0") @db.VarChar(100)
+  remarks             String? @db.VarChar(500)
+
   patients             patients               @relation(fields: [patient_id], references: [id])
   patient_fuel_source  patient_fuel_source[]
   patient_light_source patient_light_source[]
