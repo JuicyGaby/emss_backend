@@ -406,6 +406,7 @@ exports.updateSocialFunction = async function (req, res, next) {
 exports.getProblemsInEnvironment = async function (req, res, next) {
   const patientId = req.params.id;
   try {
+    // console.log(patientId);
     const problemsInEnvironment = await getProblemsInEnvironment(patientId);
     res.send(problemsInEnvironment);
     console.log(patientId);

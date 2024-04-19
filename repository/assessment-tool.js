@@ -11,7 +11,9 @@ async function createInterview(reqBody) {
       patient_id: parseInt(body.patientId),
       interview_date: body.interview_date,
       interview_time: body.interview_time,
-      admission_date_and_time: new Date(body.admission_date_and_time).toISOString(),
+      admission_date_and_time: new Date(
+        body.admission_date_and_time
+      ).toISOString(),
       basic_ward: body.basic_ward,
       nonbasic_ward: body.nonbasic_ward,
       health_record_number: body.health_record_number,
@@ -39,7 +41,7 @@ async function getInterviewById(patient_id) {
       ...interview,
       interview_date: moment(interview.interview_date)
         .local()
-        .format("YYYY-MM-DD")
+        .format("YYYY-MM-DD"),
     };
   }
   return interview || false;
@@ -339,8 +341,12 @@ async function getMonthlyExpenses(patient_id) {
     "others_description",
   ];
   listTypes.forEach((type) => {
-    if (monthlyExpenses[type]) {
-      monthlyExpenses[type] = monthlyExpenses[type].split(",");
+    if (monthlyExpenses[type] !== undefined) {
+      if (monthlyExpenses[type].trim() === "") {
+        delete monthlyExpenses[type];
+      } else {
+        monthlyExpenses[type] = monthlyExpenses[type].split(",");
+      }
     }
   });
   return monthlyExpenses;
@@ -794,29 +800,27 @@ async function getProblemsInEnvironment(patient_id) {
   if (!response) {
     return false;
   }
-  if (response.problems_presented !== null) {
-    response.problems_presented = response.problems_presented.split(",");
-  }
-  if (response.reasons_psychosocial_counselling !== null) {
-    response.reasons_psychosocial_counselling =
-      response.reasons_psychosocial_counselling.split(",");
-  }
+  const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
+  listTypes.forEach((type) => {
+    if (response[type] !== undefined) {
+      if (response[type].trim() === "") {
+        delete response[type];
+      } else {
+        response[type] = response[type].split(",");
+      }
+    }
+  });
   return response;
 }
 async function createPatientProblemsEnvironment(reqBody) {
-  let problems_presented = "";
-  let reasons_psychosocial_counselling = "";
+  const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
+  const joinedTypes = {};
+  listTypes.forEach((type) => {
+    if (reqBody[type]) {
+      joinedTypes[type] = reqBody[type].join(",");
+    }
+  });
 
-  if (reqBody.problems_presented) {
-    if (reqBody.problems_presented) {
-      let problems = reqBody.problems_presented;
-      problems_presented = problems.join(",");
-    }
-    if (reqBody.reasons_psychosocial_counselling) {
-      let reasons = reqBody.reasons_psychosocial_counselling;
-      reasons_psychosocial_counselling = reasons.join(",");
-    }
-  }
   const newRecord = await prisma.patient_problems_environment.create({
     data: {
       patient_id: reqBody.patient_id,
@@ -837,10 +841,11 @@ async function createPatientProblemsEnvironment(reqBody) {
       inadequate_support_system: reqBody.inadequate_support_system,
       excessive_support_system: reqBody.excessive_support_system,
       // array
-      problems_presented: problems_presented,
-      reasons_psychosocial_counselling: reasons_psychosocial_counselling,
+      problems_presented: joinedTypes.problems_presented,
+      reasons_psychosocial_counselling:
+        joinedTypes.reasons_psychosocial_counselling,
       // end of array
-      assesment_findings: reasons_psychosocial_counselling,
+      assesment_findings: reqBody.assesment_findings,
       recommended_intervention: reqBody.recommended_intervention,
       action_taken: reqBody.action_taken,
       person_emergency: reqBody.person_emergency,
@@ -855,21 +860,16 @@ async function createPatientProblemsEnvironment(reqBody) {
   return newRecord;
 }
 async function updatePatientProblemsEnvironment(reqBody) {
-  let problems_presented = "";
-  let reasons_psychosocial_counselling = "";
-  if (reqBody.problems_presented) {
-    if (reqBody.problems_presented) {
-      let problems = reqBody.problems_presented;
-      problems_presented = problems.join(",");
+  const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
+  const joinedTypes = {};
+  listTypes.forEach((type) => {
+    if (reqBody[type]) {
+      joinedTypes[type] = reqBody[type].join(",");
     }
-    if (reqBody.reasons_psychosocial_counselling) {
-      let reasons = reqBody.reasons_psychosocial_counselling;
-      reasons_psychosocial_counselling = reasons.join(",");
-    }
-  }
+  });
   const updatedRecord = await prisma.patient_problems_environment.update({
     where: {
-      id: reqBody.id,
+      id: parseInt(reqBody.id),
     },
     data: {
       patient_id: reqBody.patient_id,
@@ -890,10 +890,11 @@ async function updatePatientProblemsEnvironment(reqBody) {
       inadequate_support_system: reqBody.inadequate_support_system,
       excessive_support_system: reqBody.excessive_support_system,
       // array
-      problems_presented: problems_presented,
-      reasons_psychosocial_counselling: reasons_psychosocial_counselling,
+      problems_presented: joinedTypes.problems_presented,
+      reasons_psychosocial_counselling:
+        joinedTypes.reasons_psychosocial_counselling,
       // end of array
-      assesment_findings: reasons_psychosocial_counselling,
+      assesment_findings: reqBody.assesment_findings,
       recommended_intervention: reqBody.recommended_intervention,
       action_taken: reqBody.action_taken,
       person_emergency: reqBody.person_emergency,
@@ -904,7 +905,6 @@ async function updatePatientProblemsEnvironment(reqBody) {
       remarks: reqBody.remarks,
     },
   });
-  console.log("updated", updatedRecord);
   return updatedRecord;
 }
 module.exports = {
