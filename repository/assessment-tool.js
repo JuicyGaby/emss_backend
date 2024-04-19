@@ -8,9 +8,10 @@ async function createInterview(reqBody) {
   const body = reqBody;
   const interview = await prisma.patient_interview.create({
     data: {
-      interview_date: new Date(body.interview_date),
+      patient_id: parseInt(body.patientId),
+      interview_date: body.interview_date,
       interview_time: body.interview_time,
-      admission_date_and_time: new Date(body.admission_date_and_time),
+      admission_date_and_time: new Date(body.admission_date_and_time).toISOString(),
       basic_ward: body.basic_ward,
       nonbasic_ward: body.nonbasic_ward,
       health_record_number: body.health_record_number,
@@ -38,10 +39,7 @@ async function getInterviewById(patient_id) {
       ...interview,
       interview_date: moment(interview.interview_date)
         .local()
-        .format("YYYY-MM-DD"),
-      admission_date_and_time: moment(interview.admission_date)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
+        .format("YYYY-MM-DD")
     };
   }
   return interview || false;
