@@ -3,8 +3,6 @@ const { parse } = require("dotenv");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
-
-
 // DAR
 exports.createDailyActivityReport = async function (reqBody) {
   const { isExisting } = reqBody;
@@ -492,7 +490,6 @@ exports.createDarServicesItem = async function (reqBody) {
 
 // DAR Notes
 exports.createDarNote = async function (reqBody) {
-  console.log(reqBody);
   const darNote = await prisma.dar_notes.create({
     data: {
       dar_id: reqBody.dar_id,
@@ -547,7 +544,14 @@ exports.updateDarNote = async function (reqBody) {
       note_body: reqBody.note_body,
     },
   });
-  return darNote;
+  const updatedDarNote = {
+    ...darNote,
+    date_created: moment(darNote.date_created)
+      .local()
+      .format("YYYY-MM-DD hh:mm A"),
+  };
+  console.log(updatedDarNote);
+  return updatedDarNote;
 };
 exports.deleteDarNote = async function (note_id) {
   const darNote = await prisma.dar_notes.delete({
