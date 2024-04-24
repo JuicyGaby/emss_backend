@@ -48,9 +48,22 @@ const {
   getProblemsInEnvironment,
   createPatientProblemsEnvironment,
   updatePatientProblemsEnvironment,
+  getPatientActivityLogs,
 } = require("../repository/assessment-tool");
 
 const assesmentTool = require("../repository/assessment-tool");
+
+// * Activity Logs
+exports.getActivityLogsById = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    console.log(patientId);
+    const activityLogs = await getPatientActivityLogs(patientId);
+    res.send(activityLogs);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // * interview
 exports.interview = async function (req, res, next) {

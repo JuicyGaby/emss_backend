@@ -2,6 +2,30 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
+async function createActivityLog(patient_id, body) {
+  const activity = await prisma.patient_activity_logs.create({
+    data: {
+      patient_id: parseInt(patient_id),
+      created_by: body.social_worker,
+      activity: body.activity,
+    },
+  });
+  console.log("activity", activity);
+}
+async function getPatientActivityLogs(patient_id) {
+  let activityLogs = await prisma.patient_activity_logs.findMany({
+    where: {
+      patient_id: parseInt(patient_id),
+    },
+  });
+  activityLogs = activityLogs.map((log) => {
+    return {
+      ...log,
+      created_at: moment(log.created_at).local().format("YYYY-MM-DD HH:mm"),
+    };
+  });
+  return activityLogs;
+}
 // * interview
 
 async function createInterview(reqBody) {
@@ -69,6 +93,8 @@ async function updateInterviewById(patient_id, reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  reqBody.activity = "Updated interview details";
+  await createActivityLog(patient_id, reqBody);
   return interview;
 }
 
@@ -957,4 +983,5 @@ module.exports = {
   getProblemsInEnvironment,
   createPatientProblemsEnvironment,
   updatePatientProblemsEnvironment,
+  getPatientActivityLogs,
 };

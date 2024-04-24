@@ -68,6 +68,17 @@ model patients {
   patient_family_info                      patient_family_info[]
   patient_problems_environment             patient_problems_environment[]
   daily_activity_report                    daily_activity_report[]
+  patient_activity_logs                    patient_activity_logs[]
+}
+
+model patient_activity_logs {
+  id         Int      @id @default(autoincrement())
+  patient_id Int
+  activity   String?  @db.VarChar(100)
+  created_at DateTime @default(now()) @db.DateTime(0)
+  created_by String?  @db.VarChar(100)
+  remarks    String?  @db.VarChar(255)
+  patients   patients @relation(fields: [patient_id], references: [id])
 }
 
 model patient_interview {
