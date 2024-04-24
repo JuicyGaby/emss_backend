@@ -2,6 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
+// activity log
+
 async function createActivityLog(patient_id, body) {
   const activity = await prisma.patient_activity_logs.create({
     data: {
@@ -297,7 +299,6 @@ async function getMswdClassification(patient_id) {
       },
     }
   );
-
   if (!mswdClassification) {
     return false;
   }
@@ -324,6 +325,7 @@ async function createMswdClassification(reqBody) {
     },
   });
   console.log("mswdClassification", mswdClassification);
+
   return mswdClassification;
 }
 async function updateMswwdClassification(reqBody) {
@@ -343,6 +345,8 @@ async function updateMswwdClassification(reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  reqBody.activity = "Updated MSWD classification";
+  await createActivityLog(mswdClassification.patient_id, reqBody);
   console.log("updated", mswdClassification);
   return mswdClassification;
 }
