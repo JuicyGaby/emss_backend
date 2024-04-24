@@ -34,6 +34,9 @@ router.get("/search-patient/:search", patients.searchPatient);
 
 router.get("/activity-logs/:id", assessmentTool.getActivityLogsById);
 
+router.get("/dar-activity-logs/:id", dailyActivityReport.getDarActivityLogs);
+router.get("/swa-activity-logs/:id", dailyActivityReport.getSwaActivityLogs);
+
 // ? interview
 router.post("/interview", assessmentTool.interview);
 router.get("/interview/:id", assessmentTool.getInterview);

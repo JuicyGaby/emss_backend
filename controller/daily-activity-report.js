@@ -233,3 +233,24 @@ exports.deleteDarNote = async function (req, res, next) {
     console.error(error);
   }
 };
+
+// Activity Logs
+
+exports.getDarActivityLogs = async function (req, res, next) {
+  try {
+    const darId = req.params.id;
+    const darItem = await repository.getDarActivityLogs(darId);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getSwaActivityLogs = async function (req, res, next) {
+  try {
+    const swaId = req.params.id;
+    const darItem = await repository.getSwaActivityLogs(swaId);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};

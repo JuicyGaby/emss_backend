@@ -26,6 +26,39 @@ const createSwaActivityLog = async function (reqBody) {
   return activityLog;
 };
 
+exports.getDarActivityLogs = async function (dar_id) {
+  const activityLogs = await prisma.dar_activity_logs.findMany({
+    where: {
+      dar_id: parseInt(dar_id),
+    },
+  });
+  const updatedActivityLogs = activityLogs.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return updatedActivityLogs || [];
+};
+exports.getSwaActivityLogs = async function (dar_swa_id) {
+  const activityLogs = await prisma.swa_activity_logs.findMany({
+    where: {
+      swa_id: parseInt(dar_swa_id),
+    },
+  });
+  const updatedActivityLogs = activityLogs.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return updatedActivityLogs || [];
+};
+
 // DAR
 exports.createDailyActivityReport = async function (reqBody) {
   const { isExisting } = reqBody;
