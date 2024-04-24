@@ -148,21 +148,28 @@ model patient_mswd_classification {
 }
 
 model patient_monthly_expenses {
-  id                   Int                    @id @default(autoincrement())
-  patient_id           Int                    @unique
-  house_lot_cost       String?                @default("0") @db.VarChar(100)
-  food_water_cost      String?                @default("0") @db.VarChar(100)
-  education_cost       String?                @default("0") @db.VarChar(100)
-  clothing_cost        String?                @default("0") @db.VarChar(100)
-  transportation_type  String?                @db.VarChar(100)
-  transportation_cost  String?                @default("0") @db.VarChar(100)
-  communication_cost   String?                @default("0") @db.VarChar(100)
-  house_help_cost      String?                @default("0") @db.VarChar(100)
-  medical_cost         String?                @default("0") @db.VarChar(100)
-  others_description   String?                @db.VarChar(100)
-  others_cost          String?                @db.VarChar(100)
-  total_cost           String?                @default("0") @db.VarChar(100)
-  remarks              String?                @db.VarChar(500)
+  id                  Int     @id @default(autoincrement())
+  patient_id          Int     @unique
+  house_lot_cost      String? @default("0") @db.VarChar(100)
+  food_water_cost     String? @default("0") @db.VarChar(100)
+  education_cost      String? @default("0") @db.VarChar(100)
+  clothing_cost       String? @default("0") @db.VarChar(100)
+  transportation_type String? @db.VarChar(300)
+  transportation_cost String? @default("0") @db.VarChar(100)
+  light_source_type   String? @default("0") @db.VarChar(255)
+  water_source_type   String? @default("0") @db.VarChar(255)
+  fuel_source_type    String? @default("0") @db.VarChar(255)
+  light_source_cost   String? @default("0") @db.VarChar(100)
+  water_source_cost   String? @default("0") @db.VarChar(100)
+  fuel_source_cost    String? @default("0") @db.VarChar(100)
+  communication_cost  String? @default("0") @db.VarChar(100)
+  house_help_cost     String? @default("0") @db.VarChar(100)
+  medical_cost        String? @default("0") @db.VarChar(100)
+  others_description  String? @db.VarChar(100)
+  others_cost         String? @db.VarChar(100)
+  total_cost          String? @default("0") @db.VarChar(100)
+  remarks             String? @db.VarChar(500)
+
   patients             patients               @relation(fields: [patient_id], references: [id])
   patient_fuel_source  patient_fuel_source[]
   patient_light_source patient_light_source[]
@@ -367,25 +374,28 @@ model ph_barangays {
 // DAR 
 
 model daily_activity_report {
-  id                      Int      @id @default(autoincrement())
+  id                      Int       @id @default(autoincrement())
   patient_id              Int
   creator_id              Int?
-  created_by              String?  @db.VarChar(100)
-  date_created            DateTime @default(now()) @db.DateTime(0)
-  area                    String?  @db.VarChar(100)
-  case_type               String?  @db.VarChar(100)
-  indirect_contributor    String?  @db.VarChar(100)
-  phic_classification     String?  @db.VarChar(100)
-  non_phic_classification String?  @db.VarChar(100)
-  sectoral_grouping       String?  @db.VarChar(100)
-  house_hold_size         String?  @db.VarChar(100)
-  source_of_referral      String?  @db.VarChar(100)
-  diagnosis               String?  @db.VarChar(100)
-  informant               String?  @db.VarChar(100)
-  relationship_to_patient String?  @db.VarChar(100)
-  interview_start_time    String?  @db.VarChar(100)
-  interview_end_time      String?  @db.VarChar(100)
-  remarks                 String?  @db.VarChar(255)
+  created_by              String?   @db.VarChar(100)
+  date_created            DateTime  @default(now()) @db.DateTime(0)
+  admission_date          DateTime?
+  area                    String?   @db.VarChar(100)
+  case_type               String?   @db.VarChar(100)
+  indirect_contributor    String?   @db.VarChar(100)
+  is_phic_member          Int?      @db.TinyInt
+  phic_classification     String?   @db.VarChar(100)
+  non_phic_classification String?   @db.VarChar(100)
+  sectoral_grouping       String?   @db.VarChar(100)
+  house_hold_size         String?   @db.VarChar(100)
+  source_of_referral      String?   @db.VarChar(100)
+  diagnosis               String?   @db.VarChar(100)
+  informant               String?   @db.VarChar(100)
+  relationship_to_patient String?   @db.VarChar(100)
+  interview_start_time    String?   @db.VarChar(100)
+  interview_end_time      String?   @db.VarChar(100)
+  remarks                 String?   @db.VarChar(255)
+  is_active               Int?      @default(1) @db.TinyInt
 
   dar_case_services dar_case_services[]
   dar_notes         dar_notes[]

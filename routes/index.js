@@ -103,6 +103,7 @@ router.post('/daily-activity-report', dailyActivityReport.createDailyActivityRep
 router.get('/daily-activity-report', dailyActivityReport.getDailyActivityReport)
 router.get('/daily-activity-report/:id', dailyActivityReport.getDailyActivityReportById)
 router.put('/daily-activity-report', dailyActivityReport.updateDailyActivityReport)
+router.put('/update-dar-status/:id', dailyActivityReport.updateDarStatus)
 router.get('/daily-activity-report-by-date/:date', dailyActivityReport.getDailyActivityReportByDate)
 router.get('/dar-by-month/:month', dailyActivityReport.getDarByMonth)
 

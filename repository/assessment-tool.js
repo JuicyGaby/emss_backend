@@ -8,9 +8,12 @@ async function createInterview(reqBody) {
   const body = reqBody;
   const interview = await prisma.patient_interview.create({
     data: {
-      interview_date: new Date(body.interview_date),
+      patient_id: parseInt(body.patientId),
+      interview_date: body.interview_date,
       interview_time: body.interview_time,
-      admission_date_and_time: new Date(body.admission_date_and_time),
+      admission_date_and_time: new Date(
+        body.admission_date_and_time
+      ).toISOString(),
       basic_ward: body.basic_ward,
       nonbasic_ward: body.nonbasic_ward,
       health_record_number: body.health_record_number,
@@ -39,9 +42,6 @@ async function getInterviewById(patient_id) {
       interview_date: moment(interview.interview_date)
         .local()
         .format("YYYY-MM-DD"),
-      admission_date_and_time: moment(interview.admission_date)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
     };
   }
   return interview || false;
@@ -328,82 +328,108 @@ async function getMonthlyExpenses(patient_id) {
     where: {
       patient_id: parseInt(patient_id),
     },
-    include: {
-      patient_water_source: true,
-      patient_light_source: true,
-      patient_fuel_source: true,
-    },
   });
+  console.log("monthlyExpenses", monthlyExpenses);
   if (!monthlyExpenses) {
     return false;
   }
-  if (monthlyExpenses.transportation_type) {
-    monthlyExpenses.transportation_type =
-      monthlyExpenses.transportation_type.split(",");
-  }
+  const listTypes = [
+    "transportation_type",
+    "light_source_type",
+    "water_source_type",
+    "fuel_source_type",
+    "others_description",
+  ];
+  listTypes.forEach((type) => {
+    if (monthlyExpenses[type] !== undefined) {
+      if (monthlyExpenses[type].trim() === "") {
+        delete monthlyExpenses[type];
+      } else {
+        monthlyExpenses[type] = monthlyExpenses[type].split(",");
+      }
+    }
+  });
   return monthlyExpenses;
 }
 async function createMonthlyExpenses(reqBody) {
-  console.log("reqBody", reqBody);
-  let transportation_type = null;
-  if (reqBody.transportation_type) {
-    let transpo = reqBody.transportation_type;
-    transportation_type = transpo.join(",");
-  }
+  const { number, text } = reqBody;
+  console.log(reqBody);
+  const listTypes = [
+    "transportation_type",
+    "light_source_type",
+    "water_source_type",
+    "fuel_source_type",
+    "others_description",
+  ];
+  const joinedTypes = {};
+  listTypes.forEach((type) => {
+    if (text[type]) {
+      joinedTypes[type] = text[type].join(",");
+    }
+  });
   const monthlyExpenses = await prisma.patient_monthly_expenses.create({
     data: {
-      patient_id: reqBody.patient_id,
-      house_lot_cost: reqBody.house_lot_cost || "0",
-      food_water_cost: reqBody.food_water_cost || "0",
-      education_cost: reqBody.education_cost || "0",
-      clothing_cost: reqBody.clothing_cost || "0",
-      transportation_type: transportation_type,
-      transportation_cost: reqBody.transportation_cost || "0",
-      communication_cost: reqBody.communication_cost || "0",
-      house_help_cost: reqBody.house_help_cost || "0",
-      medical_cost: reqBody.medical_cost || "0",
-      others_description: reqBody.others_description || "",
-      others_cost: reqBody.others_cost || "0",
-      total_cost: reqBody.total_cost || "0",
-      remarks: reqBody.remarks || "",
+      house_lot_cost: number.house_lot_cost,
+      food_water_cost: number.food_water_cost,
+      education_cost: number.education_cost,
+      clothing_cost: number.clothing_cost,
+      transportation_type: joinedTypes.transportation_type,
+      light_source_type: joinedTypes.light_source_type,
+      water_source_type: joinedTypes.water_source_type,
+      fuel_source_type: joinedTypes.fuel_source_type,
+      others_description: joinedTypes.others_description,
+      others_cost: number.others_cost,
+      transportation_cost: number.transportation_cost,
+      light_source_cost: number.light_source_cost,
+      water_source_cost: number.water_source_cost,
+      fuel_source_cost: number.fuel_source_cost,
+      communication_cost: number.communication_cost,
+      house_help_cost: number.house_help_cost,
+      medical_cost: number.medical_cost,
+      total_cost: reqBody.total_cost.toString(),
+      patient_id: reqBody.id,
     },
   });
-  patient_monthly_expenses_id = monthlyExpenses.id;
-  await createSources(patient_monthly_expenses_id, reqBody);
-  console.log("Created", monthlyExpenses);
   return monthlyExpenses;
 }
 async function updateMonthlyExpenses(reqBody) {
-  let transportation_type = null;
-  if (reqBody.transportation_type) {
-    let transpo = reqBody.transportation_type;
-    transportation_type = transpo.join(",");
-  }
+  const { number, text, id } = reqBody;
+  const listTypes = [
+    "transportation_type",
+    "light_source_type",
+    "water_source_type",
+    "fuel_source_type",
+    "others_description",
+  ];
+  const joinedTypes = {};
+  listTypes.forEach((type) => {
+    if (text[type]) {
+      joinedTypes[type] = text[type].join(",");
+    }
+  });
   const monthlyExpenses = await prisma.patient_monthly_expenses.update({
-    where: {
-      id: reqBody.id,
-    },
+    where: { id: id },
     data: {
-      house_lot_cost: reqBody.house_lot_cost,
-      food_water_cost: reqBody.food_water_cost,
-      education_cost: reqBody.education_cost,
-      clothing_cost: reqBody.clothing_cost,
-      transportation_type: transportation_type,
-      transportation_cost: reqBody.transportation_cost,
-      communication_cost: reqBody.communication_cost,
-      house_help_cost: reqBody.house_help_cost,
-      medical_cost: reqBody.medical_cost,
-      others_description: reqBody.others_description,
-      others_cost: reqBody.others_cost,
-      total_cost: reqBody.total_cost,
-      remarks: reqBody.remarks,
+      house_lot_cost: number.house_lot_cost,
+      food_water_cost: number.food_water_cost,
+      education_cost: number.education_cost,
+      clothing_cost: number.clothing_cost,
+      transportation_type: joinedTypes.transportation_type,
+      light_source_type: joinedTypes.light_source_type,
+      water_source_type: joinedTypes.water_source_type,
+      fuel_source_type: joinedTypes.fuel_source_type,
+      others_description: joinedTypes.others_description,
+      others_cost: number.others_cost,
+      transportation_cost: number.transportation_cost,
+      light_source_cost: number.light_source_cost,
+      water_source_cost: number.water_source_cost,
+      fuel_source_cost: number.fuel_source_cost,
+      communication_cost: number.communication_cost,
+      house_help_cost: number.house_help_cost,
+      medical_cost: number.medical_cost,
+      total_cost: reqBody.total_cost.toString(),
     },
   });
-  console.log("Updated", monthlyExpenses);
-  if (monthlyExpenses) {
-    const patient_monthly_expenses_id = monthlyExpenses.id;
-    await updateSources(patient_monthly_expenses_id, reqBody);
-  }
   return monthlyExpenses;
 }
 async function createSources(id, reqBody) {
@@ -774,29 +800,27 @@ async function getProblemsInEnvironment(patient_id) {
   if (!response) {
     return false;
   }
-  if (response.problems_presented !== null) {
-    response.problems_presented = response.problems_presented.split(",");
-  }
-  if (response.reasons_psychosocial_counselling !== null) {
-    response.reasons_psychosocial_counselling =
-      response.reasons_psychosocial_counselling.split(",");
-  }
+  const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
+  listTypes.forEach((type) => {
+    if (response[type] !== undefined) {
+      if (response[type].trim() === "") {
+        delete response[type];
+      } else {
+        response[type] = response[type].split(",");
+      }
+    }
+  });
   return response;
 }
 async function createPatientProblemsEnvironment(reqBody) {
-  let problems_presented = "";
-  let reasons_psychosocial_counselling = "";
+  const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
+  const joinedTypes = {};
+  listTypes.forEach((type) => {
+    if (reqBody[type]) {
+      joinedTypes[type] = reqBody[type].join(",");
+    }
+  });
 
-  if (reqBody.problems_presented) {
-    if (reqBody.problems_presented) {
-      let problems = reqBody.problems_presented;
-      problems_presented = problems.join(",");
-    }
-    if (reqBody.reasons_psychosocial_counselling) {
-      let reasons = reqBody.reasons_psychosocial_counselling;
-      reasons_psychosocial_counselling = reasons.join(",");
-    }
-  }
   const newRecord = await prisma.patient_problems_environment.create({
     data: {
       patient_id: reqBody.patient_id,
@@ -817,10 +841,11 @@ async function createPatientProblemsEnvironment(reqBody) {
       inadequate_support_system: reqBody.inadequate_support_system,
       excessive_support_system: reqBody.excessive_support_system,
       // array
-      problems_presented: problems_presented,
-      reasons_psychosocial_counselling: reasons_psychosocial_counselling,
+      problems_presented: joinedTypes.problems_presented,
+      reasons_psychosocial_counselling:
+        joinedTypes.reasons_psychosocial_counselling,
       // end of array
-      assesment_findings: reasons_psychosocial_counselling,
+      assesment_findings: reqBody.assesment_findings,
       recommended_intervention: reqBody.recommended_intervention,
       action_taken: reqBody.action_taken,
       person_emergency: reqBody.person_emergency,
@@ -835,21 +860,16 @@ async function createPatientProblemsEnvironment(reqBody) {
   return newRecord;
 }
 async function updatePatientProblemsEnvironment(reqBody) {
-  let problems_presented = "";
-  let reasons_psychosocial_counselling = "";
-  if (reqBody.problems_presented) {
-    if (reqBody.problems_presented) {
-      let problems = reqBody.problems_presented;
-      problems_presented = problems.join(",");
+  const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
+  const joinedTypes = {};
+  listTypes.forEach((type) => {
+    if (reqBody[type]) {
+      joinedTypes[type] = reqBody[type].join(",");
     }
-    if (reqBody.reasons_psychosocial_counselling) {
-      let reasons = reqBody.reasons_psychosocial_counselling;
-      reasons_psychosocial_counselling = reasons.join(",");
-    }
-  }
+  });
   const updatedRecord = await prisma.patient_problems_environment.update({
     where: {
-      id: reqBody.id,
+      id: parseInt(reqBody.id),
     },
     data: {
       patient_id: reqBody.patient_id,
@@ -870,10 +890,11 @@ async function updatePatientProblemsEnvironment(reqBody) {
       inadequate_support_system: reqBody.inadequate_support_system,
       excessive_support_system: reqBody.excessive_support_system,
       // array
-      problems_presented: problems_presented,
-      reasons_psychosocial_counselling: reasons_psychosocial_counselling,
+      problems_presented: joinedTypes.problems_presented,
+      reasons_psychosocial_counselling:
+        joinedTypes.reasons_psychosocial_counselling,
       // end of array
-      assesment_findings: reasons_psychosocial_counselling,
+      assesment_findings: reqBody.assesment_findings,
       recommended_intervention: reqBody.recommended_intervention,
       action_taken: reqBody.action_taken,
       person_emergency: reqBody.person_emergency,
@@ -884,7 +905,6 @@ async function updatePatientProblemsEnvironment(reqBody) {
       remarks: reqBody.remarks,
     },
   });
-  console.log("updated", updatedRecord);
   return updatedRecord;
 }
 module.exports = {
