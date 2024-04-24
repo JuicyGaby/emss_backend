@@ -23,7 +23,7 @@ const createSwaActivityLog = async function (reqBody) {
       created_by: reqBody.created_by,
     },
   });
-  return activityLog;
+  console.log(activityLog);
 };
 
 exports.getDarActivityLogs = async function (dar_id) {
@@ -32,12 +32,11 @@ exports.getDarActivityLogs = async function (dar_id) {
       dar_id: parseInt(dar_id),
     },
   });
+  // return with local time
   const updatedActivityLogs = activityLogs.map((item) => {
     return {
       ...item,
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
+      created_at: moment(item.created_at).local().format("YYYY-MM-DD hh:mm A"),
     };
   });
   return updatedActivityLogs || [];
@@ -51,9 +50,7 @@ exports.getSwaActivityLogs = async function (dar_swa_id) {
   const updatedActivityLogs = activityLogs.map((item) => {
     return {
       ...item,
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
+      created_at: moment(item.created_at).local().format("YYYY-MM-DD hh:mm A"),
     };
   });
   return updatedActivityLogs || [];
@@ -433,6 +430,8 @@ exports.createSwaNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
+  reqBody.activity = `Created SWA Note`;
+  await createSwaActivityLog(reqBody);
   return updatedSwaNote;
 };
 exports.getSwaNotes = async function (dar_swa_id) {
@@ -476,6 +475,8 @@ exports.updateSwaNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
+  swaNote.activity = `Updated SWA Note`;
+  await createSwaActivityLog(swaNote);
   return swaNote;
 };
 exports.deleteSwaNote = async function (note_id) {
@@ -484,6 +485,8 @@ exports.deleteSwaNote = async function (note_id) {
       id: parseInt(note_id),
     },
   });
+  swaNote.activity = `Deleted SWA Note`;
+  await createSwaActivityLog(swaNote);
   return swaNote;
 };
 
