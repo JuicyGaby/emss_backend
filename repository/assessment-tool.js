@@ -573,6 +573,8 @@ async function createHealthAndMentalHealth(reqBody) {
       },
     });
   console.log("created", healthAndMentalHealth);
+  reqBody.activity = "Created Health and Mental Health";
+  await createActivityLog(healthAndMentalHealth.patient_id, reqBody);
   return healthAndMentalHealth;
 }
 async function updateHealthAndMentalHealth(reqBody) {
@@ -598,6 +600,8 @@ async function updateHealthAndMentalHealth(reqBody) {
       },
     });
   console.log("updated", healthAndMentalHealth);
+  reqBody.activity = "Updated Health and Mental Health";
+  await createActivityLog(healthAndMentalHealth.patient_id, reqBody);
   return healthAndMentalHealth;
 }
 
