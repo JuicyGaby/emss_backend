@@ -635,9 +635,11 @@ async function createDiscrimination(reqBody) {
     },
   });
   console.log("created", discrimination);
+  await createActivityLog(discrimination.patient_id, reqBody);
   return discrimination || false;
 }
 async function updateDiscrimination(reqBody) {
+  console.log("reqBody", reqBody);
   const discrimination = await prisma.patient_descrimination.update({
     where: {
       id: reqBody.id,
@@ -658,6 +660,7 @@ async function updateDiscrimination(reqBody) {
     },
   });
   console.log("updated", discrimination);
+  await createActivityLog(discrimination.patient_id, reqBody);
   return discrimination;
 }
 
