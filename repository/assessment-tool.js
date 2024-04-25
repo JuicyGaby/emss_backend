@@ -754,6 +754,7 @@ async function createSocialFunction(reqBody) {
       },
     });
   console.log("created", createdSocialFunction);
+  await createActivityLog(createdSocialFunction.patient_id, reqBody);
   return createdSocialFunction;
 }
 async function updateSocialFunction(reqBody) {
@@ -791,6 +792,7 @@ async function updateSocialFunction(reqBody) {
       },
     });
   console.log("updated", updatedSocialFunction);
+  await createActivityLog(updatedSocialFunction.patient_id, reqBody);
   return updatedSocialFunction;
 }
 
