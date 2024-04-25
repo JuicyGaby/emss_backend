@@ -808,7 +808,7 @@ async function getProblemsInEnvironment(patient_id) {
   }
   const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
   listTypes.forEach((type) => {
-    if (response[type] !== undefined) {
+    if (response[type] !== undefined && response[type] !== null) {
       if (response[type].trim() === "") {
         delete response[type];
       } else {
@@ -822,8 +822,14 @@ async function createPatientProblemsEnvironment(reqBody) {
   const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (reqBody[type]) {
-      joinedTypes[type] = reqBody[type].join(",");
+    if (reqBody[type] !== undefined && reqBody[type] !== null) {
+      if (Array.isArray(reqBody[type])) {
+        joinedTypes[type] = reqBody[type].join(",").trim();
+      } else if (typeof reqBody[type] === "string") {
+        if (reqBody[type].trim() === "") {
+          delete reqBody[type];
+        }
+      }
     }
   });
 
@@ -863,14 +869,21 @@ async function createPatientProblemsEnvironment(reqBody) {
     },
   });
   console.log("created", newRecord);
+  await createActivityLog(newRecord.patient_id, reqBody);
   return newRecord;
 }
 async function updatePatientProblemsEnvironment(reqBody) {
   const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (reqBody[type]) {
-      joinedTypes[type] = reqBody[type].join(",");
+    if (reqBody[type] !== undefined && reqBody[type] !== null) {
+      if (Array.isArray(reqBody[type])) {
+        joinedTypes[type] = reqBody[type].join(",").trim();
+      } else if (typeof reqBody[type] === "string") {
+        if (reqBody[type].trim() === "") {
+          delete reqBody[type];
+        }
+      }
     }
   });
   const updatedRecord = await prisma.patient_problems_environment.update({
@@ -911,6 +924,8 @@ async function updatePatientProblemsEnvironment(reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  console.log("updated", updatedRecord);
+  await createActivityLog(updatedRecord.patient_id, reqBody);
   return updatedRecord;
 }
 module.exports = {
