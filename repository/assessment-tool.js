@@ -674,7 +674,6 @@ async function getSafety(patient_id) {
   });
   return safety || false;
 }
-
 async function createSafety(reqBody) {
   const createdSafetyData = await prisma.patient_safety.create({
     data: {
@@ -689,6 +688,7 @@ async function createSafety(reqBody) {
     },
   });
   console.log("created", createdSafetyData);
+  await createActivityLog(createdSafetyData.patient_id, reqBody);
   return createdSafetyData;
 }
 async function updateSafety(reqBody) {
@@ -707,6 +707,7 @@ async function updateSafety(reqBody) {
     },
   });
   console.log("updated", updatedSafetyData);
+  await createActivityLog(updatedSafetyData.patient_id, reqBody);
   return updatedSafetyData;
 }
 
