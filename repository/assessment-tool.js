@@ -517,6 +517,8 @@ async function createMedicalData(reqBody) {
     },
   });
   console.log("medicalData created", medicalData);
+  reqBody.activity = "Created Medical Data";
+  await createActivityLog(medicalData.patient_id, reqBody);
   return medicalData;
 }
 async function updateMedicalData(reqBody) {
@@ -534,6 +536,8 @@ async function updateMedicalData(reqBody) {
     },
   });
   console.log("medicalData updated", medicalData);
+  reqBody.activity = "Updated Medical Data";
+  await createActivityLog(medicalData.patient_id, reqBody);
   return medicalData;
 }
 
