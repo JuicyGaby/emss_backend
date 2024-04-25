@@ -240,7 +240,7 @@ exports.getMonthlyExpenses = async function (req, res, next) {
   try {
     const monthlyExpenses = await getMonthlyExpenses(patientId);
     res.send(monthlyExpenses);
-  } catch (error) {
+  } catch (error) { 
     console.error(error);
   }
 };

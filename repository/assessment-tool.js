@@ -324,8 +324,8 @@ async function createMswdClassification(reqBody) {
       remarks: reqBody.remarks,
     },
   });
-  console.log("mswdClassification", mswdClassification);
-
+  reqBody.activity = "Created MSWD classification";
+  await createActivityLog(reqBody.patient_id, reqBody);
   return mswdClassification;
 }
 async function updateMswwdClassification(reqBody) {
@@ -371,7 +371,7 @@ async function getMonthlyExpenses(patient_id) {
     "others_description",
   ];
   listTypes.forEach((type) => {
-    if (monthlyExpenses[type] !== undefined) {
+    if (monthlyExpenses[type] !== undefined && monthlyExpenses[type] !== null) {
       if (monthlyExpenses[type].trim() === "") {
         delete monthlyExpenses[type];
       } else {
@@ -393,7 +393,7 @@ async function createMonthlyExpenses(reqBody) {
   ];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (text[type]) {
+    if (text && text[type]) {
       joinedTypes[type] = text[type].join(",");
     }
   });
@@ -420,10 +420,13 @@ async function createMonthlyExpenses(reqBody) {
       patient_id: reqBody.id,
     },
   });
+  reqBody.activity = "Created Monthly Expenses";
+  await createActivityLog(monthlyExpenses.patient_id, reqBody);
   return monthlyExpenses;
 }
 async function updateMonthlyExpenses(reqBody) {
   const { number, text, id } = reqBody;
+  console.log(reqBody);
   const listTypes = [
     "transportation_type",
     "light_source_type",
@@ -433,12 +436,12 @@ async function updateMonthlyExpenses(reqBody) {
   ];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (text[type]) {
+    if (text && text[type]) {
       joinedTypes[type] = text[type].join(",");
     }
   });
   const monthlyExpenses = await prisma.patient_monthly_expenses.update({
-    where: { id: id },
+    where: { id },
     data: {
       house_lot_cost: number.house_lot_cost,
       food_water_cost: number.food_water_cost,
@@ -460,6 +463,8 @@ async function updateMonthlyExpenses(reqBody) {
       total_cost: reqBody.total_cost.toString(),
     },
   });
+  reqBody.activity = "Updated Monthly Expenses";
+  await createActivityLog(monthlyExpenses.patient_id, reqBody);
   return monthlyExpenses;
 }
 async function createSources(id, reqBody) {
@@ -485,49 +490,6 @@ async function createSources(id, reqBody) {
       charcoal: reqBody.patient_fuel_source.charcoal,
       kerosene: reqBody.patient_fuel_source.kerosene,
       gas: reqBody.patient_fuel_source.gas,
-    },
-  });
-}
-async function updateSources(id, reqBody) {
-  const waterSourceProfile = await findFirst("patient_water_source", id);
-  const lightSourceProfile = await findFirst("patient_light_source", id);
-  const fuelSourceProfile = await findFirst("patient_fuel_source", id);
-  const waterSource = await prisma.patient_water_source.update({
-    where: {
-      id: waterSourceProfile.id,
-    },
-    data: {
-      water_district: reqBody.patient_water_source.water_district,
-      private_artesian_well: reqBody.patient_water_source.private_artesian_well,
-      public_artesian_well: reqBody.patient_water_source.public_artesian_well,
-    },
-  });
-  const lightSource = await prisma.patient_light_source.update({
-    where: {
-      id: lightSourceProfile.id,
-    },
-    data: {
-      electric: reqBody.patient_light_source.electric,
-      kerosene: reqBody.patient_light_source.kerosene,
-      candle: reqBody.patient_light_source.candle,
-    },
-  });
-  const fuelSource = await prisma.patient_fuel_source.update({
-    where: {
-      id: fuelSourceProfile.id,
-    },
-    data: {
-      charcoal: reqBody.patient_fuel_source.charcoal,
-      kerosene: reqBody.patient_fuel_source.kerosene,
-      gas: reqBody.patient_fuel_source.gas,
-    },
-  });
-  console.log("updated sources", waterSource, lightSource, fuelSource);
-}
-async function findFirst(model, id) {
-  return await prisma[model].findFirst({
-    where: {
-      patient_monthly_expenses_id: id,
     },
   });
 }
