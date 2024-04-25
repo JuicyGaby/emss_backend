@@ -23,7 +23,7 @@ async function getPatientActivityLogs(patient_id) {
   activityLogs = activityLogs.map((log) => {
     return {
       ...log,
-      created_at: moment(log.created_at).local().format("YYYY-MM-DD HH:mm"),
+      created_at: moment(log.created_at).local().format("YYYY-MM-DD hh:mm A"),
     };
   });
   return activityLogs;
