@@ -816,6 +816,30 @@ async function getProblemsInEnvironment(patient_id) {
       }
     }
   });
+  const excludedProperties = [
+    "problems_presented",
+    "reasons_psychosocial_counselling",
+    "assesment_findings",
+    "recommended_intervention",
+    "action_taken",
+    "person_emergency",
+    "relationship_to_patient",
+    "address",
+    "contact_number",
+    "interviewed_by",
+    "remarks",
+  ];
+
+  for (const prop in response) {
+    if (
+      response.hasOwnProperty(prop) &&
+      response[prop] === null &&
+      !excludedProperties.includes(prop)
+    ) {
+      response[prop] = { duration: "", severity: "" };
+    }
+  }
+  console.log("response", response);
   return response;
 }
 async function createPatientProblemsEnvironment(reqBody) {
@@ -873,6 +897,7 @@ async function createPatientProblemsEnvironment(reqBody) {
   return newRecord;
 }
 async function updatePatientProblemsEnvironment(reqBody) {
+  console.log("reqBody", reqBody);
   const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
   const joinedTypes = {};
   listTypes.forEach((type) => {
