@@ -51,6 +51,7 @@ model patients {
   ph_membership_type      String?  @db.VarChar(100)
   created_at              DateTime @default(now()) @db.DateTime(0)
   created_by              String?  @db.VarChar(100)
+  creator_id              Int?
   remarks                 String?  @db.VarChar(255)
   highest_education_level String?  @db.VarChar(100)
   education_status        String?  @db.VarChar(100)
