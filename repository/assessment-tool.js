@@ -2,6 +2,32 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
+// activity log
+
+async function createActivityLog(patient_id, body) {
+  const activity = await prisma.patient_activity_logs.create({
+    data: {
+      patient_id: parseInt(patient_id),
+      created_by: body.social_worker,
+      activity: body.activity,
+    },
+  });
+  console.log("activity", activity);
+}
+async function getPatientActivityLogs(patient_id) {
+  let activityLogs = await prisma.patient_activity_logs.findMany({
+    where: {
+      patient_id: parseInt(patient_id),
+    },
+  });
+  activityLogs = activityLogs.map((log) => {
+    return {
+      ...log,
+      created_at: moment(log.created_at).local().format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return activityLogs;
+}
 // * interview
 
 async function createInterview(reqBody) {
@@ -69,6 +95,8 @@ async function updateInterviewById(patient_id, reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  reqBody.activity = "Updated interview details";
+  await createActivityLog(patient_id, reqBody);
   return interview;
 }
 
@@ -271,7 +299,6 @@ async function getMswdClassification(patient_id) {
       },
     }
   );
-
   if (!mswdClassification) {
     return false;
   }
@@ -297,7 +324,8 @@ async function createMswdClassification(reqBody) {
       remarks: reqBody.remarks,
     },
   });
-  console.log("mswdClassification", mswdClassification);
+  reqBody.activity = "Created MSWD classification";
+  await createActivityLog(reqBody.patient_id, reqBody);
   return mswdClassification;
 }
 async function updateMswwdClassification(reqBody) {
@@ -317,6 +345,8 @@ async function updateMswwdClassification(reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  reqBody.activity = "Updated MSWD classification";
+  await createActivityLog(mswdClassification.patient_id, reqBody);
   console.log("updated", mswdClassification);
   return mswdClassification;
 }
@@ -341,7 +371,7 @@ async function getMonthlyExpenses(patient_id) {
     "others_description",
   ];
   listTypes.forEach((type) => {
-    if (monthlyExpenses[type] !== undefined) {
+    if (monthlyExpenses[type] !== undefined && monthlyExpenses[type] !== null) {
       if (monthlyExpenses[type].trim() === "") {
         delete monthlyExpenses[type];
       } else {
@@ -363,7 +393,7 @@ async function createMonthlyExpenses(reqBody) {
   ];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (text[type]) {
+    if (text && text[type]) {
       joinedTypes[type] = text[type].join(",");
     }
   });
@@ -390,10 +420,13 @@ async function createMonthlyExpenses(reqBody) {
       patient_id: reqBody.id,
     },
   });
+  reqBody.activity = "Created Monthly Expenses";
+  await createActivityLog(monthlyExpenses.patient_id, reqBody);
   return monthlyExpenses;
 }
 async function updateMonthlyExpenses(reqBody) {
   const { number, text, id } = reqBody;
+  console.log(reqBody);
   const listTypes = [
     "transportation_type",
     "light_source_type",
@@ -403,12 +436,12 @@ async function updateMonthlyExpenses(reqBody) {
   ];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (text[type]) {
+    if (text && text[type]) {
       joinedTypes[type] = text[type].join(",");
     }
   });
   const monthlyExpenses = await prisma.patient_monthly_expenses.update({
-    where: { id: id },
+    where: { id },
     data: {
       house_lot_cost: number.house_lot_cost,
       food_water_cost: number.food_water_cost,
@@ -430,6 +463,8 @@ async function updateMonthlyExpenses(reqBody) {
       total_cost: reqBody.total_cost.toString(),
     },
   });
+  reqBody.activity = "Updated Monthly Expenses";
+  await createActivityLog(monthlyExpenses.patient_id, reqBody);
   return monthlyExpenses;
 }
 async function createSources(id, reqBody) {
@@ -458,49 +493,6 @@ async function createSources(id, reqBody) {
     },
   });
 }
-async function updateSources(id, reqBody) {
-  const waterSourceProfile = await findFirst("patient_water_source", id);
-  const lightSourceProfile = await findFirst("patient_light_source", id);
-  const fuelSourceProfile = await findFirst("patient_fuel_source", id);
-  const waterSource = await prisma.patient_water_source.update({
-    where: {
-      id: waterSourceProfile.id,
-    },
-    data: {
-      water_district: reqBody.patient_water_source.water_district,
-      private_artesian_well: reqBody.patient_water_source.private_artesian_well,
-      public_artesian_well: reqBody.patient_water_source.public_artesian_well,
-    },
-  });
-  const lightSource = await prisma.patient_light_source.update({
-    where: {
-      id: lightSourceProfile.id,
-    },
-    data: {
-      electric: reqBody.patient_light_source.electric,
-      kerosene: reqBody.patient_light_source.kerosene,
-      candle: reqBody.patient_light_source.candle,
-    },
-  });
-  const fuelSource = await prisma.patient_fuel_source.update({
-    where: {
-      id: fuelSourceProfile.id,
-    },
-    data: {
-      charcoal: reqBody.patient_fuel_source.charcoal,
-      kerosene: reqBody.patient_fuel_source.kerosene,
-      gas: reqBody.patient_fuel_source.gas,
-    },
-  });
-  console.log("updated sources", waterSource, lightSource, fuelSource);
-}
-async function findFirst(model, id) {
-  return await prisma[model].findFirst({
-    where: {
-      patient_monthly_expenses_id: id,
-    },
-  });
-}
 
 // * medical data
 async function getMedicalData(patient_id) {
@@ -525,6 +517,8 @@ async function createMedicalData(reqBody) {
     },
   });
   console.log("medicalData created", medicalData);
+  reqBody.activity = "Created Medical Data";
+  await createActivityLog(medicalData.patient_id, reqBody);
   return medicalData;
 }
 async function updateMedicalData(reqBody) {
@@ -542,6 +536,8 @@ async function updateMedicalData(reqBody) {
     },
   });
   console.log("medicalData updated", medicalData);
+  reqBody.activity = "Updated Medical Data";
+  await createActivityLog(medicalData.patient_id, reqBody);
   return medicalData;
 }
 
@@ -577,6 +573,8 @@ async function createHealthAndMentalHealth(reqBody) {
       },
     });
   console.log("created", healthAndMentalHealth);
+  reqBody.activity = "Created Health and Mental Health";
+  await createActivityLog(healthAndMentalHealth.patient_id, reqBody);
   return healthAndMentalHealth;
 }
 async function updateHealthAndMentalHealth(reqBody) {
@@ -602,6 +600,8 @@ async function updateHealthAndMentalHealth(reqBody) {
       },
     });
   console.log("updated", healthAndMentalHealth);
+  reqBody.activity = "Updated Health and Mental Health";
+  await createActivityLog(healthAndMentalHealth.patient_id, reqBody);
   return healthAndMentalHealth;
 }
 
@@ -635,9 +635,11 @@ async function createDiscrimination(reqBody) {
     },
   });
   console.log("created", discrimination);
+  await createActivityLog(discrimination.patient_id, reqBody);
   return discrimination || false;
 }
 async function updateDiscrimination(reqBody) {
+  console.log("reqBody", reqBody);
   const discrimination = await prisma.patient_descrimination.update({
     where: {
       id: reqBody.id,
@@ -658,6 +660,7 @@ async function updateDiscrimination(reqBody) {
     },
   });
   console.log("updated", discrimination);
+  await createActivityLog(discrimination.patient_id, reqBody);
   return discrimination;
 }
 
@@ -671,7 +674,6 @@ async function getSafety(patient_id) {
   });
   return safety || false;
 }
-
 async function createSafety(reqBody) {
   const createdSafetyData = await prisma.patient_safety.create({
     data: {
@@ -686,6 +688,7 @@ async function createSafety(reqBody) {
     },
   });
   console.log("created", createdSafetyData);
+  await createActivityLog(createdSafetyData.patient_id, reqBody);
   return createdSafetyData;
 }
 async function updateSafety(reqBody) {
@@ -704,6 +707,7 @@ async function updateSafety(reqBody) {
     },
   });
   console.log("updated", updatedSafetyData);
+  await createActivityLog(updatedSafetyData.patient_id, reqBody);
   return updatedSafetyData;
 }
 
@@ -750,6 +754,7 @@ async function createSocialFunction(reqBody) {
       },
     });
   console.log("created", createdSocialFunction);
+  await createActivityLog(createdSocialFunction.patient_id, reqBody);
   return createdSocialFunction;
 }
 async function updateSocialFunction(reqBody) {
@@ -787,6 +792,7 @@ async function updateSocialFunction(reqBody) {
       },
     });
   console.log("updated", updatedSocialFunction);
+  await createActivityLog(updatedSocialFunction.patient_id, reqBody);
   return updatedSocialFunction;
 }
 
@@ -802,7 +808,7 @@ async function getProblemsInEnvironment(patient_id) {
   }
   const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
   listTypes.forEach((type) => {
-    if (response[type] !== undefined) {
+    if (response[type] !== undefined && response[type] !== null) {
       if (response[type].trim() === "") {
         delete response[type];
       } else {
@@ -810,14 +816,44 @@ async function getProblemsInEnvironment(patient_id) {
       }
     }
   });
+  const excludedProperties = [
+    "problems_presented",
+    "reasons_psychosocial_counselling",
+    "assesment_findings",
+    "recommended_intervention",
+    "action_taken",
+    "person_emergency",
+    "relationship_to_patient",
+    "address",
+    "contact_number",
+    "interviewed_by",
+    "remarks",
+  ];
+
+  for (const prop in response) {
+    if (
+      response.hasOwnProperty(prop) &&
+      response[prop] === null &&
+      !excludedProperties.includes(prop)
+    ) {
+      response[prop] = { duration: "", severity: "" };
+    }
+  }
+  console.log("response", response);
   return response;
 }
 async function createPatientProblemsEnvironment(reqBody) {
   const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (reqBody[type]) {
-      joinedTypes[type] = reqBody[type].join(",");
+    if (reqBody[type] !== undefined && reqBody[type] !== null) {
+      if (Array.isArray(reqBody[type])) {
+        joinedTypes[type] = reqBody[type].join(",").trim();
+      } else if (typeof reqBody[type] === "string") {
+        if (reqBody[type].trim() === "") {
+          delete reqBody[type];
+        }
+      }
     }
   });
 
@@ -857,14 +893,22 @@ async function createPatientProblemsEnvironment(reqBody) {
     },
   });
   console.log("created", newRecord);
+  await createActivityLog(newRecord.patient_id, reqBody);
   return newRecord;
 }
 async function updatePatientProblemsEnvironment(reqBody) {
+  console.log("reqBody", reqBody);
   const listTypes = ["problems_presented", "reasons_psychosocial_counselling"];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (reqBody[type]) {
-      joinedTypes[type] = reqBody[type].join(",");
+    if (reqBody[type] !== undefined && reqBody[type] !== null) {
+      if (Array.isArray(reqBody[type])) {
+        joinedTypes[type] = reqBody[type].join(",").trim();
+      } else if (typeof reqBody[type] === "string") {
+        if (reqBody[type].trim() === "") {
+          delete reqBody[type];
+        }
+      }
     }
   });
   const updatedRecord = await prisma.patient_problems_environment.update({
@@ -905,6 +949,8 @@ async function updatePatientProblemsEnvironment(reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  console.log("updated", updatedRecord);
+  await createActivityLog(updatedRecord.patient_id, reqBody);
   return updatedRecord;
 }
 module.exports = {
@@ -957,4 +1003,5 @@ module.exports = {
   getProblemsInEnvironment,
   createPatientProblemsEnvironment,
   updatePatientProblemsEnvironment,
+  getPatientActivityLogs,
 };

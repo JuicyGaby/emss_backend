@@ -34,6 +34,7 @@ model patients {
   first_name              String?  @db.VarChar(100)
   middle_name             String?  @db.VarChar(100)
   last_name               String?  @db.VarChar(100)
+  preferred_name          String?  @db.VarChar(100)
   birth_date              String?  @db.VarChar(100)
   age                     String?
   sex                     String?  @db.VarChar(10)
@@ -50,6 +51,7 @@ model patients {
   ph_membership_type      String?  @db.VarChar(100)
   created_at              DateTime @default(now()) @db.DateTime(0)
   created_by              String?  @db.VarChar(100)
+  creator_id              Int?
   remarks                 String?  @db.VarChar(255)
   highest_education_level String?  @db.VarChar(100)
   education_status        String?  @db.VarChar(100)
@@ -68,6 +70,16 @@ model patients {
   patient_family_info                      patient_family_info[]
   patient_problems_environment             patient_problems_environment[]
   daily_activity_report                    daily_activity_report[]
+  patient_activity_logs                    patient_activity_logs[]
+}
+
+model patient_activity_logs {
+  id         Int      @id @default(autoincrement())
+  patient_id Int
+  activity   String?  @db.VarChar(100)
+  created_at DateTime @default(now()) @db.DateTime(0)
+  created_by String?  @db.VarChar(100)
+  patients   patients @relation(fields: [patient_id], references: [id])
 }
 
 model patient_interview {
@@ -400,6 +412,7 @@ model daily_activity_report {
   dar_case_services dar_case_services[]
   dar_notes         dar_notes[]
   patients          patients            @relation(fields: [patient_id], references: [id])
+  dar_activity_logs dar_activity_logs[]
 }
 
 model dar_services {
@@ -428,13 +441,14 @@ model dar_notes {
 }
 
 model dar_swa {
-  id               Int                @id @default(autoincrement())
-  created_by       String?            @db.VarChar(100)
-  creator_name     String?            @db.VarChar(100)
-  creator_id       Int?
-  date_created     DateTime           @default(now()) @db.DateTime(0)
-  dar_swa_services dar_swa_services[]
-  dar_swa_notes    dar_swa_notes[]
+  id                Int                 @id @default(autoincrement())
+  created_by        String?             @db.VarChar(100)
+  creator_name      String?             @db.VarChar(100)
+  creator_id        Int?
+  date_created      DateTime            @default(now()) @db.DateTime(0)
+  dar_swa_services  dar_swa_services[]
+  dar_swa_notes     dar_swa_notes[]
+  swa_activity_logs swa_activity_logs[]
 }
 
 model swa_services {
@@ -460,4 +474,22 @@ model dar_swa_notes {
   creator_id   Int?
   date_created DateTime @default(now()) @db.DateTime(0)
   dar_swa      dar_swa  @relation(fields: [dar_swa_id], references: [id])
+}
+
+model dar_activity_logs {
+  id                    Int                   @id @default(autoincrement())
+  dar_id                Int
+  activity              String?               @db.VarChar(100)
+  created_at            DateTime              @default(now()) @db.DateTime(0)
+  created_by            String?               @db.VarChar(100)
+  daily_activity_report daily_activity_report @relation(fields: [dar_id], references: [id])
+}
+
+model swa_activity_logs {
+  id         Int      @id @default(autoincrement())
+  swa_id     Int
+  activity   String?  @db.VarChar(100)
+  created_at DateTime @default(now()) @db.DateTime(0)
+  created_by String?  @db.VarChar(100)
+  swa        dar_swa  @relation(fields: [swa_id], references: [id])
 }

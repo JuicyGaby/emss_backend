@@ -68,7 +68,7 @@ async function createPatient(reqBody) {
       first_name: demographicData.first_name,
       middle_name: demographicData.middle_name,
       last_name: demographicData.last_name,
-      age: demographicData.age,
+      age: demographicData.age.toString(),
       birth_date: demographicData.birth_date,
       sex: demographicData.sex,
       gender: demographicData.gender,
@@ -87,6 +87,10 @@ async function createPatient(reqBody) {
   const patientId = patient.id;
   console.log("created", patientId);
   await createPatientInterview(interview, patientId);
+  await createPatientProblemsEnvironment(
+    patientId,
+    demographicData.social_worker
+  );
   return patient;
 }
 async function createPatientAddress(addressData, addressType, patientId) {
@@ -193,6 +197,15 @@ async function updatePatient(reqBody) {
   return patient;
 }
 
+async function createPatientProblemsEnvironment(patientId, social_worker) {
+  const entry = await prisma.patient_problems_environment.create({
+    data: {
+      patient_id: patientId,
+      interviewed_by: social_worker,
+    },
+  });
+  console.log("created", entry);
+}
 module.exports = {
   getPatients,
   getPatientById,

@@ -3,6 +3,59 @@ const { parse } = require("dotenv");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
+// activity logs
+
+const createDarActivityLog = async function (reqBody) {
+  const activityLog = await prisma.dar_activity_logs.create({
+    data: {
+      dar_id: parseInt(reqBody.dar_id),
+      activity: reqBody.activity,
+      created_by: reqBody.created_by,
+    },
+  });
+  console.log(activityLog);
+};
+const createSwaActivityLog = async function (reqBody) {
+  const activityLog = await prisma.swa_activity_logs.create({
+    data: {
+      swa_id: reqBody.dar_swa_id,
+      activity: reqBody.activity,
+      created_by: reqBody.created_by,
+    },
+  });
+  console.log(activityLog);
+};
+
+exports.getDarActivityLogs = async function (dar_id) {
+  const activityLogs = await prisma.dar_activity_logs.findMany({
+    where: {
+      dar_id: parseInt(dar_id),
+    },
+  });
+  // return with local time
+  const updatedActivityLogs = activityLogs.map((item) => {
+    return {
+      ...item,
+      created_at: moment(item.created_at).local().format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return updatedActivityLogs || [];
+};
+exports.getSwaActivityLogs = async function (dar_swa_id) {
+  const activityLogs = await prisma.swa_activity_logs.findMany({
+    where: {
+      swa_id: parseInt(dar_swa_id),
+    },
+  });
+  const updatedActivityLogs = activityLogs.map((item) => {
+    return {
+      ...item,
+      created_at: moment(item.created_at).local().format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return updatedActivityLogs || [];
+};
+
 // DAR
 exports.createDailyActivityReport = async function (reqBody) {
   const { isExisting } = reqBody;
@@ -183,7 +236,9 @@ exports.updateDailyActivityReport = async function (reqBody) {
       remarks: reqBody.remarks,
     },
   });
-  console.log("Updated DAR", darItem);
+  reqBody.activity = `Updated DAR Demographic Data`;
+  reqBody.dar_id = reqBody.id;
+  await createDarActivityLog(reqBody);
   return darItem;
 };
 async function updateDarPatientItem(patientData) {
@@ -375,6 +430,8 @@ exports.createSwaNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
+  reqBody.activity = `Created SWA Note`;
+  await createSwaActivityLog(reqBody);
   return updatedSwaNote;
 };
 exports.getSwaNotes = async function (dar_swa_id) {
@@ -418,6 +475,8 @@ exports.updateSwaNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
+  swaNote.activity = `Updated SWA Note`;
+  await createSwaActivityLog(swaNote);
   return swaNote;
 };
 exports.deleteSwaNote = async function (note_id) {
@@ -426,6 +485,8 @@ exports.deleteSwaNote = async function (note_id) {
       id: parseInt(note_id),
     },
   });
+  swaNote.activity = `Deleted SWA Note`;
+  await createSwaActivityLog(swaNote);
   return swaNote;
 };
 
@@ -505,7 +566,8 @@ exports.createDarNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
-
+  reqBody.activity = `Created DAR Note`;
+  await createDarActivityLog(reqBody);
   return updatedDarNote;
 };
 exports.getDarNotes = async function (dar_id) {
@@ -531,7 +593,6 @@ exports.getDarNoteById = async function (note_id) {
       id: parseInt(note_id),
     },
   });
-  console.log(darNote);
   return darNote;
 };
 exports.updateDarNote = async function (reqBody) {
@@ -550,7 +611,10 @@ exports.updateDarNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
-  console.log(updatedDarNote);
+  reqBody.activity = `Updated DAR Note`;
+  reqBody.dar_id = darNote.dar_id;
+  reqBody.created_by = darNote.created_by;
+  await createDarActivityLog(reqBody);
   return updatedDarNote;
 };
 exports.deleteDarNote = async function (note_id) {
@@ -559,6 +623,8 @@ exports.deleteDarNote = async function (note_id) {
       id: parseInt(note_id),
     },
   });
+  darNote.activity = `Deleted DAR Note`;
+  await createDarActivityLog(darNote);
   return darNote;
 };
 
