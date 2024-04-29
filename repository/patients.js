@@ -68,6 +68,7 @@ async function createPatient(reqBody) {
       first_name: demographicData.first_name,
       middle_name: demographicData.middle_name,
       last_name: demographicData.last_name,
+      preferred_name: demographicData.preferred_name,
       age: demographicData.age.toString(),
       birth_date: demographicData.birth_date,
       sex: demographicData.sex,
