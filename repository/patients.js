@@ -177,6 +177,7 @@ async function updatePatient(reqBody) {
       first_name: reqBody.first_name,
       middle_name: reqBody.middle_name,
       last_name: reqBody.last_name,
+      preferred_name: reqBody.preferred_name,
       age: reqBody.age,
       birth_date: reqBody.birth_date,
       sex: reqBody.sex,
