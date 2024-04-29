@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { parse } = require("dotenv");
 const prisma = new PrismaClient();
 const moment = require("moment");
 
@@ -83,6 +84,8 @@ async function createPatient(reqBody) {
       living_arrangement: demographicData.living_arrangement,
       ph_membership_number: demographicData.ph_membership_number,
       ph_membership_type: demographicData.ph_membership_type,
+      created_by: demographicData.social_worker,
+      creator_id: parseInt(demographicData.social_worker_id),
     },
   });
   const patientId = patient.id;
