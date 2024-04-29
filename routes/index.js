@@ -8,6 +8,7 @@ const patients = require("../controller/patients");
 const assessmentTool = require("../controller/assesment-tool");
 const employees = require("../controller/employees");
 const dailyActivityReport = require("../controller/daily-activity-report");
+const statisticalReport = require("../controller/statistical-report");
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -169,3 +170,6 @@ router.get("/swa-notes/:id", dailyActivityReport.getSwaNotes);
 router.get("/swa-note/:id", dailyActivityReport.getSwaNoteById);
 router.put("/swa-note", dailyActivityReport.updateSwaNote);
 router.delete("/swa-note/:id", dailyActivityReport.deleteSwaNote);
+
+// statistical report
+router.post("/generate-monthly-report", statisticalReport.generateMonthlyReport);
