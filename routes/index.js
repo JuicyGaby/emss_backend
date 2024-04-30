@@ -20,6 +20,7 @@ router.get("/", function (req, res, next) {
 // router.get('/employees', authentication.employees)
 router.post("/login", authentication.login);
 router.get("/userByToken", authentication.userByToken);
+router.get("/getUserAccessRightsById/:id", authentication.getUserAccessRightsById);
 
 module.exports = router;
 
@@ -34,7 +35,6 @@ router.get("/search-patient/:search", patients.searchPatient);
 // ? Activity Logs
 
 router.get("/activity-logs/:id", assessmentTool.getActivityLogsById);
-
 router.get("/dar-activity-logs/:id", dailyActivityReport.getDarActivityLogs);
 router.get("/swa-activity-logs/:id", dailyActivityReport.getSwaActivityLogs);
 

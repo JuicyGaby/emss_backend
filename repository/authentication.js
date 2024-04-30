@@ -9,7 +9,7 @@ async function getUser(username, password) {
       username: username.toUpperCase(),
       password: md5(password),
     },
-  })
+  });
   return user;
 }
 
@@ -19,22 +19,34 @@ async function getUserByToken(token) {
       login_token: token,
     },
   });
-  return user
+  return user;
 }
 
 async function updateUserToken(token, user) {
   const updatedUser = await prisma.employees.update({
-      where: {
+    where: {
       id: user.id,
-      },
-      data: {
+    },
+    data: {
       login_token: token,
-      },
+    },
   });
   return updatedUser;
 }
-
+async function getUserAccessRightsById(accessRightsId) {
+  console.log(accessRightsId);
+  const accessRights = await prisma.access_rights.findUnique({
+    where: {
+      id: parseInt(accessRightsId),
+    },
+  });
+  console.log(accessRights);
+  return accessRights || null;
+}
 
 module.exports = {
-  getUser, getUserByToken, updateUserToken
+  getUser,
+  getUserByToken,
+  updateUserToken,
+  getUserAccessRightsById,
 };
