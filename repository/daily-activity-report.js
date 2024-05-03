@@ -67,6 +67,7 @@ exports.createDailyActivityReport = async function (reqBody) {
   }
   console.log("New", reqBody);
   const patient = await createPatientItem(reqBody);
+  console.log("Created", patient);
   reqBody.patient_id = patient.id;
   const darItem = await createDarItem(reqBody);
   const services = await createDarServicesItem(darItem.id, reqBody.services);
@@ -82,6 +83,8 @@ async function createPatientItem(reqBody) {
       last_name: reqBody.last_name,
       age: reqBody.age,
       sex: reqBody.sex,
+      creator_id: reqBody.creatorId,
+      created_by: reqBody.creatorFullName,
       civil_status: reqBody.civil_status,
       occupation: reqBody.occupation,
       highest_education_level: reqBody.highest_education_level,

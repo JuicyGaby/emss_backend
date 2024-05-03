@@ -8,15 +8,13 @@ datasource db {
 }
 
 model access_rights {
-  id                     Int                      @id @default(autoincrement())
-  name                   String
-  can_view               Int                      @default(0) @db.TinyInt
-  can_create             Int                      @default(0) @db.TinyInt
-  can_update             Int                      @default(0) @db.TinyInt
-  can_delete             Int                      @default(0) @db.TinyInt
-  can_manage             Int                      @default(0) @db.TinyInt
-  createdAt              DateTime                 @default(now())
-  employee_access_rights employee_access_rights[]
+  id                        Int                      @id @default(autoincrement())
+  name                      String
+  can_manage_dar            Int                      @default(0) @db.TinyInt
+  can_manage_assesment_tool Int                      @default(0) @db.TinyInt
+  can_manage_social_worker  Int                      @default(0) @db.TinyInt
+  createdAt                 DateTime                 @default(now())
+  employee_access_rights    employee_access_rights[]
 }
 
 model employee_access_rights {

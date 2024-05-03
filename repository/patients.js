@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { parse } = require("dotenv");
 const prisma = new PrismaClient();
 const moment = require("moment");
 
@@ -68,6 +69,7 @@ async function createPatient(reqBody) {
       first_name: demographicData.first_name,
       middle_name: demographicData.middle_name,
       last_name: demographicData.last_name,
+      preferred_name: demographicData.preferred_name,
       age: demographicData.age.toString(),
       birth_date: demographicData.birth_date,
       sex: demographicData.sex,
@@ -82,6 +84,8 @@ async function createPatient(reqBody) {
       living_arrangement: demographicData.living_arrangement,
       ph_membership_number: demographicData.ph_membership_number,
       ph_membership_type: demographicData.ph_membership_type,
+      created_by: demographicData.social_worker,
+      creator_id: parseInt(demographicData.social_worker_id),
     },
   });
   const patientId = patient.id;
@@ -176,6 +180,7 @@ async function updatePatient(reqBody) {
       first_name: reqBody.first_name,
       middle_name: reqBody.middle_name,
       last_name: reqBody.last_name,
+      preferred_name: reqBody.preferred_name,
       age: reqBody.age,
       birth_date: reqBody.birth_date,
       sex: reqBody.sex,

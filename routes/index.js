@@ -8,6 +8,7 @@ const patients = require("../controller/patients");
 const assessmentTool = require("../controller/assesment-tool");
 const employees = require("../controller/employees");
 const dailyActivityReport = require("../controller/daily-activity-report");
+const statisticalReport = require("../controller/statistical-report");
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -19,6 +20,7 @@ router.get("/", function (req, res, next) {
 // router.get('/employees', authentication.employees)
 router.post("/login", authentication.login);
 router.get("/userByToken", authentication.userByToken);
+router.get("/getUserAccessRightsById/:id", authentication.getUserAccessRightsById);
 
 module.exports = router;
 
@@ -33,7 +35,6 @@ router.get("/search-patient/:search", patients.searchPatient);
 // ? Activity Logs
 
 router.get("/activity-logs/:id", assessmentTool.getActivityLogsById);
-
 router.get("/dar-activity-logs/:id", dailyActivityReport.getDarActivityLogs);
 router.get("/swa-activity-logs/:id", dailyActivityReport.getSwaActivityLogs);
 
@@ -169,3 +170,6 @@ router.get("/swa-notes/:id", dailyActivityReport.getSwaNotes);
 router.get("/swa-note/:id", dailyActivityReport.getSwaNoteById);
 router.put("/swa-note", dailyActivityReport.updateSwaNote);
 router.delete("/swa-note/:id", dailyActivityReport.deleteSwaNote);
+
+// statistical report
+router.post("/generate-monthly-report", statisticalReport.generateMonthlyReport);
