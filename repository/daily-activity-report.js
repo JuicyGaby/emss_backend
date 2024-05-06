@@ -164,9 +164,9 @@ exports.getDailyActivityReportById = async function (dar_id) {
     if (dar.admission_date) {
       dar.admission_date = moment(dar.admission_date)
         .local()
-        .format("YYYY-MM-DD hh:mm");
+        .format("YYYY-MM-DD");
     } else {
-      dar.admission_date = moment().local().format("YYYY-MM-DD hh:mm");
+      dar.admission_date = moment().local().format("YYYY-MM-DD");
     }
     if (dar.phic_classification !== null) {
       dar.classification = dar.phic_classification;
