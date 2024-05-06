@@ -390,15 +390,17 @@ model daily_activity_report {
   created_by              String?   @db.VarChar(100)
   date_created            DateTime  @default(now()) @db.DateTime(0)
   admission_date          DateTime?
-  area                    String?   @db.VarChar(100)
-  case_type               String?   @db.VarChar(100)
+  area                    Int?
+  case_type               Int?
   indirect_contributor    String?   @db.VarChar(100)
+  department              String?   @db.VarChar(100)
   is_phic_member          Int?      @db.TinyInt
   phic_classification     String?   @db.VarChar(100)
   non_phic_classification String?   @db.VarChar(100)
   sectoral_grouping       String?   @db.VarChar(100)
   house_hold_size         String?   @db.VarChar(100)
   source_of_referral      String?   @db.VarChar(100)
+  referring_party         String?   @db.VarChar(100)
   diagnosis               String?   @db.VarChar(100)
   informant               String?   @db.VarChar(100)
   relationship_to_patient String?   @db.VarChar(100)

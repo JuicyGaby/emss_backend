@@ -216,11 +216,11 @@ exports.updateDailyActivityReport = async function (reqBody) {
       area: reqBody.area,
       case_type: reqBody.case_type,
       indirect_contributor: reqBody.indirect_contributor,
-      phic_classification:
-        reqBody.is_phic_member === 1 ? reqBody.phic_classification : null,
-      non_phic_classification:
-        reqBody.is_phic_member === 0 ? reqBody.phic_classification : null,
+      is_phic_member: reqBody.is_phic_member,
+      department: reqBody.department,
+      phic_classification: reqBody.phic_classification,
       sectoral_grouping: reqBody.sectoral_grouping,
+      referring_party: reqBody.referring_party,
       house_hold_size: reqBody.house_hold_size,
       source_of_referral: reqBody.source_of_referral,
       diagnosis: reqBody.diagnosis,
