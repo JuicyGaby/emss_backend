@@ -62,7 +62,6 @@ exports.createDailyActivityReport = async function (reqBody) {
   if (isExisting) {
     console.log("Existing", reqBody);
     const darItem = await createDarItem(reqBody);
-    await createDarServicesItem(darItem.id, reqBody.services);
     return darItem;
   }
   console.log("New", reqBody);
@@ -70,9 +69,6 @@ exports.createDailyActivityReport = async function (reqBody) {
   console.log("Created", patient);
   reqBody.patient_id = patient.id;
   const darItem = await createDarItem(reqBody);
-  const services = await createDarServicesItem(darItem.id, reqBody.services);
-  console.log("Created", darItem);
-  console.log("services", services);
   return darItem;
 };
 async function createPatientItem(reqBody) {
@@ -81,8 +77,9 @@ async function createPatientItem(reqBody) {
       first_name: reqBody.first_name,
       middle_name: reqBody.middle_name,
       last_name: reqBody.last_name,
-      age: reqBody.age,
+      age: reqBody.age.toString(),
       sex: reqBody.sex,
+      birth_date: reqBody.birth_date,
       creator_id: reqBody.creatorId,
       created_by: reqBody.creatorFullName,
       civil_status: reqBody.civil_status,
@@ -97,11 +94,6 @@ async function createDarItem(reqBody) {
       patient_id: reqBody.patient_id,
       creator_id: reqBody.creatorId,
       created_by: reqBody.creatorFullName,
-      is_phic_member: reqBody.phic_member === "Yes" ? 1 : 0,
-      non_phic_classification:
-        reqBody.phic_member === "No" ? reqBody.phic_classification : null,
-      phic_classification:
-        reqBody.phic_member === "Yes" ? reqBody.phic_classification : null,
     },
   });
   const patient = await prisma.patients.findUnique({
@@ -113,6 +105,7 @@ async function createDarItem(reqBody) {
     `${patient.first_name} ${patient.middle_name} ${patient.last_name}`.toUpperCase();
   return darItem;
 }
+
 async function createDarServicesItem(darId, services) {
   const darServices = await Promise.all(
     services.map((serviceId) => {
@@ -634,27 +627,30 @@ exports.deleteDarNote = async function (note_id) {
 // Statistical Report
 
 exports.getDarByMonth = async function (month) {
-  // Parse the month name into a date
-  const startOfMonth = moment(month, "MMMM")
-    .startOf("month")
-    .format("YYYY-MM-DD HH:mm:ss");
-  const endOfMonth = moment(month, "MMMM")
-    .endOf("month")
-    .format("YYYY-MM-DD HH:mm:ss");
+  const startOfMonth = moment(month, "MMMM").startOf("month").toISOString();
+  const endOfMonth = moment(month, "MMMM").endOf("month").toISOString();
+  const darItems = await prisma.daily_activity_report.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+    },
+  });
+  const updatedDarItems = darItems.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return updatedDarItems || [];
+};
 
-  const result = await prisma.$queryRaw`
-    SELECT dcs.dar_service_id, ds.service_name, COUNT(*) as count
-    FROM emss_system.dar_case_services AS dcs
-    LEFT JOIN emss_system.daily_activity_report AS dar ON dcs.dar_id = dar.id
-    LEFT JOIN emss_system.dar_services AS ds ON dcs.dar_service_id = ds.id
-    WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth}
-    GROUP BY dcs.dar_service_id
-  `;
-
-  // Convert BigInt values to strings
-  const resultWithStrings = result.map((row) => ({
-    ...row,
-    count: row.count.toString(),
-  }));
-  return resultWithStrings;
+// get social worker dar and swa
+exports.getSocialWorkerMonthlyReports = async function (body) {
+  const { social_worker_id, month } = body;
+  const startOfMonth = moment(month, "MMMM").startOf("month").toISOString();
+  const endOfMonth = moment(month, "MMMM").endOf("month").toISOString();
 };
