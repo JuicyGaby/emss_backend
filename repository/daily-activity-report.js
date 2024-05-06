@@ -414,6 +414,8 @@ exports.createSwaNote = async function (reqBody) {
   const swaNote = await prisma.dar_swa_notes.create({
     data: {
       dar_swa_id: reqBody.dar_swa_id,
+      note_time_started: reqBody.note_time_started,
+      note_time_ended: reqBody.note_time_ended,
       note_title: reqBody.note_title,
       note_body: reqBody.note_body,
       created_by: reqBody.created_by,
@@ -461,6 +463,8 @@ exports.updateSwaNote = async function (reqBody) {
       id: reqBody.id,
     },
     data: {
+      note_time_started: reqBody.note_time_started,
+      note_time_ended: reqBody.note_time_ended,
       note_title: reqBody.note_title,
       note_body: reqBody.note_body,
     },

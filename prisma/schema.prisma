@@ -466,14 +466,16 @@ model dar_swa_services {
 }
 
 model dar_swa_notes {
-  id           Int      @id @default(autoincrement())
-  dar_swa_id   Int
-  note_title   String?  @db.VarChar(100)
-  note_body    String?  @db.VarChar(500)
-  created_by   String?  @db.VarChar(100)
-  creator_id   Int?
-  date_created DateTime @default(now()) @db.DateTime(0)
-  dar_swa      dar_swa  @relation(fields: [dar_swa_id], references: [id])
+  id                Int      @id @default(autoincrement())
+  dar_swa_id        Int
+  note_time_started String?  @db.VarChar(100)
+  note_time_ended   String?  @db.VarChar(100)
+  note_title        String?  @db.VarChar(100)
+  note_body         String?  @db.VarChar(500)
+  created_by        String?  @db.VarChar(100)
+  creator_id        Int?
+  date_created      DateTime @default(now()) @db.DateTime(0)
+  dar_swa           dar_swa  @relation(fields: [dar_swa_id], references: [id])
 }
 
 model dar_activity_logs {
