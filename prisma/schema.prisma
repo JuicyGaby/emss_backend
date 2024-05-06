@@ -88,6 +88,8 @@ model patient_interview {
   admission_date_and_time  String?  @db.VarChar(200)
   basic_ward               String?  @db.VarChar(200)
   nonbasic_ward            String?  @db.VarChar(200)
+  area                     String?  @db.VarChar(200)
+  department               String?  @db.VarChar(200)
   health_record_number     String?  @db.VarChar(200)
   mswd_number              String?  @db.VarChar(200)
   source_of_referral       String?  @db.VarChar(200)
