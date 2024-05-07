@@ -192,6 +192,24 @@ async function getProvinceByRegionCode(regDesc) {
   });
   return province;
 }
+async function getDistrictByProvinceCode(provDesc) {
+  const province = await prisma.ph_provinces.findFirst({
+    where: {
+      provDesc,
+    },
+  });
+  const district = await prisma.ph_districts.findMany({
+    where: {
+      provCode: province.provCode,
+    },
+    select: {
+      disDesc: true,
+      provCode: true,
+    },
+  });
+  console.log("district", district);
+  return district;
+}
 async function getMunicipalityByProvinceCode(provDesc) {
   const province = await prisma.ph_provinces.findFirst({
     where: {
@@ -207,6 +225,7 @@ async function getMunicipalityByProvinceCode(provDesc) {
       citymunCode: true,
     },
   });
+  console.log(municipality);
   return municipality;
 }
 async function getBarangayByMunicipalityCode(citymunDesc) {
@@ -961,6 +980,7 @@ module.exports = {
   // address
   getRegion,
   getProvinceByRegionCode,
+  getDistrictByProvinceCode,
   getMunicipalityByProvinceCode,
   getBarangayByMunicipalityCode,
   createPatientAddress,

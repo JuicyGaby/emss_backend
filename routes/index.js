@@ -20,7 +20,10 @@ router.get("/", function (req, res, next) {
 // router.get('/employees', authentication.employees)
 router.post("/login", authentication.login);
 router.get("/userByToken", authentication.userByToken);
-router.get("/getUserAccessRightsById/:id", authentication.getUserAccessRightsById);
+router.get(
+  "/getUserAccessRightsById/:id",
+  authentication.getUserAccessRightsById
+);
 
 module.exports = router;
 
@@ -53,6 +56,7 @@ router.delete("/family-composition/:id", assessmentTool.deleteFamilyMember);
 // ? address
 router.get("/region", assessmentTool.getRegion);
 router.get("/province/:id", assessmentTool.getProvinceByRegionCode);
+router.get("/district/:id", assessmentTool.getDistrictByProvinceCode);
 router.get("/municipality/:id", assessmentTool.getMunicipalityByProvinceCode);
 router.get("/barangay/:id", assessmentTool.getBarangayByMunicipalityCode);
 router.get("/address/:id", patients.getPatientAddress);
@@ -172,4 +176,7 @@ router.put("/swa-note", dailyActivityReport.updateSwaNote);
 router.delete("/swa-note/:id", dailyActivityReport.deleteSwaNote);
 
 // statistical report
-router.post("/generate-monthly-report", statisticalReport.generateMonthlyReport);
+router.post(
+  "/generate-monthly-report",
+  statisticalReport.generateMonthlyReport
+);

@@ -353,13 +353,21 @@ model ph_regions {
 }
 
 model ph_provinces {
-  id       Int           @id @default(autoincrement())
-  psgcCode String        @db.VarChar(50)
-  provDesc String        @db.VarChar(50)
-  regCode  String        @db.VarChar(50)
-  provCode String        @unique @db.VarChar(50)
-  region   ph_regions    @relation(fields: [regCode], references: [regCode])
-  cities   ph_city_mun[] // Add this line
+  id           Int            @id @default(autoincrement())
+  psgcCode     String         @db.VarChar(50)
+  provDesc     String         @db.VarChar(50)
+  regCode      String         @db.VarChar(50)
+  provCode     String         @unique @db.VarChar(50)
+  region       ph_regions     @relation(fields: [regCode], references: [regCode])
+  cities       ph_city_mun[]
+  ph_districts ph_districts[]
+}
+
+model ph_districts {
+  id       Int          @id @default(autoincrement())
+  disDesc  String       @db.VarChar(50)
+  provCode String       @db.VarChar(50)
+  province ph_provinces @relation(fields: [provCode], references: [provCode]) // Add this line
 }
 
 model ph_city_mun {

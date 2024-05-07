@@ -6,6 +6,7 @@ const {
   // addresss
   getRegion,
   getProvinceByRegionCode,
+  getDistrictByProvinceCode,
   getMunicipalityByProvinceCode,
   getBarangayByMunicipalityCode,
   createPatientAddress,
@@ -163,6 +164,15 @@ exports.getProvinceByRegionCode = async function (req, res, next) {
     console.error(error);
   }
 };
+exports.getDistrictByProvinceCode = async function (req, res, next) {
+  const provCode = req.params.id;
+  try {
+    const district = await getDistrictByProvinceCode(provCode);
+    res.send(district);
+  } catch (error) {
+    console.error(error);
+  }
+};
 exports.getMunicipalityByProvinceCode = async function (req, res, next) {
   const provCode = req.params.id;
   try {
@@ -240,7 +250,7 @@ exports.getMonthlyExpenses = async function (req, res, next) {
   try {
     const monthlyExpenses = await getMonthlyExpenses(patientId);
     res.send(monthlyExpenses);
-  } catch (error) { 
+  } catch (error) {
     console.error(error);
   }
 };
