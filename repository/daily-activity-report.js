@@ -441,9 +441,15 @@ exports.getSwaNotes = async function (dar_swa_id) {
   const updatedSwaNotes = swaNotes.map((item) => {
     return {
       ...item,
+      note_time_started: moment(item.note_time_started, "HH:mm").format(
+        "hh:mm A"
+      ),
+      note_time_ended: item.note_time_ended
+        ? moment(item.note_time_ended, "HH:mm").format("hh:mm A")
+        : null,
       date_created: moment(item.date_created)
         .local()
-        .format("YYYY-MM-DD hh:mm A"),
+        .format("YYYY-MM-DD hh:mm"),
     };
   });
   return updatedSwaNotes || [];
