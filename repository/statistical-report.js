@@ -140,3 +140,23 @@ exports.getMonthlyDarEntries = async (month) => {
   });
   return darEntries || [];
 };
+exports.getMonthlySwaEntries = async (month) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  let swaEntries = await prisma.dar_swa.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+    },
+  });
+  swaEntries = swaEntries.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return swaEntries || [];
+};

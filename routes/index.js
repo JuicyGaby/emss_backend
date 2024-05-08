@@ -182,3 +182,4 @@ router.post(
 );
 // getMonthlyDarEntries
 router.post("/get-monthly-dar-entries", statisticalReport.getMonthlyDarEntries);
+router.post("/get-monthly-swa-entries", statisticalReport.getMonthlySwaEntries);

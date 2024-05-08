@@ -18,3 +18,12 @@ exports.getMonthlyDarEntries = async (req, res) => {
     console.log(error);
   }
 };
+exports.getMonthlySwaEntries = async (req, res) => {
+  try {
+    const month = req.body.month;
+    const entries = await repository.getMonthlySwaEntries(month);
+    res.send(entries);
+  } catch (error) {
+    console.log(error);
+  }
+};
