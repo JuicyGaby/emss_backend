@@ -8,3 +8,13 @@ exports.generateMonthlyReport = async (req, res) => {
     console.log(error);
   }
 };
+exports.getMonthlyDarEntries = async (req, res) => {
+  try {
+    const month = req.body.month;
+    console.log(month);
+    const entries = await repository.getMonthlyDarEntries(month);
+    res.send(entries);
+  } catch (error) {
+    console.log(error);
+  }
+};

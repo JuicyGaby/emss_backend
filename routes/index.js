@@ -180,3 +180,5 @@ router.post(
   "/generate-monthly-report",
   statisticalReport.generateMonthlyReport
 );
+// getMonthlyDarEntries
+router.post("/get-monthly-dar-entries", statisticalReport.getMonthlyDarEntries);
