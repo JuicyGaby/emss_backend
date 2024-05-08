@@ -80,6 +80,8 @@ async function updateInterviewById(patient_id, reqBody) {
     data: {
       interview_date: reqBody.interview_date,
       interview_time: reqBody.interview_time,
+      interview_end_time: reqBody.interview_end_time,
+      interview_duration: reqBody.interview_duration,
       admission_date_and_time: reqBody.admission_date_and_time,
       basic_ward: reqBody.basic_ward,
       nonbasic_ward: reqBody.nonbasic_ward,
