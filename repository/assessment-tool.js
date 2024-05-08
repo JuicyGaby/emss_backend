@@ -126,7 +126,7 @@ async function createFamilyMember(reqBody) {
     data: {
       patient_id: parseInt(reqBody.patient_id),
       full_name: reqBody.full_name,
-      age: reqBody.age,
+      age: reqBody.age.toString(),
       birth_date: reqBody.birth_date,
       civil_status: reqBody.civil_status,
       relationship: reqBody.relationship,
@@ -183,6 +183,10 @@ async function getProvinceByRegionCode(regDesc) {
       regDesc,
     },
   });
+  if (!region) {
+    return;
+  }
+  console.log("region", region);
   const province = await prisma.ph_provinces.findMany({
     where: {
       regCode: region.regCode,
@@ -200,6 +204,9 @@ async function getDistrictByProvinceCode(provDesc) {
       provDesc,
     },
   });
+  if (!province) {
+    return;
+  }
   const district = await prisma.ph_districts.findMany({
     where: {
       provCode: province.provCode,
@@ -209,7 +216,6 @@ async function getDistrictByProvinceCode(provDesc) {
       provCode: true,
     },
   });
-  console.log("district", district);
   return district;
 }
 async function getMunicipalityByProvinceCode(provDesc) {
@@ -218,6 +224,9 @@ async function getMunicipalityByProvinceCode(provDesc) {
       provDesc,
     },
   });
+  if (!province) {
+    return;
+  }
   const municipality = await prisma.ph_city_mun.findMany({
     where: {
       provCode: province.provCode,
@@ -227,7 +236,6 @@ async function getMunicipalityByProvinceCode(provDesc) {
       citymunCode: true,
     },
   });
-  console.log(municipality);
   return municipality;
 }
 async function getBarangayByMunicipalityCode(citymunDesc) {
@@ -236,6 +244,9 @@ async function getBarangayByMunicipalityCode(citymunDesc) {
       citymunDesc,
     },
   });
+  if (!municipality) {
+    return;
+  }
   const barangay = await prisma.ph_barangays.findMany({
     where: {
       citymunCode: municipality.citymunCode,
@@ -447,7 +458,7 @@ async function createMonthlyExpenses(reqBody) {
 }
 async function updateMonthlyExpenses(reqBody) {
   const { number, text, id } = reqBody;
-  console.log('updating', reqBody);
+  console.log("updating", reqBody);
   const listTypes = [
     "transportation_type",
     "light_source_type",
