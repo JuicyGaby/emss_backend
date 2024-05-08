@@ -464,6 +464,7 @@ async function updateMonthlyExpenses(reqBody) {
   const monthlyExpenses = await prisma.patient_monthly_expenses.update({
     where: { id },
     data: {
+      living_arrangement: reqBody.living_arrangement,
       house_lot_cost: number.house_lot_cost,
       food_water_cost: number.food_water_cost,
       education_cost: number.education_cost,
