@@ -114,3 +114,49 @@ const generateStartAndEndOfMonth = (month) => {
   const endOfMonth = moment(month, "MMMM").endOf("month").toISOString();
   return { startOfMonth, endOfMonth };
 };
+
+exports.getMonthlyDarEntries = async (month) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  let darEntries = await prisma.daily_activity_report.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+    },
+    include: {
+      patients: true,
+    },
+  });
+  darEntries = darEntries.map((item) => {
+    return {
+      ...item,
+      fullname:
+        `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return darEntries || [];
+};
+exports.getMonthlySwaEntries = async (month) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  let swaEntries = await prisma.dar_swa.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+    },
+  });
+  swaEntries = swaEntries.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return swaEntries || [];
+};

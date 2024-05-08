@@ -80,6 +80,8 @@ async function updateInterviewById(patient_id, reqBody) {
     data: {
       interview_date: reqBody.interview_date,
       interview_time: reqBody.interview_time,
+      interview_end_time: reqBody.interview_end_time,
+      interview_duration: reqBody.interview_duration,
       admission_date_and_time: reqBody.admission_date_and_time,
       basic_ward: reqBody.basic_ward,
       nonbasic_ward: reqBody.nonbasic_ward,
@@ -124,7 +126,7 @@ async function createFamilyMember(reqBody) {
     data: {
       patient_id: parseInt(reqBody.patient_id),
       full_name: reqBody.full_name,
-      age: reqBody.age,
+      age: reqBody.age.toString(),
       birth_date: reqBody.birth_date,
       civil_status: reqBody.civil_status,
       relationship: reqBody.relationship,
@@ -181,6 +183,10 @@ async function getProvinceByRegionCode(regDesc) {
       regDesc,
     },
   });
+  if (!region) {
+    return;
+  }
+  console.log("region", region);
   const province = await prisma.ph_provinces.findMany({
     where: {
       regCode: region.regCode,
@@ -192,12 +198,35 @@ async function getProvinceByRegionCode(regDesc) {
   });
   return province;
 }
+async function getDistrictByProvinceCode(provDesc) {
+  const province = await prisma.ph_provinces.findFirst({
+    where: {
+      provDesc,
+    },
+  });
+  if (!province) {
+    return;
+  }
+  const district = await prisma.ph_districts.findMany({
+    where: {
+      provCode: province.provCode,
+    },
+    select: {
+      disDesc: true,
+      provCode: true,
+    },
+  });
+  return district;
+}
 async function getMunicipalityByProvinceCode(provDesc) {
   const province = await prisma.ph_provinces.findFirst({
     where: {
       provDesc,
     },
   });
+  if (!province) {
+    return;
+  }
   const municipality = await prisma.ph_city_mun.findMany({
     where: {
       provCode: province.provCode,
@@ -215,6 +244,9 @@ async function getBarangayByMunicipalityCode(citymunDesc) {
       citymunDesc,
     },
   });
+  if (!municipality) {
+    return;
+  }
   const barangay = await prisma.ph_barangays.findMany({
     where: {
       citymunCode: municipality.citymunCode,
@@ -426,7 +458,7 @@ async function createMonthlyExpenses(reqBody) {
 }
 async function updateMonthlyExpenses(reqBody) {
   const { number, text, id } = reqBody;
-  console.log(reqBody);
+  console.log("updating", reqBody);
   const listTypes = [
     "transportation_type",
     "light_source_type",
@@ -443,6 +475,7 @@ async function updateMonthlyExpenses(reqBody) {
   const monthlyExpenses = await prisma.patient_monthly_expenses.update({
     where: { id },
     data: {
+      living_arrangement: text.living_arrangement,
       house_lot_cost: number.house_lot_cost,
       food_water_cost: number.food_water_cost,
       education_cost: number.education_cost,
@@ -888,6 +921,8 @@ async function createPatientProblemsEnvironment(reqBody) {
       relationship_to_patient: reqBody.relationship_to_patient,
       address: reqBody.address,
       contact_number: reqBody.contact_number,
+      contact_number_2: reqBody.contact_number_2,
+      contact_number_3: reqBody.contact_number_3,
       interviewed_by: reqBody.interviewed_by,
       remarks: reqBody.remarks,
     },
@@ -945,6 +980,8 @@ async function updatePatientProblemsEnvironment(reqBody) {
       relationship_to_patient: reqBody.relationship_to_patient,
       address: reqBody.address,
       contact_number: reqBody.contact_number,
+      contact_number_2: reqBody.contact_number_2,
+      contact_number_3: reqBody.contact_number_3,
       interviewed_by: reqBody.interviewed_by,
       remarks: reqBody.remarks,
     },
@@ -961,6 +998,7 @@ module.exports = {
   // address
   getRegion,
   getProvinceByRegionCode,
+  getDistrictByProvinceCode,
   getMunicipalityByProvinceCode,
   getBarangayByMunicipalityCode,
   createPatientAddress,

@@ -12,7 +12,6 @@ async function getUser(username, password) {
   });
   return user;
 }
-
 async function getUserByToken(token) {
   const user = await prisma.employees.findFirst({
     where: {
@@ -21,7 +20,6 @@ async function getUserByToken(token) {
   });
   return user;
 }
-
 async function updateUserToken(token, user) {
   const updatedUser = await prisma.employees.update({
     where: {
