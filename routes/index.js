@@ -175,11 +175,12 @@ router.get("/swa-note/:id", dailyActivityReport.getSwaNoteById);
 router.put("/swa-note", dailyActivityReport.updateSwaNote);
 router.delete("/swa-note/:id", dailyActivityReport.deleteSwaNote);
 
-// statistical report
+// * Statistical report
 router.post(
   "/generate-monthly-report",
   statisticalReport.generateMonthlyReport
 );
-// getMonthlyDarEntries
 router.post("/get-monthly-dar-entries", statisticalReport.getMonthlyDarEntries);
 router.post("/get-monthly-swa-entries", statisticalReport.getMonthlySwaEntries);
+// getSocialWorkerMonthlyDarEntries
+router.post("/get-social-worker-monthly-dar-entries",statisticalReport.getSocialWorkerMonthlyDarEntries);
