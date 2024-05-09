@@ -101,6 +101,28 @@ exports.getSocialWorkerMonthlyDarEntries = async (body) => {
   });
   return darEntries || [];
 };
+exports.getSocialWorkerMonthlySwaEntries = async (body) => {
+  const { creator_id, month } = body;
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  let swaEntries = await prisma.dar_swa.findMany({
+    where: {
+      creator_id,
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+    },
+  });
+  swaEntries = swaEntries.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return swaEntries || [];
+};
 
 const getMonthlyDarCount = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);

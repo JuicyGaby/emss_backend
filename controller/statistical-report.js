@@ -35,3 +35,12 @@ exports.getSocialWorkerMonthlyDarEntries = async (req, res) => {
     console.log(error);
   }
 };
+
+exports.getSocialWorkerMonthlySwaEntries = async (req, res) => {
+  try {
+    const entries = await repository.getSocialWorkerMonthlySwaEntries(req.body);
+    res.send(entries);
+  } catch (error) {
+    console.log(error);
+  }
+};
