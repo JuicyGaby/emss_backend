@@ -397,37 +397,56 @@ model ph_barangays {
 }
 
 // DAR 
-
 model daily_activity_report {
-  id                      Int       @id @default(autoincrement())
+  id                      Int                 @id @default(autoincrement())
   patient_id              Int
   creator_id              Int?
-  created_by              String?   @db.VarChar(100)
-  date_created            DateTime  @default(now()) @db.DateTime(0)
+  created_by              String?             @db.VarChar(100)
+  date_created            DateTime            @default(now()) @db.DateTime(0)
   admission_date          DateTime?
-  area                    Int?
-  case_type               Int?
-  indirect_contributor    String?   @db.VarChar(100)
-  department              String?   @db.VarChar(100)
-  is_phic_member          Int?      @db.TinyInt
-  phic_classification     String?   @db.VarChar(100)
-  non_phic_classification String?   @db.VarChar(100)
-  sectoral_grouping       String?   @db.VarChar(100)
-  house_hold_size         String?   @db.VarChar(100)
-  source_of_referral      String?   @db.VarChar(100)
-  referring_party         String?   @db.VarChar(100)
-  diagnosis               String?   @db.VarChar(100)
-  informant               String?   @db.VarChar(100)
-  relationship_to_patient String?   @db.VarChar(100)
-  interview_start_time    String?   @db.VarChar(100)
-  interview_end_time      String?   @db.VarChar(100)
-  remarks                 String?   @db.VarChar(255)
-  is_active               Int?      @default(1) @db.TinyInt
+  area_id                 Int?
+  case_type_id            Int?
+  indirect_contributor    String?             @db.VarChar(100)
+  department              String?             @db.VarChar(100)
+  is_phic_member          Int?                @db.TinyInt
+  phic_classification     String?             @db.VarChar(100)
+  non_phic_classification String?             @db.VarChar(100)
+  sectoral_grouping       String?             @db.VarChar(100)
+  house_hold_size         String?             @db.VarChar(100)
+  source_of_referral_id   Int?
+  referring_party         String?             @db.VarChar(100)
+  diagnosis               String?             @db.VarChar(100)
+  informant               String?             @db.VarChar(100)
+  relationship_to_patient String?             @db.VarChar(100)
+  interview_start_time    String?             @db.VarChar(100)
+  interview_end_time      String?             @db.VarChar(100)
+  remarks                 String?             @db.VarChar(255)
+  is_active               Int?                @default(1) @db.TinyInt
+  dar_case_services       dar_case_services[]
+  dar_notes               dar_notes[]
+  patients                patients            @relation(fields: [patient_id], references: [id])
+  dar_activity_logs       dar_activity_logs[]
+  source_of_referral      source_of_referral? @relation(fields: [source_of_referral_id], references: [id])
+  hospital_area           hospital_area?      @relation(fields: [area_id], references: [id])
+  case_type               case_type?          @relation(fields: [case_type_id], references: [id])
+}
 
-  dar_case_services dar_case_services[]
-  dar_notes         dar_notes[]
-  patients          patients            @relation(fields: [patient_id], references: [id])
-  dar_activity_logs dar_activity_logs[]
+model source_of_referral {
+  id                    Int                     @id @default(autoincrement())
+  name                  String                  @db.VarChar(100)
+  daily_activity_report daily_activity_report[]
+}
+
+model hospital_area {
+  id                    Int                     @id @default(autoincrement())
+  area_name             String                  @db.VarChar(100)
+  daily_activity_report daily_activity_report[]
+}
+
+model case_type {
+  id                    Int                     @id @default(autoincrement())
+  case_type             String                  @db.VarChar(100)
+  daily_activity_report daily_activity_report[]
 }
 
 model dar_services {

@@ -105,7 +105,6 @@ async function createDarItem(reqBody) {
     `${patient.first_name} ${patient.middle_name} ${patient.last_name}`.toUpperCase();
   return darItem;
 }
-
 async function createDarServicesItem(darId, services) {
   const darServices = await Promise.all(
     services.map((serviceId) => {
@@ -213,8 +212,8 @@ exports.updateDailyActivityReport = async function (reqBody) {
       id: parseInt(reqBody.id),
     },
     data: {
-      area: reqBody.area,
-      case_type: reqBody.case_type,
+      area_id: reqBody.area_id,
+      case_type_id: reqBody.case_type_id,
       indirect_contributor: reqBody.indirect_contributor,
       is_phic_member: reqBody.is_phic_member,
       department: reqBody.department,
@@ -222,7 +221,7 @@ exports.updateDailyActivityReport = async function (reqBody) {
       sectoral_grouping: reqBody.sectoral_grouping,
       referring_party: reqBody.referring_party,
       house_hold_size: reqBody.house_hold_size,
-      source_of_referral: reqBody.source_of_referral,
+      source_of_referral_id: reqBody.source_of_referral_id,
       diagnosis: reqBody.diagnosis,
       informant: reqBody.informant,
       relationship_to_patient: reqBody.relationship_to_patient,
