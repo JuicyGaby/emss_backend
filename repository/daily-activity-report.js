@@ -214,7 +214,7 @@ exports.updateDailyActivityReport = async function (reqBody) {
     data: {
       area_id: reqBody.area_id,
       case_type_id: reqBody.case_type_id,
-      indirect_contributor: reqBody.indirect_contributor,
+      contributor_type: reqBody.contributor_type,
       is_phic_member: reqBody.is_phic_member,
       department: reqBody.department,
       phic_classification: reqBody.phic_classification,

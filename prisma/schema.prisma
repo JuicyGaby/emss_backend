@@ -407,6 +407,7 @@ model daily_activity_report {
   area_id                 Int?
   case_type_id            Int?
   indirect_contributor    String?             @db.VarChar(100)
+  contributor_type        String?             @db.VarChar(100)
   department              String?             @db.VarChar(100)
   is_phic_member          Int?                @db.TinyInt
   phic_classification     String?             @db.VarChar(100)
