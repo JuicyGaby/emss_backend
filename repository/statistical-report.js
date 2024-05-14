@@ -35,6 +35,7 @@ exports.getMonthlyDarEntries = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
   let darEntries = await prisma.daily_activity_report.findMany({
     where: {
+      is_active: 1,
       date_created: {
         gte: startOfMonth,
         lte: endOfMonth,
@@ -82,6 +83,7 @@ exports.getSocialWorkerMonthlyDarEntries = async (body) => {
   let darEntries = await prisma.daily_activity_report.findMany({
     where: {
       creator_id,
+      is_active: 1,
       date_created: {
         gte: startOfMonth,
         lte: endOfMonth,
@@ -222,9 +224,7 @@ const getMonthlyCaseLoad = async (startOfMonth, endOfMonth) => {
   const nonPhic = await nonPhicCaseLoad(startOfMonth, endOfMonth, 0);
   console.log("nonPhic", nonPhic);
 };
-const phicCaseLoad = async (startOfMonth, endOfMonth, isPhic) => {
-  
-};
+const phicCaseLoad = async (startOfMonth, endOfMonth, isPhic) => {};
 const nonPhicCaseLoad = async (startOfMonth, endOfMonth, isPhic) => {
   const caseLoad = {
     area: {
@@ -288,6 +288,7 @@ const getMonthlyDarCount = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
   const darCount = await prisma.daily_activity_report.count({
     where: {
+      is_active: 1,
       date_created: {
         gte: startOfMonth,
         lte: endOfMonth,
@@ -326,6 +327,7 @@ const getSocialWorkerDarCount = async (body) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
   const darCount = await prisma.daily_activity_report.count({
     where: {
+      is_active: 1,
       creator_id,
       date_created: {
         gte: startOfMonth,

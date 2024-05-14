@@ -182,6 +182,7 @@ exports.getDailyActivityReportByDate = async function (date) {
 
   let dar = await prisma.daily_activity_report.findMany({
     where: {
+      is_active: 1,
       date_created: {
         gte: today.toDate(),
         lt: tomorrow.toDate(),
