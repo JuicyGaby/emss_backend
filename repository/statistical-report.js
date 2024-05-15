@@ -2,8 +2,57 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
-2;
-
+exports.getSocialWorkerMonthlyDarEntries = async (body) => {
+  const { creator_id, month } = body;
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  let darEntries = await prisma.daily_activity_report.findMany({
+    where: {
+      creator_id,
+      is_active: 1,
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+    },
+    include: {
+      patients: true,
+    },
+  });
+  darEntries = darEntries.map((item) => {
+    return {
+      ...item,
+      fullname:
+        `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  const report = await this.generateMonthlyReport(body);
+  return { darEntries, report };
+};
+exports.getSocialWorkerMonthlySwaEntries = async (body) => {
+  const { creator_id, month } = body;
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  let swaEntries = await prisma.dar_swa.findMany({
+    where: {
+      creator_id,
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+    },
+  });
+  swaEntries = swaEntries.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created)
+        .local()
+        .format("YYYY-MM-DD hh:mm A"),
+    };
+  });
+  return swaEntries || [];
+};
 exports.generateMonthlyReport = async (body) => {
   const data = {
     social_worker: {
@@ -77,56 +126,7 @@ exports.getMonthlySwaEntries = async (month) => {
   });
   return swaEntries || [];
 };
-exports.getSocialWorkerMonthlyDarEntries = async (body) => {
-  const { creator_id, month } = body;
-  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
-  let darEntries = await prisma.daily_activity_report.findMany({
-    where: {
-      creator_id,
-      is_active: 1,
-      date_created: {
-        gte: startOfMonth,
-        lte: endOfMonth,
-      },
-    },
-    include: {
-      patients: true,
-    },
-  });
-  darEntries = darEntries.map((item) => {
-    return {
-      ...item,
-      fullname:
-        `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
-    };
-  });
-  return darEntries || [];
-};
-exports.getSocialWorkerMonthlySwaEntries = async (body) => {
-  const { creator_id, month } = body;
-  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
-  let swaEntries = await prisma.dar_swa.findMany({
-    where: {
-      creator_id,
-      date_created: {
-        gte: startOfMonth,
-        lte: endOfMonth,
-      },
-    },
-  });
-  swaEntries = swaEntries.map((item) => {
-    return {
-      ...item,
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
-    };
-  });
-  return swaEntries || [];
-};
+
 exports.getMonthlyStatisticalReport = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
   const statisticalReport = {};
