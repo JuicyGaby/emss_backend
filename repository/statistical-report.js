@@ -51,7 +51,8 @@ exports.getSocialWorkerMonthlySwaEntries = async (body) => {
         .format("YYYY-MM-DD hh:mm A"),
     };
   });
-  return swaEntries || [];
+  const report = await this.generateMonthlyReport(body);
+  return { swaEntries, report };
 };
 exports.generateMonthlyReport = async (body) => {
   const data = {
