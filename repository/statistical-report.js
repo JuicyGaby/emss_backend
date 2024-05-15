@@ -149,7 +149,7 @@ const getMonthlySourceOfReferral = async (startOfMonth, endOfMonth) => {
   FROM emss_system.daily_activity_report AS dar 
   LEFT JOIN emss_system.source_of_referral AS sor ON dar.source_of_referral_id = sor.id
   LEFT JOIN emss_system.hospital_area AS HA ON dar.area_id = HA.id
-  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth}
+  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth} AND dar.phic_classification IS NOT NULL
   GROUP BY sor.name, HA.id`;
   const serializedResult = result.map((row) => ({
     name: row.name,
@@ -161,17 +161,9 @@ const getMonthlySourceOfReferral = async (startOfMonth, endOfMonth) => {
   const countsMap = {};
 
   // Iterate through the data
-  serializedResult.forEach((item) => {
-    if (item.name && item.area_id !== null) {
-      const key = `${item.name.toLowerCase()}_area_${item.area_id}_count`;
-      if (countsMap[key]) {
-        countsMap[key] += item.count;
-      } else {
-        countsMap[key] = item.count;
-      }
-    }
+  result.forEach((row) => {
+    row.count = Number(row.count);
   });
-
   // Construct the desired output
   const new_result = {};
 
