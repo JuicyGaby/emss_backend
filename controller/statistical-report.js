@@ -49,7 +49,6 @@ exports.getMonthlyStatisticalReport = async (req, res) => {
   try {
     const month = req.body.month;
     const report = await repository.getMonthlyStatisticalReport(month);
-    console.log(report);
     res.send(report);
   } catch (error) {
     console.log(error);

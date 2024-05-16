@@ -131,18 +131,22 @@ exports.getMonthlySwaEntries = async (month) => {
 exports.getMonthlyStatisticalReport = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
   const statisticalReport = {};
-  statisticalReport.sourceOfReferral = await getMonthlySourceOfReferral(
+  // statisticalReport.sourceOfReferral = await getMonthlySourceOfReferral(
+  //   startOfMonth,
+  //   endOfMonth
+  // );
+  statisticalReport.placeOfOrigin = await getMonthlyPlaceOfOrigin(
     startOfMonth,
     endOfMonth
   );
-  statisticalReport.darServices = await getDarServicesStatisticalReport(
-    startOfMonth,
-    endOfMonth
-  );
-  statisticalReport.socialWorkAdministration = await getSwaStatisticalReport(
-    startOfMonth,
-    endOfMonth
-  );
+  // statisticalReport.darServices = await getDarServicesStatisticalReport(
+  //   startOfMonth,
+  //   endOfMonth
+  // );
+  // statisticalReport.socialWorkAdministration = await getSwaStatisticalReport(
+  //   startOfMonth,
+  //   endOfMonth
+  // );
   return statisticalReport;
 };
 // statistical report starts
@@ -198,86 +202,19 @@ const transformedSourceOfReferralResult = (array) => {
   return Object.values(result);
 };
 // ? II case load
-const getMonthlyCaseLoad = async (startOfMonth, endOfMonth) => {
-  // const isphic = await phicCaseLoad(startOfMonth, endOfMonth, 1);
-  const nonPhic = await nonPhicCaseLoad(startOfMonth, endOfMonth, 0);
-  console.log("nonPhic", nonPhic);
-};
-const phicCaseLoad = async (startOfMonth, endOfMonth, isPhic) => {};
-const nonPhicCaseLoad = async (startOfMonth, endOfMonth, isPhic) => {
-  const caseLoad = {
-    area: {
-      ip: {},
-      op: {},
-      er: {},
-    },
-    totalCount: 0,
-    newCaseCount: 0,
-    oldCaseCount: 0,
-    caseClosedCount: 0,
-  };
-  const result = await prisma.$queryRaw`
-    SELECT phic_classification, HA.id, CT.case_type, COUNT(*) AS count
-    FROM emss_system.daily_activity_report as DAR
-    LEFT JOIN emss_system.hospital_area as HA 
-        ON DAR.area_id = HA.id
-    LEFT JOIN emss_system.case_type as CT 
-        ON DAR.case_type_id = CT.id
-    WHERE DAR.date_created >= ${startOfMonth} AND DAR.date_created <= ${endOfMonth}
-        AND is_phic_member = ${isPhic}
-        AND phic_classification IS NOT NULL
-        AND HA.area_name IS NOT NULL
-        AND CT.case_type IS NOT NULL
-    GROUP BY phic_classification, HA.id, CT.case_type;
-  `;
 
-  // Convert bigint to number
-  result.forEach((row) => {
-    row.count = Number(row.count);
-  });
-  const areaMap = {
-    1: "ip",
-    2: "ip",
-    3: "op",
-    4: "er",
-  };
-
-  const caseTypeMap = {
-    "New Case": "newCaseCount",
-    "Old Case": "oldCaseCount",
-    "Case Closed": "caseClosedCount",
-  };
-
-  result.forEach((item) => {
-    const area = areaMap[item.id];
-    if (area) {
-      caseLoad.area[area][item.phic_classification] = item.count;
-    }
-    const caseType = caseTypeMap[item.case_type];
-    if (caseType) {
-      caseLoad[caseType] += item.count;
-    }
-  });
-  caseLoad.totalCount = result.length;
-  console.log(result);
-  return caseLoad;
-};
-// ? Place of Origin
+// ? III Place of Origin
 const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
-  const darItems = await prisma.daily_activity_report.findMany({
-    where: {
-      phic_classification: {
-        not: null,
-      },
-      date_created: {
-        gte: startOfMonth,
-        lte: endOfMonth,
-      },
-    },
-    include: {
-      patients: true,
-    },
-  });
+  const result = await prisma.$queryRaw`
+    select DAR.id, DAR.area_id, HA.area_name, province
+    from emss_system.daily_activity_report as DAR
+    left join emss_system.hospital_area as HA on DAR.area_id = HA.id
+    left join emss_system.patients as PT on DAR.patient_id = PT.id
+    left join emss_system.patient_address as PTA on PT.id = PTA.patient_id
+    where DAR.date_created >= ${startOfMonth} and DAR.date_created <= ${endOfMonth}
+    group by DAR.id, DAR.area_id, HA.area_name, province
+  `;
+  return result;
 };
 // ? IV. Dar Services
 const getDarServicesStatisticalReport = async (startOfMonth, endOfMonth) => {
