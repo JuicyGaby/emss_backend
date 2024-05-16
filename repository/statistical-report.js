@@ -278,6 +278,7 @@ const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
 };
 // ? VI. Social Work Administration
 const getSwaStatisticalReport = async (startOfMonth, endOfMonth) => {
+  const swaTable = {};
   const result = await prisma.$queryRaw`
   select dar_swa_id, service_id, service_name, count(*) as count
   from emss_system.dar_swa_services as DSS
@@ -291,21 +292,16 @@ const getSwaStatisticalReport = async (startOfMonth, endOfMonth) => {
   result.forEach((row) => {
     row.count = Number(row.count);
   });
-  const updatedData = transformedSwaStatisticalReport(result);
-  return updatedData;
-};
-const transformedSwaStatisticalReport = (array) => {
-  const result = {};
-  array.forEach((item) => {
-    if (!result[item.service_id]) {
-      result[item.service_id] = {
+  result.forEach((item) => {
+    if (!swaTable[item.service_id]) {
+      swaTable[item.service_id] = {
         name: item.service_name,
         count: 0,
       };
     }
-    result[item.service_id].count += item.count;
+    swaTable[item.service_id].count += item.count;
   });
-  return Object.values(result);
+  return Object.values(swaTable);
 };
 // statistical report ends
 const getMonthlyDarCount = async (month) => {
