@@ -131,15 +131,15 @@ exports.getMonthlySwaEntries = async (month) => {
 exports.getMonthlyStatisticalReport = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
   const statisticalReport = {};
-
   statisticalReport.sourceOfReferral = await getMonthlySourceOfReferral(
     startOfMonth,
     endOfMonth
   );
-  // statisticalReport.caseLoad = await getMonthlyCaseLoad(
-  //   startOfMonth,
-  //   endOfMonth
-  // );
+  statisticalReport.socialWorkAdministration = await getSwaStatisticalReport(
+    startOfMonth,
+    endOfMonth
+  );
+  console.log(statisticalReport);
   return statisticalReport;
 };
 // statistical report starts
@@ -159,11 +159,11 @@ const getMonthlySourceOfReferral = async (startOfMonth, endOfMonth) => {
   });
 
   // Transform the data
-  const updatedData = transformedResult(result);
+  const updatedData = transformedSourceOfReferralResult(result);
   return updatedData;
 };
 
-const transformedResult = (array) => {
+const transformedSourceOfReferralResult = (array) => {
   const result = {};
 
   array.forEach((item) => {
@@ -275,6 +275,37 @@ const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
       patients: true,
     },
   });
+};
+// ? VI. Social Work Administration
+const getSwaStatisticalReport = async (startOfMonth, endOfMonth) => {
+  const result = await prisma.$queryRaw`
+  select dar_swa_id, service_id, service_name, count(*) as count
+  from emss_system.dar_swa_services as DSS
+  left join emss_system.dar_swa as DS
+    on DSS.dar_swa_id = DS.id
+  left join emss_system.swa_services as SS on DSS.service_id = SS.id
+  WHERE DS.date_created >= ${startOfMonth}
+    AND DS.date_created < ${endOfMonth}
+  group by dar_swa_id, service_id, service_name
+  `;
+  result.forEach((row) => {
+    row.count = Number(row.count);
+  });
+  const updatedData = transformedSwaStatisticalReport(result);
+  return updatedData;
+};
+const transformedSwaStatisticalReport = (array) => {
+  const result = {};
+  array.forEach((item) => {
+    if (!result[item.service_id]) {
+      result[item.service_id] = {
+        name: item.service_name,
+        count: 0,
+      };
+    }
+    result[item.service_id].count += item.count;
+  });
+  return Object.values(result);
 };
 // statistical report ends
 const getMonthlyDarCount = async (month) => {

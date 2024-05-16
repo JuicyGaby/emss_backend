@@ -271,13 +271,13 @@ exports.updateDarStatus = async function (dar_id) {
 
 // SWA
 exports.createSwaItem = async function (reqBody) {
+  console.log(reqBody);
   const swaItem = await prisma.dar_swa.create({
     data: {
       creator_name: reqBody.creator_fullname,
       creator_id: reqBody.creator_id,
     },
   });
-  console.log(reqBody);
   const services = await createSwaServicesItem(swaItem.id, reqBody.services);
   const updatedSwaItem = {
     ...swaItem,
@@ -371,7 +371,6 @@ exports.getDarSwaId = async function (dar_swa_id) {
 };
 
 exports.createSwaServicesItem = async function (reqBody) {
-  console.log(reqBody);
   const swaServices = await Promise.all(
     reqBody.services.map(async (serviceId) => {
       // Check if a dar_swa_services item with the same service_id and dar_swa_id already exists
