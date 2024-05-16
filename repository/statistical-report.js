@@ -136,13 +136,14 @@ exports.getMonthlyStatisticalReport = async (month) => {
     startOfMonth,
     endOfMonth
   );
-  statisticalReport.caseLoad = await getMonthlyCaseLoad(
-    startOfMonth,
-    endOfMonth
-  );
+  // statisticalReport.caseLoad = await getMonthlyCaseLoad(
+  //   startOfMonth,
+  //   endOfMonth
+  // );
   return statisticalReport;
 };
 // statistical report starts
+// ? I source or referral
 const getMonthlySourceOfReferral = async (startOfMonth, endOfMonth) => {
   const result = await prisma.$queryRaw`
   SELECT sor.name, HA.id, COUNT(*) as count
@@ -151,67 +152,49 @@ const getMonthlySourceOfReferral = async (startOfMonth, endOfMonth) => {
   LEFT JOIN emss_system.hospital_area AS HA ON dar.area_id = HA.id
   WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth} AND dar.phic_classification IS NOT NULL
   GROUP BY sor.name, HA.id`;
-  const serializedResult = result.map((row) => ({
-    name: row.name,
-    area_id: row.id,
-    count: Number(row.count), // Convert BigInt to number
-  }));
 
-  // Map to store counts
-  const countsMap = {};
-
-  // Iterate through the data
+  // Convert count to number
   result.forEach((row) => {
     row.count = Number(row.count);
   });
-  // Construct the desired output
-  const new_result = {};
 
-  serializedResult.forEach((item) => {
-    if (item.name && item.area_id !== null) {
-      const key = item.name.toLowerCase();
-      const areaKey = `area_${item.area_id}_count`;
-      if (new_result[key]) {
-        if (new_result[key][areaKey]) {
-          new_result[key][areaKey] += item.count;
-        } else {
-          // Aggregate counts under area_1_count if area_id is 1 or 2
-          if (item.area_id === 1 || item.area_id === 2) {
-            if (new_result[key].area_1_count) {
-              new_result[key].area_1_count += item.count;
-            } else {
-              new_result[key].area_1_count = item.count;
-            }
-          } else {
-            new_result[key][areaKey] = item.count;
-          }
-        }
-      } else {
-        new_result[key] = {
-          name: item.name.charAt(0).toUpperCase() + item.name.slice(1),
-        };
-        if (item.area_id === 1 || item.area_id === 2) {
-          new_result[key].area_1_count = item.count;
-        } else {
-          new_result[key][areaKey] = item.count;
-        }
-      }
-    }
-  });
-
-  // Calculate the total count after renaming the keys
-  Object.values(new_result).forEach((obj) => {
-    let total = 0;
-    for (const key in obj) {
-      if (key.startsWith(`area_`)) {
-        total += obj[key];
-      }
-    }
-    obj.total = total;
-  });
-
-  return Object.values(new_result);
+  // Transform the data
+  const updatedData = transformedResult(result);
+  return updatedData;
 };
+
+const transformedResult = (array) => {
+  const result = {};
+
+  array.forEach((item) => {
+    if (!result[item.name]) {
+      result[item.name] = {
+        name: item.name,
+        area_1_count: 0,
+        area_2_count: 0,
+        area_3_count: 0,
+        total_count: 0,
+      };
+    }
+
+    if (item.id === 1 || item.id === 2) {
+      result[item.name].area_1_count += item.count;
+    }
+    if (item.id === 3) {
+      result[item.name].area_2_count += item.count;
+    }
+    if (item.id === 4) {
+      result[item.name].area_3_count += item.count;
+    }
+    result[item.name].total_count =
+      result[item.name].area_1_count +
+      result[item.name].area_2_count +
+      result[item.name].area_3_count;
+  });
+
+  return Object.values(result);
+};
+// ? II case load
 const getMonthlyCaseLoad = async (startOfMonth, endOfMonth) => {
   // const isphic = await phicCaseLoad(startOfMonth, endOfMonth, 1);
   const nonPhic = await nonPhicCaseLoad(startOfMonth, endOfMonth, 0);
@@ -275,6 +258,23 @@ const nonPhicCaseLoad = async (startOfMonth, endOfMonth, isPhic) => {
   caseLoad.totalCount = result.length;
   console.log(result);
   return caseLoad;
+};
+// ? Place of Origin
+const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
+  const darItems = await prisma.daily_activity_report.findMany({
+    where: {
+      phic_classification: {
+        not: null,
+      },
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+    },
+    include: {
+      patients: true,
+    },
+  });
 };
 // statistical report ends
 const getMonthlyDarCount = async (month) => {
