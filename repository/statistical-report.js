@@ -135,11 +135,14 @@ exports.getMonthlyStatisticalReport = async (month) => {
     startOfMonth,
     endOfMonth
   );
+  statisticalReport.darServices = await getDarServicesStatisticalReport(
+    startOfMonth,
+    endOfMonth
+  );
   statisticalReport.socialWorkAdministration = await getSwaStatisticalReport(
     startOfMonth,
     endOfMonth
   );
-  console.log(statisticalReport);
   return statisticalReport;
 };
 // statistical report starts
@@ -276,32 +279,38 @@ const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
     },
   });
 };
+// ? IV. Dar Services
+const getDarServicesStatisticalReport = async (startOfMonth, endOfMonth) => {
+  const result = await prisma.$queryRaw`
+  SELECT dar_service_id, service_name, COUNT(*) as count
+  FROM emss_system.dar_case_services AS dcs
+  LEFT JOIN emss_system.daily_activity_report AS dar ON dcs.dar_id = dar.id
+  LEFT JOIN emss_system.dar_services AS ds ON dcs.dar_service_id = ds.id
+  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth}
+  GROUP BY dar_service_id, service_name;
+  `;
+  result.forEach((row) => {
+    row.count = Number(row.count);
+  });
+  return result;
+};
 // ? VI. Social Work Administration
 const getSwaStatisticalReport = async (startOfMonth, endOfMonth) => {
   const swaTable = {};
   const result = await prisma.$queryRaw`
-  select dar_swa_id, service_id, service_name, count(*) as count
+  select service_id, service_name, count(*) as count
   from emss_system.dar_swa_services as DSS
   left join emss_system.dar_swa as DS
     on DSS.dar_swa_id = DS.id
   left join emss_system.swa_services as SS on DSS.service_id = SS.id
   WHERE DS.date_created >= ${startOfMonth}
     AND DS.date_created < ${endOfMonth}
-  group by dar_swa_id, service_id, service_name
+  group by service_id, service_name
   `;
   result.forEach((row) => {
     row.count = Number(row.count);
   });
-  result.forEach((item) => {
-    if (!swaTable[item.service_id]) {
-      swaTable[item.service_id] = {
-        name: item.service_name,
-        count: 0,
-      };
-    }
-    swaTable[item.service_id].count += item.count;
-  });
-  return Object.values(swaTable);
+  return result;
 };
 // statistical report ends
 const getMonthlyDarCount = async (month) => {
