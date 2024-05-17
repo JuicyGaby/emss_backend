@@ -131,22 +131,23 @@ exports.getMonthlySwaEntries = async (month) => {
 exports.getMonthlyStatisticalReport = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
   const statisticalReport = {};
-  // statisticalReport.sourceOfReferral = await getMonthlySourceOfReferral(
-  //   startOfMonth,
-  //   endOfMonth
-  // );
+  statisticalReport.sourceOfReferral = await getMonthlySourceOfReferral(
+    startOfMonth,
+    endOfMonth
+  );
   statisticalReport.placeOfOrigin = await getMonthlyPlaceOfOrigin(
     startOfMonth,
     endOfMonth
   );
-  // statisticalReport.darServices = await getDarServicesStatisticalReport(
-  //   startOfMonth,
-  //   endOfMonth
-  // );
-  // statisticalReport.socialWorkAdministration = await getSwaStatisticalReport(
-  //   startOfMonth,
-  //   endOfMonth
-  // );
+  const { updatedResult: darServices, filteredResults: mswdDocumentation } =
+    await getDarServicesStatisticalReport(startOfMonth, endOfMonth);
+  statisticalReport.darServices = darServices;
+  statisticalReport.mswdDocumentation = mswdDocumentation;
+
+  statisticalReport.socialWorkAdministration = await getSwaStatisticalReport(
+    startOfMonth,
+    endOfMonth
+  );
   return statisticalReport;
 };
 // statistical report starts
@@ -229,7 +230,30 @@ const getDarServicesStatisticalReport = async (startOfMonth, endOfMonth) => {
   result.forEach((row) => {
     row.count = Number(row.count);
   });
-  return result;
+  const mswdCategories = [
+    "MSWD Assessment Tool",
+    "Social Profile with Social Care Plan",
+    "Medical Social Worker's Progress Note",
+    "Group Work Recording",
+    "Social Case Study Report",
+    "Social Case Summary",
+    "Home Visit Report",
+    "Service Card",
+    "Registration Book",
+    "Daily Activity Report",
+    "Feedback Report",
+    "Home Conduction Report",
+  ];
+  const filteredResults = result.filter((result) =>
+    mswdCategories.some((category) => result.service_name.includes(category))
+  );
+  const updatedResult = result.filter(
+    (row) =>
+      !mswdCategories.some((category) => row.service_name.includes(category))
+  );
+  // console.log('filtered', filteredResults);
+  // i want to isolate the results containing mswd categories
+  return { updatedResult, filteredResults };
 };
 // ? VI. Social Work Administration
 const getSwaStatisticalReport = async (startOfMonth, endOfMonth) => {
