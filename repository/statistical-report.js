@@ -130,7 +130,11 @@ exports.getMonthlySwaEntries = async (month) => {
 
 exports.getMonthlyStatisticalReport = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+
+  // Initialize the statistical report object
   const statisticalReport = {};
+
+  // Gather the various parts of the statistical report
   statisticalReport.sourceOfReferral = await getMonthlySourceOfReferral(
     startOfMonth,
     endOfMonth
@@ -139,17 +143,26 @@ exports.getMonthlyStatisticalReport = async (month) => {
     startOfMonth,
     endOfMonth
   );
+  //  Get Place of Origin
+  const { regionSevenObject, otherProviceObject } =
+    await getMonthlyPlaceOfOrigin(startOfMonth, endOfMonth);
+  statisticalReport.regionSevenObject = regionSevenObject;
+  statisticalReport.otherProviceObject = otherProviceObject;
+  // Get DAR services and MSWD documentation
   const { updatedResult: darServices, filteredResults: mswdDocumentation } =
     await getDarServicesStatisticalReport(startOfMonth, endOfMonth);
   statisticalReport.darServices = darServices;
   statisticalReport.mswdDocumentation = mswdDocumentation;
 
+  // Gather social work administration report
   statisticalReport.socialWorkAdministration = await getSwaStatisticalReport(
     startOfMonth,
     endOfMonth
   );
+
   return statisticalReport;
 };
+
 // statistical report starts
 // ? I source or referral
 const getMonthlySourceOfReferral = async (startOfMonth, endOfMonth) => {
@@ -206,16 +219,58 @@ const transformedSourceOfReferralResult = (array) => {
 
 // ? III Place of Origin
 const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
+  const regionSevenProvince = ["CEBU", "BOHOL", "SIQUIJOR", "NEGROS ORIENTAL"];
   const result = await prisma.$queryRaw`
-    select DAR.id, DAR.area_id, HA.area_name, province
-    from emss_system.daily_activity_report as DAR
-    left join emss_system.hospital_area as HA on DAR.area_id = HA.id
-    left join emss_system.patients as PT on DAR.patient_id = PT.id
-    left join emss_system.patient_address as PTA on PT.id = PTA.patient_id
-    where DAR.date_created >= ${startOfMonth} and DAR.date_created <= ${endOfMonth}
-    group by DAR.id, DAR.area_id, HA.area_name, province
-  `;
-  return result;
+  SELECT DAR.id, DAR.area_id, HA.area_name, province
+  FROM emss_system.daily_activity_report AS DAR
+  LEFT JOIN emss_system.hospital_area AS HA ON DAR.area_id = HA.id
+  LEFT JOIN emss_system.patients AS PT ON DAR.patient_id = PT.id
+  LEFT JOIN emss_system.patient_address AS PTA ON PT.id = PTA.patient_id
+  WHERE DAR.date_created >= ${startOfMonth}
+  AND DAR.date_created <= ${endOfMonth}
+  AND DAR.area_id IS NOT NULL
+  AND HA.area_name IS NOT NULL
+  AND province IS NOT NULL
+  GROUP BY DAR.id, DAR.area_id, HA.area_name, province;
+`;
+  const filteredProvince = result.filter((item) =>
+    regionSevenProvince.some((category) => item.province.includes(category))
+  );
+  const updatedResult = result.filter(
+    (item) =>
+      !regionSevenProvince.some((province) => item.province.includes(province))
+  );
+  const regionSevenObject = transformedPlaceOfOrigin(filteredProvince);
+  const otherProviceObject = transformedPlaceOfOrigin(updatedResult);
+  return { regionSevenObject, otherProviceObject };
+};
+const transformedPlaceOfOrigin = (array) => {
+  const result = {};
+  array.forEach((item) => {
+    if (!result[item.province]) {
+      result[item.province] = {
+        province: item.province,
+        area_1_count: 0,
+        area_2_count: 0,
+        area_3_count: 0,
+        total_count: 0,
+      };
+    }
+    if (item.area_id === 1 || item.area_id === 2) {
+      result[item.province].area_1_count += 1;
+    }
+    if (item.area_id === 3) {
+      result[item.province].area_2_count += 1;
+    }
+    if (item.area_id === 4) {
+      result[item.province].area_3_count += 1;
+    }
+    result[item.province].total_count =
+      result[item.province].area_1_count +
+      result[item.province].area_2_count +
+      result[item.province].area_3_count;
+  });
+  return Object.values(result);
 };
 // ? IV. Dar Services
 const getDarServicesStatisticalReport = async (startOfMonth, endOfMonth) => {
@@ -251,10 +306,9 @@ const getDarServicesStatisticalReport = async (startOfMonth, endOfMonth) => {
     (row) =>
       !mswdCategories.some((category) => row.service_name.includes(category))
   );
-  // console.log('filtered', filteredResults);
-  // i want to isolate the results containing mswd categories
   return { updatedResult, filteredResults };
 };
+
 // ? VI. Social Work Administration
 const getSwaStatisticalReport = async (startOfMonth, endOfMonth) => {
   const swaTable = {};
