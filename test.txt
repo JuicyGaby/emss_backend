@@ -1,86 +1,17 @@
-Psychosocial Assessment
-Risk Assessment
-Social Care Plan
-
-Psychosocial Casework
-Crisis Intervention
-Trauma-Informed Care
-Protective Services
-Attending Physician
-Consultant or Specialist
-Nurses
-Pharmacist
-Nutritionist
-Pathology & Laboratory
-Radiologist
-Rehabilitation Medicine
-Psychologist
-Administrative Service
-Finance Service
-Management
-Pastoral Care
-Other Staff
-
-Meditation and Conflict Resolution
-Team
-Individual
-Incoming Referral
-Inter-agency Referral
-Welfare Referrals
-Hospice and Palliative Care
-Placement of Abandoned Patients
-Home Visitation
-Home conduction
-Grief Work and Bereavement
-Referral of Abandoned Unclaimed and Unidentified Cadavers
-
-Financial Literacy
-Spiritual
-Motivational Interviewing
-Marital Conciliation
-Relaxation Therapy
-Children and Adolescent
-Adult and Elderly
-Role Playing
+// query for getting the source of Referral
+SELECT sor.name, HA.id, COUNT(*) as count
+  FROM emss_system.daily_activity_report AS dar 
+  LEFT JOIN emss_system.source_of_referral AS sor ON dar.source_of_referral_id = sor.id
+  LEFT JOIN emss_system.hospital_area AS HA ON dar.area_id = HA.id
+  GROUP BY sor.name, HA.id
 
 
 
-
-
-
-Provision of Pre-admission Planning
-Discharge Planning
-Point of Service Enrollment
- Eligibility / Indigency Certification
- Resource Mobilization
- Utilization Review
-Family Life Education
- Group Therapy
- Mutual Help/Peer Group (Face to Face/Virtual)
- Patient and Community Education
-
-
- Development of a Therapeutic Milieu
-  Family Therapy
-   Mental Health and Psychosocial Support (MHPSS)
-   CISD
-    Community-Based Patient Navigation
-    Establishment of Advisory Councils
-    Partnership with Neighborhood Organizations and Businesses
-    Partnership with Civic Organizations
-    Online Community
-    Adopt a Community Program
-
-Social Action
-MSWD Assessment Tool
-Social Profile with Social Care Plan
-Medical Social Worker's Progress Note
-Group Work Recording
- Social Case Study Report
- Social Case Summary
- Home Visit Report
- Home Conduction Report
- Service Card
- Registration Book
- Daily Activity Report
- Feedback Report
+  -- for dar
+-- SELECT dar_service_id, service_name, COUNT(*) 
+-- FROM emss_system.dar_case_services AS dcs
+-- LEFT JOIN emss_system.daily_activity_report AS dar ON dcs.dar_id = dar.id
+-- LEFT JOIN emss_system.dar_services AS ds ON dcs.dar_service_id = ds.id
+-- WHERE dar.date_created >= '2024-03-01 00:00:00'
+--   AND dar.date_created <= '2024-04-30 23:59:00'
+-- GROUP BY dar_service_id, service_name;

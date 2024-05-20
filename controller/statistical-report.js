@@ -29,17 +29,27 @@ exports.getMonthlySwaEntries = async (req, res) => {
 };
 exports.getSocialWorkerMonthlyDarEntries = async (req, res) => {
   try {
-    const entries = await repository.getSocialWorkerMonthlyDarEntries(req.body);
-    res.send(entries);
+    const { darEntries, report } =
+      await repository.getSocialWorkerMonthlyDarEntries(req.body);
+    res.send({ darEntries, report });
   } catch (error) {
     console.log(error);
   }
 };
-
 exports.getSocialWorkerMonthlySwaEntries = async (req, res) => {
   try {
-    const entries = await repository.getSocialWorkerMonthlySwaEntries(req.body);
-    res.send(entries);
+    const { swaEntries, report } =
+      await repository.getSocialWorkerMonthlySwaEntries(req.body);
+    res.send({ swaEntries, report });
+  } catch (error) {
+    console.log(error);
+  }
+};
+exports.getMonthlyStatisticalReport = async (req, res) => {
+  try {
+    const month = req.body.month;
+    const report = await repository.getMonthlyStatisticalReport(month);
+    res.send(report);
   } catch (error) {
     console.log(error);
   }

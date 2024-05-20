@@ -184,3 +184,4 @@ router.post("/get-monthly-dar-entries", statisticalReport.getMonthlyDarEntries);
 router.post("/get-monthly-swa-entries", statisticalReport.getMonthlySwaEntries);
 router.post("/get-social-worker-monthly-dar-entries",statisticalReport.getSocialWorkerMonthlyDarEntries);
 router.post("/get-social-worker-monthly-swa-entries",statisticalReport.getSocialWorkerMonthlySwaEntries);
+router.post("/get-monthly-statistical-report",statisticalReport.getMonthlyStatisticalReport);
