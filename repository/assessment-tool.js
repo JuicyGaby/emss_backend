@@ -562,6 +562,7 @@ async function updateMedicalData(reqBody) {
   const medicalData = await prisma.patient_medical_data.update({
     where: {
       id: reqBody.id,
+      patient_id: reqBody.patient_id,
     },
     data: {
       admitting_diagnosis: reqBody.admitting_diagnosis,
