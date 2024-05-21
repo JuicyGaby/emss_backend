@@ -83,8 +83,8 @@ async function updateInterviewById(patient_id, reqBody) {
       interview_end_time: reqBody.interview_end_time,
       interview_duration: reqBody.interview_duration,
       admission_date_and_time: reqBody.admission_date_and_time,
-      basic_ward: reqBody.basic_ward,
-      nonbasic_ward: reqBody.nonbasic_ward,
+      area: reqBody.area,
+      department: reqBody.department,
       health_record_number: reqBody.health_record_number,
       mswd_number: reqBody.mswd_number,
       referring_party: reqBody.referring_party,
@@ -97,6 +97,7 @@ async function updateInterviewById(patient_id, reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  console.log("updated interview", interview);
   reqBody.activity = "Updated interview details";
   await createActivityLog(patient_id, reqBody);
   return interview;
