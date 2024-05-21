@@ -157,8 +157,6 @@ async function createPatientInterview(interview, patientId) {
       admission_date_and_time: interview.admission_date_time,
       department: interview.department,
       area: interview.area,
-      basic_ward: interview.basic_ward,
-      nonbasic_ward: interview.nonbasic_ward,
       health_record_number: interview.health_record_number,
       mswd_number: interview.mswd_number,
       source_of_referral: interview.source_of_referral,
