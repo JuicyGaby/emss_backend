@@ -860,6 +860,8 @@ async function getProblemsInEnvironment(patient_id) {
     "relationship_to_patient",
     "address",
     "contact_number",
+    "contact_number_2",
+    "contact_number_3",
     "interviewed_by",
     "remarks",
   ];
