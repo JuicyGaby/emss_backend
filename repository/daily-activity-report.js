@@ -566,7 +566,7 @@ exports.createDarNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
-  reqBody.activity = `Created DAR Note`;
+  reqBody.activity = `Created DAR Note : ${darNote.note_title}`;
   await createDarActivityLog(reqBody);
   return updatedDarNote;
 };
@@ -611,7 +611,7 @@ exports.updateDarNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
-  reqBody.activity = `Updated DAR Note`;
+  reqBody.activity = `Updated DAR Note : ${darNote.note_title}`;
   reqBody.dar_id = darNote.dar_id;
   reqBody.created_by = darNote.created_by;
   await createDarActivityLog(reqBody);
@@ -623,7 +623,7 @@ exports.deleteDarNote = async function (note_id) {
       id: parseInt(note_id),
     },
   });
-  darNote.activity = `Deleted DAR Note`;
+  darNote.activity = `Deleted DAR Note : ${darNote.note_title}`;
   await createDarActivityLog(darNote);
   return darNote;
 };
