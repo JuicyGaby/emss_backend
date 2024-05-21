@@ -4,21 +4,35 @@ const prisma = new PrismaClient();
 const moment = require("moment");
 
 async function getPatients() {
+  const currentDate = moment().format("YYYY-MM-DD");
+  const today = moment(currentDate).toISOString();
+  const tomorrow = moment(currentDate).add(1, "days").toISOString();
   const patients = await prisma.patients.findMany({
     orderBy: {
       last_name: "asc",
     },
-    take: 15,
+    where: {
+      created_at: {
+        gte: today,
+        lte: tomorrow,
+      },
+    },
   });
 
   const updatedPatient = patients.map((patient) => {
     return {
       ...patient,
       fullname: `${patient.first_name} ${patient.last_name}`.toUpperCase(),
+      created_at: moment(patient.created_at).format("MMMM DD, YYYY hh:mm A"),
     };
   });
   return updatedPatient || [];
 }
+const generateStartAndEndOfMonth = (month) => {
+  const startOfMonth = moment(month, "MMMM").startOf("month").toISOString();
+  const endOfMonth = moment(month, "MMMM").endOf("month").toISOString();
+  return { startOfMonth, endOfMonth };
+};
 async function getPatientById(patient_id) {
   const patient = await prisma.patients.findUnique({
     where: {
