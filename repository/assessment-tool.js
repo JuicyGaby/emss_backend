@@ -449,6 +449,8 @@ async function createMonthlyExpenses(reqBody) {
       communication_cost: number.communication_cost,
       house_help_cost: number.house_help_cost,
       medical_cost: number.medical_cost,
+      living_arrangement: text.living_arrangement,
+      remarks: text.remarks,
       total_cost: reqBody.total_cost.toString(),
       patient_id: reqBody.id,
     },
@@ -495,6 +497,7 @@ async function updateMonthlyExpenses(reqBody) {
       house_help_cost: number.house_help_cost,
       medical_cost: number.medical_cost,
       total_cost: reqBody.total_cost.toString(),
+      remarks: text.remarks,
     },
   });
   reqBody.activity = "Updated Monthly Expenses";
