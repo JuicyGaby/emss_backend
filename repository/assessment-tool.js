@@ -426,7 +426,7 @@ async function createMonthlyExpenses(reqBody) {
   ];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (text && text[type]) {
+    if (text && text[type] && Array.isArray(text[type])) {
       joinedTypes[type] = text[type].join(",");
     }
   });
@@ -471,7 +471,7 @@ async function updateMonthlyExpenses(reqBody) {
   ];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (text && text[type]) {
+    if (text && text[type] && Array.isArray(text[type])) {
       joinedTypes[type] = text[type].join(",");
     }
   });

@@ -52,7 +52,6 @@ async function getPatientAddress(patient_id) {
   }
   return address;
 }
-
 async function searchPatient(search) {
   const patients = await prisma.patients.findMany({
     where: {

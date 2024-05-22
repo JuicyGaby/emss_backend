@@ -221,15 +221,28 @@ model patient_water_source {
 model patient_medical_data {
   id                           Int      @id @default(autoincrement())
   patient_id                   Int
-  admitting_diagnosis          String?  @db.VarChar(255)
-  final_diagnosis              String?  @db.VarChar(255)
-  duration_of_problems         String?  @db.VarChar(255)
-  previous_treatment           String?  @db.VarChar(255)
-  present_treatment_plan       String?  @db.VarChar(255)
-  health_accessibility_problem String?  @db.VarChar(255)
-  remarks                      String?  @db.VarChar(255)
+  admitting_diagnosis          String?  @db.VarChar(1000)
+  final_diagnosis              String?  @db.VarChar(1000)
+  duration_of_problems         String?  @db.VarChar(1000)
+  previous_treatment           String?  @db.VarChar(1000)
+  present_treatment_plan       String?  @db.VarChar(1000)
+  health_accessibility_problem String?  @db.VarChar(1000)
+  remarks                      String?  @db.VarChar(1000)
   patients                     patients @relation(fields: [patient_id], references: [id])
 }
+
+// model medical_data_item {
+//   id                           Int     @id @default(autoincrement())
+//   patient_medical_data_id      Int
+//   title                        String? @db.VarChar(255)
+//   admitting_diagnosis          String? @db.VarChar(255)
+//   final_diagnosis              String? @db.VarChar(255)
+//   duration_of_problems         String? @db.VarChar(255)
+//   previous_treatment           String? @db.VarChar(255)
+//   present_treatment_plan       String? @db.VarChar(255)
+//   health_accessibility_problem String? @db.VarChar(255)
+//   remarks                      String? @db.VarChar(255)
+// }
 
 model patient_health_and_mental_health {
   id                                   Int     @id @default(autoincrement())
