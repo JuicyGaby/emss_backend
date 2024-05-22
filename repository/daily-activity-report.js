@@ -426,6 +426,12 @@ exports.createSwaNote = async function (reqBody) {
     date_created: moment(swaNote.date_created)
       .local()
       .format("YYYY-MM-DD hh:mm A"),
+    note_time_started: moment(swaNote.note_time_started, "HH:mm").format(
+      "hh:mm A"
+    ),
+    note_time_ended: swaNote.note_time_ended
+      ? moment(swaNote.note_time_ended, "HH:mm").format("hh:mm A")
+      : null,
   };
   reqBody.activity = `Created SWA Note`;
   await createSwaActivityLog(reqBody);
@@ -479,6 +485,12 @@ exports.updateSwaNote = async function (reqBody) {
     date_created: moment(swaNote.date_created)
       .local()
       .format("YYYY-MM-DD hh:mm A"),
+    note_time_started: moment(swaNote.note_time_started, "HH:mm").format(
+      "hh:mm A"
+    ),
+    note_time_ended: swaNote.note_time_ended
+      ? moment(swaNote.note_time_ended, "HH:mm").format("hh:mm A")
+      : null,
   };
   swaNote.activity = `Updated SWA Note`;
   await createSwaActivityLog(swaNote);
