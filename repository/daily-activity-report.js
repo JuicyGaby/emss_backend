@@ -369,7 +369,6 @@ exports.getDarSwaId = async function (dar_swa_id) {
   });
   return servicesArray || [];
 };
-
 exports.createSwaServicesItem = async function (reqBody) {
   const swaServices = await Promise.all(
     reqBody.services.map(async (serviceId) => {
@@ -406,7 +405,17 @@ exports.createSwaServicesItem = async function (reqBody) {
   });
   return servicesArray;
 };
-
+exports.updateSwaStatus = async function (dar_swa_id) {
+  const swa = await prisma.dar_swa.update({
+    where: {
+      id: parseInt(dar_swa_id),
+    },
+    data: {
+      is_active: 0,
+    },
+  });
+  return swa;
+};
 // SWA notes
 exports.createSwaNote = async function (reqBody) {
   console.log(reqBody);

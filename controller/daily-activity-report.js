@@ -115,6 +115,15 @@ exports.createSwaServicesItem = async function (req, res, next) {
     console.error(error);
   }
 };
+exports.updateSwaStatus = async function (req, res, next) {
+  try {
+    const swa_id = req.params.id;
+    const darItem = await repository.updateSwaStatus(swa_id);
+    res.send(darItem);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // SWA NOTES
 

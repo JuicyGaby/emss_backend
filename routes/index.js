@@ -167,6 +167,7 @@ router.get("/dar_swa", dailyActivityReport.getDarSwa);
 router.get("/dar_swa/:id", dailyActivityReport.getDarSwaId);
 router.get("/dar_swa_by_date/:date", dailyActivityReport.getDarSwaByDate);
 router.post("/swa-services", dailyActivityReport.createSwaServicesItem);
+router.put("/update-swa-status/:id", dailyActivityReport.updateSwaStatus);
 
 // * SWA NOTES
 router.post("/swa-notes", dailyActivityReport.createSwaNote);

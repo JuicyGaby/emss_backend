@@ -231,19 +231,6 @@ model patient_medical_data {
   patients                     patients @relation(fields: [patient_id], references: [id])
 }
 
-// model medical_data_item {
-//   id                           Int     @id @default(autoincrement())
-//   patient_medical_data_id      Int
-//   title                        String? @db.VarChar(255)
-//   admitting_diagnosis          String? @db.VarChar(255)
-//   final_diagnosis              String? @db.VarChar(255)
-//   duration_of_problems         String? @db.VarChar(255)
-//   previous_treatment           String? @db.VarChar(255)
-//   present_treatment_plan       String? @db.VarChar(255)
-//   health_accessibility_problem String? @db.VarChar(255)
-//   remarks                      String? @db.VarChar(255)
-// }
-
 model patient_health_and_mental_health {
   id                                   Int     @id @default(autoincrement())
   patient_id                           Int
@@ -493,6 +480,7 @@ model dar_swa {
   created_by        String?             @db.VarChar(100)
   creator_name      String?             @db.VarChar(100)
   creator_id        Int?
+  is_active         Int?                @default(1) @db.TinyInt
   date_created      DateTime            @default(now()) @db.DateTime(0)
   dar_swa_services  dar_swa_services[]
   dar_swa_notes     dar_swa_notes[]
