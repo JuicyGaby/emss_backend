@@ -78,6 +78,8 @@ router.post("/monthly-expenses", assessmentTool.createMonthlyExpenses);
 router.get("/medical-data/:id", assessmentTool.getMedicalData);
 router.post("/medical-data", assessmentTool.createMedicalData);
 router.put("/medical-data", assessmentTool.updateMedicalData);
+// getMedicalDataById
+router.get("/medical-data-by-id/:id", assessmentTool.getMedicalDataById);
 
 // ? health and mental health
 router.get(
@@ -167,6 +169,7 @@ router.get("/dar_swa", dailyActivityReport.getDarSwa);
 router.get("/dar_swa/:id", dailyActivityReport.getDarSwaId);
 router.get("/dar_swa_by_date/:date", dailyActivityReport.getDarSwaByDate);
 router.post("/swa-services", dailyActivityReport.createSwaServicesItem);
+router.put("/update-swa-status/:id", dailyActivityReport.updateSwaStatus);
 
 // * SWA NOTES
 router.post("/swa-notes", dailyActivityReport.createSwaNote);
@@ -182,6 +185,15 @@ router.post(
 );
 router.post("/get-monthly-dar-entries", statisticalReport.getMonthlyDarEntries);
 router.post("/get-monthly-swa-entries", statisticalReport.getMonthlySwaEntries);
-router.post("/get-social-worker-monthly-dar-entries",statisticalReport.getSocialWorkerMonthlyDarEntries);
-router.post("/get-social-worker-monthly-swa-entries",statisticalReport.getSocialWorkerMonthlySwaEntries);
-router.post("/get-monthly-statistical-report",statisticalReport.getMonthlyStatisticalReport);
+router.post(
+  "/get-social-worker-monthly-dar-entries",
+  statisticalReport.getSocialWorkerMonthlyDarEntries
+);
+router.post(
+  "/get-social-worker-monthly-swa-entries",
+  statisticalReport.getSocialWorkerMonthlySwaEntries
+);
+router.post(
+  "/get-monthly-statistical-report",
+  statisticalReport.getMonthlyStatisticalReport
+);

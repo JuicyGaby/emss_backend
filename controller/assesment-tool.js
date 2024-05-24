@@ -29,6 +29,7 @@ const {
   getMedicalData,
   createMedicalData,
   updateMedicalData,
+  getMedicalDataById,
   // health and mental health
   getHealthAndMentalHealth,
   createHealthAndMentalHealth,
@@ -299,6 +300,15 @@ exports.updateMedicalData = async function (req, res, next) {
   try {
     const updatedMedicalData = await updateMedicalData(medicalData);
     res.send(updatedMedicalData);
+  } catch (error) {
+    console.error(error);
+  }
+};
+exports.getMedicalDataById = async function (req, res, next) {
+  const patientId = req.params.id;
+  try {
+    const medicalData = await getMedicalDataById(patientId);
+    res.send(medicalData);
   } catch (error) {
     console.error(error);
   }

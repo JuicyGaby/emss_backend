@@ -83,8 +83,8 @@ async function updateInterviewById(patient_id, reqBody) {
       interview_end_time: reqBody.interview_end_time,
       interview_duration: reqBody.interview_duration,
       admission_date_and_time: reqBody.admission_date_and_time,
-      basic_ward: reqBody.basic_ward,
-      nonbasic_ward: reqBody.nonbasic_ward,
+      area: reqBody.area,
+      department: reqBody.department,
       health_record_number: reqBody.health_record_number,
       mswd_number: reqBody.mswd_number,
       referring_party: reqBody.referring_party,
@@ -97,6 +97,7 @@ async function updateInterviewById(patient_id, reqBody) {
       remarks: reqBody.remarks,
     },
   });
+  console.log("updated interview", interview);
   reqBody.activity = "Updated interview details";
   await createActivityLog(patient_id, reqBody);
   return interview;
@@ -425,7 +426,7 @@ async function createMonthlyExpenses(reqBody) {
   ];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (text && text[type]) {
+    if (text && text[type] && Array.isArray(text[type])) {
       joinedTypes[type] = text[type].join(",");
     }
   });
@@ -448,6 +449,8 @@ async function createMonthlyExpenses(reqBody) {
       communication_cost: number.communication_cost,
       house_help_cost: number.house_help_cost,
       medical_cost: number.medical_cost,
+      living_arrangement: text.living_arrangement,
+      remarks: text.remarks,
       total_cost: reqBody.total_cost.toString(),
       patient_id: reqBody.id,
     },
@@ -468,7 +471,7 @@ async function updateMonthlyExpenses(reqBody) {
   ];
   const joinedTypes = {};
   listTypes.forEach((type) => {
-    if (text && text[type]) {
+    if (text && text[type] && Array.isArray(text[type])) {
       joinedTypes[type] = text[type].join(",");
     }
   });
@@ -494,6 +497,7 @@ async function updateMonthlyExpenses(reqBody) {
       house_help_cost: number.house_help_cost,
       medical_cost: number.medical_cost,
       total_cost: reqBody.total_cost.toString(),
+      remarks: text.remarks,
     },
   });
   reqBody.activity = "Updated Monthly Expenses";
@@ -529,47 +533,64 @@ async function createSources(id, reqBody) {
 
 // * medical data
 async function getMedicalData(patient_id) {
-  const medicalData = await prisma.patient_medical_data.findFirst({
+  let medicalDataItems = await prisma.patient_medical_data.findMany({
     where: {
       patient_id: parseInt(patient_id),
     },
   });
-  return medicalData || false;
+  // modify the 'date_created
+  medicalDataItems = medicalDataItems.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created).local().format("YYYY-MM-DD"),
+    };
+  });
+  return medicalDataItems || [];
 }
-async function createMedicalData(reqBody) {
-  console.log("reqBody", reqBody);
-  const medicalData = await prisma.patient_medical_data.create({
-    data: {
-      patient_id: reqBody.patient_id,
-      admitting_diagnosis: reqBody.admitting_diagnosis,
-      final_diagnosis: reqBody.final_diagnosis,
-      duration_of_problems: reqBody.duration_of_problems,
-      previous_treatment: reqBody.previous_treatment,
-      present_treatment_plan: reqBody.present_treatment_plan,
-      health_accessibility_problem: reqBody.health_accessibility_problem,
+async function getMedicalDataById(medicalDataId) {
+  let medicalData = await prisma.patient_medical_data.findFirst({
+    where: {
+      id: parseInt(medicalDataId),
     },
   });
-  console.log("medicalData created", medicalData);
-  reqBody.activity = "Created Medical Data";
+  // convert date_created to local time
+  medicalData = {
+    ...medicalData,
+    date_created: moment(medicalData.date_created).local().format("YYYY-MM-DD"),
+  };
+  console.log("medicalData", medicalData);
+  return medicalData;
+}
+async function createMedicalData(reqBody) {
+  let medicalData = await prisma.patient_medical_data.create({
+    data: {
+      patient_id: reqBody.patient_id,
+      medical_data_type: reqBody.medical_data_type,
+      medical_data_note: reqBody.medical_data_note,
+      creator_id: reqBody.creator_id,
+      created_by: reqBody.created_by,
+    },
+  });
+  medicalData = {
+    ...medicalData,
+    date_created: moment(medicalData.date_created).local().format("YYYY-MM-DD"),
+  };
   await createActivityLog(medicalData.patient_id, reqBody);
   return medicalData;
 }
 async function updateMedicalData(reqBody) {
-  const medicalData = await prisma.patient_medical_data.update({
+  let medicalData = await prisma.patient_medical_data.update({
     where: {
-      id: reqBody.id,
+      id: parseInt(reqBody.id),
     },
     data: {
-      admitting_diagnosis: reqBody.admitting_diagnosis,
-      final_diagnosis: reqBody.final_diagnosis,
-      duration_of_problems: reqBody.duration_of_problems,
-      previous_treatment: reqBody.previous_treatment,
-      present_treatment_plan: reqBody.present_treatment_plan,
-      health_accessibility_problem: reqBody.health_accessibility_problem,
+      medical_data_note: reqBody.medical_data_note,
     },
   });
-  console.log("medicalData updated", medicalData);
-  reqBody.activity = "Updated Medical Data";
+  medicalData = {
+    ...medicalData,
+    date_created: moment(medicalData.date_created).local().format("YYYY-MM-DD"),
+  };
   await createActivityLog(medicalData.patient_id, reqBody);
   return medicalData;
 }
@@ -859,6 +880,8 @@ async function getProblemsInEnvironment(patient_id) {
     "relationship_to_patient",
     "address",
     "contact_number",
+    "contact_number_2",
+    "contact_number_3",
     "interviewed_by",
     "remarks",
   ];
@@ -1021,6 +1044,7 @@ module.exports = {
   getMedicalData,
   createMedicalData,
   updateMedicalData,
+  getMedicalDataById,
   // health and mental health
   createHealthAndMentalHealth,
   updateHealthAndMentalHealth,

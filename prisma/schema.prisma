@@ -219,16 +219,14 @@ model patient_water_source {
 }
 
 model patient_medical_data {
-  id                           Int      @id @default(autoincrement())
-  patient_id                   Int
-  admitting_diagnosis          String?  @db.VarChar(255)
-  final_diagnosis              String?  @db.VarChar(255)
-  duration_of_problems         String?  @db.VarChar(255)
-  previous_treatment           String?  @db.VarChar(255)
-  present_treatment_plan       String?  @db.VarChar(255)
-  health_accessibility_problem String?  @db.VarChar(255)
-  remarks                      String?  @db.VarChar(255)
-  patients                     patients @relation(fields: [patient_id], references: [id])
+  id                Int      @id @default(autoincrement())
+  patient_id        Int
+  medical_data_type String?  @db.VarChar(100)
+  medical_data_note String?  @db.VarChar(500)
+  date_created      DateTime @default(now()) @db.DateTime(0)
+  creator_id        Int?
+  created_by        String?  @db.VarChar(100)
+  patients          patients @relation(fields: [patient_id], references: [id])
 }
 
 model patient_health_and_mental_health {
@@ -480,6 +478,7 @@ model dar_swa {
   created_by        String?             @db.VarChar(100)
   creator_name      String?             @db.VarChar(100)
   creator_id        Int?
+  is_active         Int?                @default(1) @db.TinyInt
   date_created      DateTime            @default(now()) @db.DateTime(0)
   dar_swa_services  dar_swa_services[]
   dar_swa_notes     dar_swa_notes[]

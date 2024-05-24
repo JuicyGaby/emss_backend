@@ -369,7 +369,6 @@ exports.getDarSwaId = async function (dar_swa_id) {
   });
   return servicesArray || [];
 };
-
 exports.createSwaServicesItem = async function (reqBody) {
   const swaServices = await Promise.all(
     reqBody.services.map(async (serviceId) => {
@@ -406,7 +405,17 @@ exports.createSwaServicesItem = async function (reqBody) {
   });
   return servicesArray;
 };
-
+exports.updateSwaStatus = async function (dar_swa_id) {
+  const swa = await prisma.dar_swa.update({
+    where: {
+      id: parseInt(dar_swa_id),
+    },
+    data: {
+      is_active: 0,
+    },
+  });
+  return swa;
+};
 // SWA notes
 exports.createSwaNote = async function (reqBody) {
   console.log(reqBody);
@@ -426,8 +435,14 @@ exports.createSwaNote = async function (reqBody) {
     date_created: moment(swaNote.date_created)
       .local()
       .format("YYYY-MM-DD hh:mm A"),
+    note_time_started: moment(swaNote.note_time_started, "HH:mm").format(
+      "hh:mm A"
+    ),
+    note_time_ended: swaNote.note_time_ended
+      ? moment(swaNote.note_time_ended, "HH:mm").format("hh:mm A")
+      : null,
   };
-  reqBody.activity = `Created SWA Note`;
+  reqBody.activity = `Created SWA Note : ${swaNote.note_title}`;
   await createSwaActivityLog(reqBody);
   return updatedSwaNote;
 };
@@ -479,8 +494,14 @@ exports.updateSwaNote = async function (reqBody) {
     date_created: moment(swaNote.date_created)
       .local()
       .format("YYYY-MM-DD hh:mm A"),
+    note_time_started: moment(swaNote.note_time_started, "HH:mm").format(
+      "hh:mm A"
+    ),
+    note_time_ended: swaNote.note_time_ended
+      ? moment(swaNote.note_time_ended, "HH:mm").format("hh:mm A")
+      : null,
   };
-  swaNote.activity = `Updated SWA Note`;
+  swaNote.activity = `Updated SWA Note ${swaNote.note_title}`;
   await createSwaActivityLog(swaNote);
   return swaNote;
 };
@@ -566,7 +587,7 @@ exports.createDarNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
-  reqBody.activity = `Created DAR Note`;
+  reqBody.activity = `Created DAR Note : ${darNote.note_title}`;
   await createDarActivityLog(reqBody);
   return updatedDarNote;
 };
@@ -611,7 +632,7 @@ exports.updateDarNote = async function (reqBody) {
       .local()
       .format("YYYY-MM-DD hh:mm A"),
   };
-  reqBody.activity = `Updated DAR Note`;
+  reqBody.activity = `Updated DAR Note : ${darNote.note_title}`;
   reqBody.dar_id = darNote.dar_id;
   reqBody.created_by = darNote.created_by;
   await createDarActivityLog(reqBody);
@@ -623,7 +644,7 @@ exports.deleteDarNote = async function (note_id) {
       id: parseInt(note_id),
     },
   });
-  darNote.activity = `Deleted DAR Note`;
+  darNote.activity = `Deleted DAR Note : ${darNote.note_title}`;
   await createDarActivityLog(darNote);
   return darNote;
 };
