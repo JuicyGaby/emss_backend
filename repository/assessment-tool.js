@@ -533,29 +533,32 @@ async function createSources(id, reqBody) {
 
 // * medical data
 async function getMedicalData(patient_id) {
-  const medicalData = await prisma.patient_medical_data.findFirst({
+  let medicalDataItems = await prisma.patient_medical_data.findMany({
     where: {
       patient_id: parseInt(patient_id),
     },
   });
-  return medicalData || false;
+  // modify the 'date_created
+  medicalDataItems = medicalDataItems.map((item) => {
+    return {
+      ...item,
+      date_created: moment(item.date_created).local().format("YYYY-MM-DD"),
+    };
+  });
+  return medicalDataItems || [];
 }
+async function getMedicalDataById(medicalDataId) {}
 async function createMedicalData(reqBody) {
-  console.log("reqBody", reqBody);
-  const medicalData = await prisma.patient_medical_data.create({
+  let medicalData = await prisma.patient_medical_data.create({
     data: {
       patient_id: reqBody.patient_id,
-      admitting_diagnosis: reqBody.admitting_diagnosis,
-      final_diagnosis: reqBody.final_diagnosis,
-      duration_of_problems: reqBody.duration_of_problems,
-      previous_treatment: reqBody.previous_treatment,
-      present_treatment_plan: reqBody.present_treatment_plan,
-      health_accessibility_problem: reqBody.health_accessibility_problem,
+      medical_data_type: reqBody.medical_data_type,
+      medical_data_note: reqBody.medical_data_note,
+      creator_id: reqBody.creator_id,
+      created_by: reqBody.created_by,
     },
   });
-  console.log("medicalData created", medicalData);
-  reqBody.activity = "Created Medical Data";
-  await createActivityLog(medicalData.patient_id, reqBody);
+  medicalData = { ...medicalData, date_created: moment().format("YYYY-MM-DD") };
   return medicalData;
 }
 async function updateMedicalData(reqBody) {
