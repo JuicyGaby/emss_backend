@@ -442,7 +442,7 @@ exports.createSwaNote = async function (reqBody) {
       ? moment(swaNote.note_time_ended, "HH:mm").format("hh:mm A")
       : null,
   };
-  reqBody.activity = `Created SWA Note`;
+  reqBody.activity = `Created SWA Note : ${swaNote.note_title}`;
   await createSwaActivityLog(reqBody);
   return updatedSwaNote;
 };
@@ -501,7 +501,7 @@ exports.updateSwaNote = async function (reqBody) {
       ? moment(swaNote.note_time_ended, "HH:mm").format("hh:mm A")
       : null,
   };
-  swaNote.activity = `Updated SWA Note`;
+  swaNote.activity = `Updated SWA Note ${swaNote.note_title}`;
   await createSwaActivityLog(swaNote);
   return swaNote;
 };
