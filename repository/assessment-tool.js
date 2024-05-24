@@ -547,7 +547,14 @@ async function getMedicalData(patient_id) {
   });
   return medicalDataItems || [];
 }
-async function getMedicalDataById(medicalDataId) {}
+async function getMedicalDataById(medicalDataId) {
+  const medicalData = await prisma.patient_medical_data.findFirst({
+    where: {
+      id: parseInt(medicalDataId),
+    },
+  });
+  return medicalData || false;
+}
 async function createMedicalData(reqBody) {
   let medicalData = await prisma.patient_medical_data.create({
     data: {
@@ -1031,6 +1038,7 @@ module.exports = {
   getMedicalData,
   createMedicalData,
   updateMedicalData,
+  getMedicalDataById,
   // health and mental health
   createHealthAndMentalHealth,
   updateHealthAndMentalHealth,

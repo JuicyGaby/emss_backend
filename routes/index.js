@@ -78,6 +78,8 @@ router.post("/monthly-expenses", assessmentTool.createMonthlyExpenses);
 router.get("/medical-data/:id", assessmentTool.getMedicalData);
 router.post("/medical-data", assessmentTool.createMedicalData);
 router.put("/medical-data", assessmentTool.updateMedicalData);
+// getMedicalDataById
+router.get("/medical-data-by-id/:id", assessmentTool.getMedicalDataById);
 
 // ? health and mental health
 router.get(
@@ -183,6 +185,15 @@ router.post(
 );
 router.post("/get-monthly-dar-entries", statisticalReport.getMonthlyDarEntries);
 router.post("/get-monthly-swa-entries", statisticalReport.getMonthlySwaEntries);
-router.post("/get-social-worker-monthly-dar-entries",statisticalReport.getSocialWorkerMonthlyDarEntries);
-router.post("/get-social-worker-monthly-swa-entries",statisticalReport.getSocialWorkerMonthlySwaEntries);
-router.post("/get-monthly-statistical-report",statisticalReport.getMonthlyStatisticalReport);
+router.post(
+  "/get-social-worker-monthly-dar-entries",
+  statisticalReport.getSocialWorkerMonthlyDarEntries
+);
+router.post(
+  "/get-social-worker-monthly-swa-entries",
+  statisticalReport.getSocialWorkerMonthlySwaEntries
+);
+router.post(
+  "/get-monthly-statistical-report",
+  statisticalReport.getMonthlyStatisticalReport
+);
