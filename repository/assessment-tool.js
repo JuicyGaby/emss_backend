@@ -569,23 +569,15 @@ async function createMedicalData(reqBody) {
   return medicalData;
 }
 async function updateMedicalData(reqBody) {
-  const medicalData = await prisma.patient_medical_data.update({
+  let medicalData = await prisma.patient_medical_data.update({
     where: {
-      id: reqBody.id,
-      patient_id: reqBody.patient_id,
+      id: parseInt(reqBody.id),
     },
     data: {
-      admitting_diagnosis: reqBody.admitting_diagnosis,
-      final_diagnosis: reqBody.final_diagnosis,
-      duration_of_problems: reqBody.duration_of_problems,
-      previous_treatment: reqBody.previous_treatment,
-      present_treatment_plan: reqBody.present_treatment_plan,
-      health_accessibility_problem: reqBody.health_accessibility_problem,
+      medical_data_note: reqBody.medical_data_note,
     },
   });
-  console.log("medicalData updated", medicalData);
-  reqBody.activity = "Updated Medical Data";
-  await createActivityLog(medicalData.patient_id, reqBody);
+  medicalData = { ...medicalData, date_created: moment().format("YYYY-MM-DD") };
   return medicalData;
 }
 
