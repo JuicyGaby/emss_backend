@@ -200,7 +200,7 @@ exports.getDailyActivityReportByDate = async function (date) {
         `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
       date_created: moment(item.date_created)
         .local()
-        .format("YYYY-MM-DD hh:mm A"),
+        .format("MMMM DD, YYYY hh:mm A"),
     };
   });
   return darLocalTime || [];
