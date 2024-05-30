@@ -23,9 +23,7 @@ exports.getSocialWorkerMonthlyDarEntries = async (body) => {
       ...item,
       fullname:
         `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
+      date_created: modifyDate(item.date_created),
     };
   });
   const report = await this.generateMonthlyReport(body);
@@ -46,9 +44,7 @@ exports.getSocialWorkerMonthlySwaEntries = async (body) => {
   swaEntries = swaEntries.map((item) => {
     return {
       ...item,
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
+      date_created: moment(item.date_created),
     };
   });
   const report = await this.generateMonthlyReport(body);
@@ -100,9 +96,7 @@ exports.getMonthlyDarEntries = async (month) => {
       ...item,
       fullname:
         `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
-      date_created: moment(item.date_created)
-        .local()
-        .format("MMMM DD, YYYY hh:mm A"),
+      date_created: modifyDate(item.date_created),
     };
   });
   return darEntries || [];
@@ -120,14 +114,11 @@ exports.getMonthlySwaEntries = async (month) => {
   swaEntries = swaEntries.map((item) => {
     return {
       ...item,
-      date_created: moment(item.date_created)
-        .local()
-        .format("MMMM DD, YYYY hh:mm A"),
+      date_created: moment(item.date_created),
     };
   });
   return swaEntries || [];
 };
-
 exports.getMonthlyStatisticalReport = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
 
@@ -161,6 +152,10 @@ exports.getMonthlyStatisticalReport = async (month) => {
   );
 
   return statisticalReport;
+};
+
+const modifyDate = (date) => {
+  return moment(date).local().format("MMMM DD, YYYY hh:mm A");
 };
 
 // statistical report starts
