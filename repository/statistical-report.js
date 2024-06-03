@@ -230,11 +230,15 @@ const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
   GROUP BY DAR.id, DAR.area_id, HA.area_name, province;
 `;
   const filteredProvince = result.filter((item) =>
-    regionSevenProvince.some((category) => item.province.includes(category))
+    regionSevenProvince.some((category) =>
+      item.province.trim().toUpperCase().includes(category)
+    )
   );
   const updatedResult = result.filter(
     (item) =>
-      !regionSevenProvince.some((province) => item.province.includes(province))
+      !regionSevenProvince.some((province) =>
+        item.province.trim().toUpperCase().includes(province)
+      )
   );
   const regionSevenObject = transformedPlaceOfOrigin(filteredProvince);
   const otherProviceObject = transformedPlaceOfOrigin(updatedResult);
@@ -243,9 +247,10 @@ const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
 const transformedPlaceOfOrigin = (array) => {
   const result = {};
   array.forEach((item) => {
-    if (!result[item.province]) {
-      result[item.province] = {
-        province: item.province,
+    const trimmedProvince = item.province.trim().toUpperCase();
+    if (!result[trimmedProvince]) {
+      result[trimmedProvince] = {
+        province: trimmedProvince,
         area_1_count: 0,
         area_2_count: 0,
         area_3_count: 0,
@@ -253,18 +258,18 @@ const transformedPlaceOfOrigin = (array) => {
       };
     }
     if (item.area_id === 1 || item.area_id === 2) {
-      result[item.province].area_1_count += 1;
+      result[trimmedProvince].area_1_count += 1;
     }
     if (item.area_id === 3) {
-      result[item.province].area_2_count += 1;
+      result[trimmedProvince].area_2_count += 1;
     }
     if (item.area_id === 4) {
-      result[item.province].area_3_count += 1;
+      result[trimmedProvince].area_3_count += 1;
     }
-    result[item.province].total_count =
-      result[item.province].area_1_count +
-      result[item.province].area_2_count +
-      result[item.province].area_3_count;
+    result[trimmedProvince].total_count =
+      result[trimmedProvince].area_1_count +
+      result[trimmedProvince].area_2_count +
+      result[trimmedProvince].area_3_count;
   });
   return Object.values(result);
 };
