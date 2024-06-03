@@ -279,7 +279,7 @@ const getDarServicesStatisticalReport = async (startOfMonth, endOfMonth) => {
   FROM emss_system.dar_case_services AS dcs
   LEFT JOIN emss_system.daily_activity_report AS dar ON dcs.dar_id = dar.id
   LEFT JOIN emss_system.dar_services AS ds ON dcs.dar_service_id = ds.id
-  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth}
+  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth} AND dar.is_active = 1
   GROUP BY dar_service_id, service_name;
   `;
   result.forEach((row) => {
@@ -468,7 +468,33 @@ exports.generateSocialWorkAdministrationItems = async (month, service_id) => {
   });
   return filteredSwaItems;
 };
-
+exports.generateDarServicesItems = async (month, dar_service_id) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  const darItems = await prisma.daily_activity_report.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+      is_active: 1,
+    },
+    include: {
+      dar_case_services: true,
+    },
+  });
+  let filteredDarItems = darItems.filter((item) =>
+    item.dar_case_services.some(
+      (service) => service.dar_service_id === dar_service_id
+    )
+  );
+  filteredDarItems = filteredDarItems.map((item) => {
+    return {
+      ...item,
+      date_created: modifyDate(item.date_created),
+    };
+  });
+  return filteredDarItems;
+};
 exports.generateMswDocumentationItems = async (month, dar_service_id) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
   const darItems = await prisma.daily_activity_report.findMany({
