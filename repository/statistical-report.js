@@ -427,6 +427,7 @@ exports.generateSourceOfReferralDarItems = async (month, sor_id) => {
         gte: startOfMonth,
         lte: endOfMonth,
       },
+      is_active: 1,
       phic_classification: {
         not: null,
       },
