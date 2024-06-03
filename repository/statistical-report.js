@@ -320,6 +320,7 @@ const getSwaStatisticalReport = async (startOfMonth, endOfMonth) => {
   left join emss_system.swa_services as SS on DSS.service_id = SS.id
   WHERE DS.date_created >= ${startOfMonth}
     AND DS.date_created < ${endOfMonth}
+    AND DS.is_active = 1
   group by service_id, service_name
   `;
   result.forEach((row) => {
@@ -440,4 +441,30 @@ exports.generateSourceOfReferralDarItems = async (month, sor_id) => {
     };
   });
   return darItems;
+};
+
+exports.generateSocialWorkAdministrationItems = async (month, service_id) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  const swaItems = await prisma.dar_swa.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+      is_active: 1,
+    },
+    include: {
+      dar_swa_services: true,
+    },
+  });
+  let filteredSwaItems = swaItems.filter((item) =>
+    item.dar_swa_services.some((service) => service.service_id === service_id)
+  );
+  filteredSwaItems = filteredSwaItems.map((item) => {
+    return {
+      ...item,
+      date_created: modifyDate(item.date_created),
+    };
+  });
+  return filteredSwaItems;
 };

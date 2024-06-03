@@ -197,8 +197,12 @@ router.post(
   "/get-monthly-statistical-report",
   statisticalReport.getMonthlyStatisticalReport
 );
-// generateSourceOfReferralDarItems
+// generation of Statistical Report
 router.post(
   "/generate-source-of-referral-dar-items",
   statisticalReport.generateSourceOfReferralDarItems
+);
+router.post(
+  "/generate-social-work-administration-items",
+  statisticalReport.generateSocialWorkAdministrationItems
 );
