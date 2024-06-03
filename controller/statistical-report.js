@@ -54,3 +54,18 @@ exports.getMonthlyStatisticalReport = async (req, res) => {
     console.log(error);
   }
 };
+
+// ? generation of Statistical Report
+exports.generateSourceOfReferralDarItems = async (req, res) => {
+  try {
+    const { month, sor_id } = req.body;
+    console.log(req.body);
+    const items = await repository.generateSourceOfReferralDarItems(
+      month,
+      sor_id
+    );
+    res.send(items);
+  } catch (error) {
+    console.log(error);
+  }
+};

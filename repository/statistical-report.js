@@ -167,7 +167,7 @@ const getMonthlySourceOfReferral = async (startOfMonth, endOfMonth) => {
   FROM emss_system.daily_activity_report AS dar 
   LEFT JOIN emss_system.source_of_referral AS sor ON dar.source_of_referral_id = sor.id
   LEFT JOIN emss_system.hospital_area AS HA ON dar.area_id = HA.id
-  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth} AND dar.phic_classification IS NOT NULL
+  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth} AND dar.phic_classification IS NOT NULL AND dar.is_active = 1
   GROUP BY sor.id, sor.name, HA.id`;
   // Convert count to number
   result.forEach((row) => {
@@ -418,3 +418,25 @@ const generateStartAndEndOfMonth = (month) => {
 };
 
 // ? statistical report generate of dar items
+exports.generateSourceOfReferralDarItems = async (month, sor_id) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  let darItems = await prisma.daily_activity_report.findMany({
+    where: {
+      source_of_referral_id: sor_id,
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+      phic_classification: {
+        not: null,
+      },
+    },
+  });
+  darItems = darItems.map((item) => {
+    return {
+      ...item,
+      date_created: modifyDate(item.date_created),
+    };
+  });
+  return darItems;
+};

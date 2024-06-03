@@ -197,3 +197,8 @@ router.post(
   "/get-monthly-statistical-report",
   statisticalReport.getMonthlyStatisticalReport
 );
+// generateSourceOfReferralDarItems
+router.post(
+  "/generate-source-of-referral-dar-items",
+  statisticalReport.generateSourceOfReferralDarItems
+);
