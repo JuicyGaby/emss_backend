@@ -468,3 +468,31 @@ exports.generateSocialWorkAdministrationItems = async (month, service_id) => {
   });
   return filteredSwaItems;
 };
+
+exports.generateMswDocumentationItems = async (month, dar_service_id) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  const darItems = await prisma.daily_activity_report.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+      is_active: 1,
+    },
+    include: {
+      dar_case_services: true,
+    },
+  });
+  let filteredDarItems = darItems.filter((item) =>
+    item.dar_case_services.some(
+      (service) => service.dar_service_id === dar_service_id
+    )
+  );
+  filteredDarItems = filteredDarItems.map((item) => {
+    return {
+      ...item,
+      date_created: modifyDate(item.date_created),
+    };
+  });
+  return filteredDarItems;
+};

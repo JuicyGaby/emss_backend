@@ -206,3 +206,8 @@ router.post(
   "/generate-social-work-administration-items",
   statisticalReport.generateSocialWorkAdministrationItems
 );
+// generateMswDocumentationItems
+router.post(
+  "/generate-msw-documentation-items",
+  statisticalReport.generateMswDocumentationItems
+);

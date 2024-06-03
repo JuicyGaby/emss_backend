@@ -83,3 +83,16 @@ exports.generateSocialWorkAdministrationItems = async (req, res) => {
     console.log(error);
   }
 };
+exports.generateMswDocumentationItems = async (req, res) => {
+  try {
+    const { month, dar_service_id } = req.body;
+    console.log(req.body);
+    const items = await repository.generateMswDocumentationItems(
+      month,
+      dar_service_id
+    );
+    res.send(items);
+  } catch (error) {
+    console.log(error);
+  }
+};
