@@ -163,13 +163,12 @@ const modifyDate = (date) => {
 // ? I source or referral
 const getMonthlySourceOfReferral = async (startOfMonth, endOfMonth) => {
   const result = await prisma.$queryRaw`
-  SELECT sor.name, HA.id, COUNT(*) as count
+  SELECT sor.id as sor_id, sor.name, HA.id, COUNT(*) as count
   FROM emss_system.daily_activity_report AS dar 
   LEFT JOIN emss_system.source_of_referral AS sor ON dar.source_of_referral_id = sor.id
   LEFT JOIN emss_system.hospital_area AS HA ON dar.area_id = HA.id
   WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth} AND dar.phic_classification IS NOT NULL
-  GROUP BY sor.name, HA.id`;
-
+  GROUP BY sor.id, sor.name, HA.id`;
   // Convert count to number
   result.forEach((row) => {
     row.count = Number(row.count);
@@ -187,6 +186,7 @@ const transformedSourceOfReferralResult = (array) => {
     if (!result[item.name]) {
       result[item.name] = {
         name: item.name,
+        name_id: item.sor_id,
         area_1_count: 0,
         area_2_count: 0,
         area_3_count: 0,
@@ -212,7 +212,6 @@ const transformedSourceOfReferralResult = (array) => {
   return Object.values(result);
 };
 // ? II case load
-
 // ? III Place of Origin
 const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
   const regionSevenProvince = ["CEBU", "BOHOL", "SIQUIJOR", "NEGROS ORIENTAL"];
@@ -417,3 +416,5 @@ const generateStartAndEndOfMonth = (month) => {
   const endOfMonth = moment(month, "MMMM").endOf("month").toISOString();
   return { startOfMonth, endOfMonth };
 };
+
+// ? statistical report generate of dar items
