@@ -310,8 +310,6 @@ exports.getSwaServices = async function () {
   return services || [];
 };
 exports.getDarSwa = async function () {
-  // Set 'today' to April 4, 2024
-  //const today = moment("2024-04-04").startOf('day');
   const today = moment().startOf("day");
   const tomorrow = moment(today).add(1, "days");
 
@@ -321,6 +319,7 @@ exports.getDarSwa = async function () {
         gte: today.toDate(),
         lt: tomorrow.toDate(),
       },
+      is_active: 1,
     },
   });
 
@@ -345,6 +344,7 @@ exports.getDarSwaByDate = async function (date) {
         gte: today.toDate(),
         lt: tomorrow.toDate(),
       },
+      is_active: 1,
     },
   });
 

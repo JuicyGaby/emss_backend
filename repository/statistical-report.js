@@ -109,6 +109,7 @@ exports.getMonthlySwaEntries = async (month) => {
         gte: startOfMonth,
         lte: endOfMonth,
       },
+      is_active: 1,
     },
   });
   swaEntries = swaEntries.map((item) => {
@@ -344,6 +345,7 @@ const getMonthlySwaCount = async (month) => {
         gte: startOfMonth,
         lte: endOfMonth,
       },
+      is_active: 1,
     },
   });
   return swaCount;
@@ -386,6 +388,7 @@ const getSocialWorkerSwaCount = async (body) => {
         gte: startOfMonth,
         lte: endOfMonth,
       },
+      is_active: 1,
     },
   });
   return swaCount;
