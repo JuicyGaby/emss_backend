@@ -124,10 +124,17 @@ exports.getMonthlyStatisticalReport = async (month) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
 
   // Initialize the statistical report object
-  const statisticalReport = {};
+  const statisticalReport = {
+    caseLoad: {},
+  };
 
   // Gather the various parts of the statistical report
   statisticalReport.sourceOfReferral = await getMonthlySourceOfReferral(
+    startOfMonth,
+    endOfMonth
+  );
+  statisticalReport.caseLoad.nonPhic = await generateCaseLoad(
+    0,
     startOfMonth,
     endOfMonth
   );
@@ -135,6 +142,7 @@ exports.getMonthlyStatisticalReport = async (month) => {
     startOfMonth,
     endOfMonth
   );
+
   //  Get Place of Origin
   const { regionSevenObject, otherProviceObject } =
     await getMonthlyPlaceOfOrigin(startOfMonth, endOfMonth);
@@ -416,6 +424,32 @@ const generateStartAndEndOfMonth = (month) => {
   const startOfMonth = moment(month, "MMMM").startOf("month").toISOString();
   const endOfMonth = moment(month, "MMMM").endOf("month").toISOString();
   return { startOfMonth, endOfMonth };
+};
+const generateCaseLoad = async (isPhic, startOfMonth, endOfMonth) => {
+  if (!isPhic) {
+    console.log("not phic member");
+    const result = await prisma.$queryRaw`
+      select
+        case_type_id, area_id, phic_classification, count(*) as count
+      from
+        emss_system.daily_activity_report
+      where
+          date_created >=  ${startOfMonth}
+          and date_created <= ${endOfMonth}
+          and is_phic_member = ${isPhic}
+          and case_type_id is not null
+          and area_id is not null
+          and phic_classification is not null
+      group by
+        case_type_id, area_id, phic_classification
+    `;
+    result.forEach((row) => {
+      row.count = Number(row.count);
+    });
+    console.log(result);
+    return result;
+  }
+  console.log("phic member");
 };
 
 // ? statistical report generate of dar items

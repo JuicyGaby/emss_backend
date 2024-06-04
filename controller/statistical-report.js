@@ -69,7 +69,6 @@ exports.generateSourceOfReferralDarItems = async (req, res) => {
     console.log(error);
   }
 };
-
 exports.generateSocialWorkAdministrationItems = async (req, res) => {
   try {
     const { month, service_id } = req.body;
