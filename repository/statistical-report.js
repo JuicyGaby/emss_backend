@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const e = require("cors");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
@@ -135,6 +136,11 @@ exports.getMonthlyStatisticalReport = async (month) => {
   );
   statisticalReport.caseLoad.nonPhic = await generateCaseLoad(
     0,
+    startOfMonth,
+    endOfMonth
+  );
+  statisticalReport.caseLoad.phic = await generateCaseLoad(
+    1,
     startOfMonth,
     endOfMonth
   );
@@ -427,7 +433,6 @@ const generateStartAndEndOfMonth = (month) => {
 };
 const generateCaseLoad = async (isPhic, startOfMonth, endOfMonth) => {
   if (!isPhic) {
-    console.log("not phic member");
     const result = await prisma.$queryRaw`
       select
         case_type_id, area_id, phic_classification, count(*) as count
@@ -446,10 +451,30 @@ const generateCaseLoad = async (isPhic, startOfMonth, endOfMonth) => {
     result.forEach((row) => {
       row.count = Number(row.count);
     });
-    console.log(result);
     return result;
   }
-  console.log("phic member");
+  console.log("this is phic");
+  const result = await prisma.$queryRaw`
+    SELECT
+      dar.contributor_type, dar.area_id, dar.phic_classification, dar.case_type_id, count(*) as count
+    FROM
+      emss_system.daily_activity_report AS dar
+    WHERE
+      dar.date_created >= ${startOfMonth}
+      AND dar.date_created <= ${endOfMonth}
+      AND dar.is_active = 1
+      AND dar.is_phic_member = 1
+      AND dar.case_type_id IS NOT NULL
+      AND dar.area_id IS NOT NULL
+      AND dar.phic_classification IS NOT NULL
+    GROUP BY
+      dar.contributor_type, dar.area_id, dar.case_type_id, dar.phic_classification`;
+  result.forEach((row) => {
+    row.count = Number(row.count);
+  });
+  // get the sum using reduce with the "count" property of result
+  // const sum = result.reduce((acc, curr) => acc + curr.count, 0);
+  return result;
 };
 
 // ? statistical report generate of dar items
