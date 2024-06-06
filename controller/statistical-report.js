@@ -48,7 +48,8 @@ exports.getSocialWorkerMonthlySwaEntries = async (req, res) => {
 exports.getMonthlyStatisticalReport = async (req, res) => {
   try {
     const month = req.body.month;
-    const report = await repository.getMonthlyStatisticalReport("may");
+    console.log(month);
+    const report = await repository.getMonthlyStatisticalReport(month);
     res.send(report);
   } catch (error) {
     console.log(error);
