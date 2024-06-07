@@ -122,6 +122,7 @@ exports.getMonthlySwaEntries = async (month) => {
   return swaEntries || [];
 };
 exports.getMonthlyStatisticalReport = async (month) => {
+  console.log("month", month);
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
 
   // Initialize the statistical report object
