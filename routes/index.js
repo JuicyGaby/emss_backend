@@ -197,3 +197,21 @@ router.post(
   "/get-monthly-statistical-report",
   statisticalReport.getMonthlyStatisticalReport
 );
+// generation of Statistical Report
+router.post(
+  "/generate-source-of-referral-dar-items",
+  statisticalReport.generateSourceOfReferralDarItems
+);
+router.post(
+  "/generate-social-work-administration-items",
+  statisticalReport.generateSocialWorkAdministrationItems
+);
+router.post(
+  "/generate-msw-documentation-items",
+  statisticalReport.generateMswDocumentationItems
+);
+// generateDarServicesItems
+router.post(
+  "/generate-dar-services-items",
+  statisticalReport.generateDarServicesItems
+);

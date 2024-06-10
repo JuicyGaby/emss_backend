@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const e = require("cors");
 const prisma = new PrismaClient();
 const moment = require("moment-timezone");
 
@@ -23,9 +24,7 @@ exports.getSocialWorkerMonthlyDarEntries = async (body) => {
       ...item,
       fullname:
         `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
+      date_created: modifyDate(item.date_created),
     };
   });
   const report = await this.generateMonthlyReport(body);
@@ -46,9 +45,7 @@ exports.getSocialWorkerMonthlySwaEntries = async (body) => {
   swaEntries = swaEntries.map((item) => {
     return {
       ...item,
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
+      date_created: moment(item.date_created),
     };
   });
   const report = await this.generateMonthlyReport(body);
@@ -100,9 +97,7 @@ exports.getMonthlyDarEntries = async (month) => {
       ...item,
       fullname:
         `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
+      date_created: modifyDate(item.date_created),
     };
   });
   return darEntries || [];
@@ -115,27 +110,38 @@ exports.getMonthlySwaEntries = async (month) => {
         gte: startOfMonth,
         lte: endOfMonth,
       },
+      is_active: 1,
     },
   });
   swaEntries = swaEntries.map((item) => {
     return {
       ...item,
-      date_created: moment(item.date_created)
-        .local()
-        .format("YYYY-MM-DD hh:mm A"),
+      date_created: moment(item.date_created),
     };
   });
   return swaEntries || [];
 };
-
 exports.getMonthlyStatisticalReport = async (month) => {
+  console.log("month", month);
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
 
   // Initialize the statistical report object
-  const statisticalReport = {};
+  const statisticalReport = {
+    caseLoad: {},
+  };
 
   // Gather the various parts of the statistical report
   statisticalReport.sourceOfReferral = await getMonthlySourceOfReferral(
+    startOfMonth,
+    endOfMonth
+  );
+  statisticalReport.caseLoad.nonPhic = await generateCaseLoad(
+    0,
+    startOfMonth,
+    endOfMonth
+  );
+  statisticalReport.caseLoad.phic = await generateCaseLoad(
+    1,
     startOfMonth,
     endOfMonth
   );
@@ -143,6 +149,7 @@ exports.getMonthlyStatisticalReport = async (month) => {
     startOfMonth,
     endOfMonth
   );
+
   //  Get Place of Origin
   const { regionSevenObject, otherProviceObject } =
     await getMonthlyPlaceOfOrigin(startOfMonth, endOfMonth);
@@ -163,17 +170,20 @@ exports.getMonthlyStatisticalReport = async (month) => {
   return statisticalReport;
 };
 
+const modifyDate = (date) => {
+  return moment(date).local().format("MMMM DD, YYYY hh:mm A");
+};
+
 // statistical report starts
 // ? I source or referral
 const getMonthlySourceOfReferral = async (startOfMonth, endOfMonth) => {
   const result = await prisma.$queryRaw`
-  SELECT sor.name, HA.id, COUNT(*) as count
+  SELECT sor.id as sor_id, sor.name, HA.id, COUNT(*) as count
   FROM emss_system.daily_activity_report AS dar 
   LEFT JOIN emss_system.source_of_referral AS sor ON dar.source_of_referral_id = sor.id
   LEFT JOIN emss_system.hospital_area AS HA ON dar.area_id = HA.id
-  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth} AND dar.phic_classification IS NOT NULL
-  GROUP BY sor.name, HA.id`;
-
+  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth} AND dar.phic_classification IS NOT NULL AND dar.is_active = 1
+  GROUP BY sor.id, sor.name, HA.id`;
   // Convert count to number
   result.forEach((row) => {
     row.count = Number(row.count);
@@ -191,6 +201,7 @@ const transformedSourceOfReferralResult = (array) => {
     if (!result[item.name]) {
       result[item.name] = {
         name: item.name,
+        name_id: item.sor_id,
         area_1_count: 0,
         area_2_count: 0,
         area_3_count: 0,
@@ -216,7 +227,6 @@ const transformedSourceOfReferralResult = (array) => {
   return Object.values(result);
 };
 // ? II case load
-
 // ? III Place of Origin
 const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
   const regionSevenProvince = ["CEBU", "BOHOL", "SIQUIJOR", "NEGROS ORIENTAL"];
@@ -234,11 +244,15 @@ const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
   GROUP BY DAR.id, DAR.area_id, HA.area_name, province;
 `;
   const filteredProvince = result.filter((item) =>
-    regionSevenProvince.some((category) => item.province.includes(category))
+    regionSevenProvince.some((category) =>
+      item.province.trim().toUpperCase().includes(category)
+    )
   );
   const updatedResult = result.filter(
     (item) =>
-      !regionSevenProvince.some((province) => item.province.includes(province))
+      !regionSevenProvince.some((province) =>
+        item.province.trim().toUpperCase().includes(province)
+      )
   );
   const regionSevenObject = transformedPlaceOfOrigin(filteredProvince);
   const otherProviceObject = transformedPlaceOfOrigin(updatedResult);
@@ -247,9 +261,10 @@ const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
 const transformedPlaceOfOrigin = (array) => {
   const result = {};
   array.forEach((item) => {
-    if (!result[item.province]) {
-      result[item.province] = {
-        province: item.province,
+    const trimmedProvince = item.province.trim().toUpperCase();
+    if (!result[trimmedProvince]) {
+      result[trimmedProvince] = {
+        province: trimmedProvince,
         area_1_count: 0,
         area_2_count: 0,
         area_3_count: 0,
@@ -257,18 +272,18 @@ const transformedPlaceOfOrigin = (array) => {
       };
     }
     if (item.area_id === 1 || item.area_id === 2) {
-      result[item.province].area_1_count += 1;
+      result[trimmedProvince].area_1_count += 1;
     }
     if (item.area_id === 3) {
-      result[item.province].area_2_count += 1;
+      result[trimmedProvince].area_2_count += 1;
     }
     if (item.area_id === 4) {
-      result[item.province].area_3_count += 1;
+      result[trimmedProvince].area_3_count += 1;
     }
-    result[item.province].total_count =
-      result[item.province].area_1_count +
-      result[item.province].area_2_count +
-      result[item.province].area_3_count;
+    result[trimmedProvince].total_count =
+      result[trimmedProvince].area_1_count +
+      result[trimmedProvince].area_2_count +
+      result[trimmedProvince].area_3_count;
   });
   return Object.values(result);
 };
@@ -279,7 +294,7 @@ const getDarServicesStatisticalReport = async (startOfMonth, endOfMonth) => {
   FROM emss_system.dar_case_services AS dcs
   LEFT JOIN emss_system.daily_activity_report AS dar ON dcs.dar_id = dar.id
   LEFT JOIN emss_system.dar_services AS ds ON dcs.dar_service_id = ds.id
-  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth}
+  WHERE dar.date_created >= ${startOfMonth} AND dar.date_created <= ${endOfMonth} AND dar.is_active = 1
   GROUP BY dar_service_id, service_name;
   `;
   result.forEach((row) => {
@@ -320,6 +335,7 @@ const getSwaStatisticalReport = async (startOfMonth, endOfMonth) => {
   left join emss_system.swa_services as SS on DSS.service_id = SS.id
   WHERE DS.date_created >= ${startOfMonth}
     AND DS.date_created < ${endOfMonth}
+    AND DS.is_active = 1
   group by service_id, service_name
   `;
   result.forEach((row) => {
@@ -349,6 +365,7 @@ const getMonthlySwaCount = async (month) => {
         gte: startOfMonth,
         lte: endOfMonth,
       },
+      is_active: 1,
     },
   });
   return swaCount;
@@ -391,6 +408,7 @@ const getSocialWorkerSwaCount = async (body) => {
         gte: startOfMonth,
         lte: endOfMonth,
       },
+      is_active: 1,
     },
   });
   return swaCount;
@@ -413,4 +431,154 @@ const generateStartAndEndOfMonth = (month) => {
   const startOfMonth = moment(month, "MMMM").startOf("month").toISOString();
   const endOfMonth = moment(month, "MMMM").endOf("month").toISOString();
   return { startOfMonth, endOfMonth };
+};
+const generateCaseLoad = async (isPhic, startOfMonth, endOfMonth) => {
+  if (!isPhic) {
+    const result = await prisma.$queryRaw`
+      select
+        case_type_id, area_id, phic_classification, count(*) as count
+      from
+        emss_system.daily_activity_report
+      where
+          date_created >=  ${startOfMonth}
+          and date_created <= ${endOfMonth}
+          and is_phic_member = ${isPhic}
+          and case_type_id is not null
+          and area_id is not null
+          and phic_classification is not null
+      group by
+        case_type_id, area_id, phic_classification
+    `;
+    result.forEach((row) => {
+      row.count = Number(row.count);
+    });
+    return result;
+  }
+  console.log("this is phic");
+  const result = await prisma.$queryRaw`
+    SELECT
+      dar.contributor_type, dar.area_id, dar.phic_classification, dar.case_type_id, count(*) as count
+    FROM
+      emss_system.daily_activity_report AS dar
+    WHERE
+      dar.date_created >= ${startOfMonth}
+      AND dar.date_created <= ${endOfMonth}
+      AND dar.is_active = 1
+      AND dar.is_phic_member = 1
+      AND dar.case_type_id IS NOT NULL
+      AND dar.area_id IS NOT NULL
+      AND dar.phic_classification IS NOT NULL
+    GROUP BY
+      dar.contributor_type, dar.area_id, dar.case_type_id, dar.phic_classification`;
+  result.forEach((row) => {
+    row.count = Number(row.count);
+  });
+  // get the sum using reduce with the "count" property of result
+  // const sum = result.reduce((acc, curr) => acc + curr.count, 0);
+  return result;
+};
+
+// ? statistical report generate of dar items
+exports.generateSourceOfReferralDarItems = async (month, sor_id) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  let darItems = await prisma.daily_activity_report.findMany({
+    where: {
+      source_of_referral_id: sor_id,
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+      is_active: 1,
+      phic_classification: {
+        not: null,
+      },
+    },
+  });
+  darItems = darItems.map((item) => {
+    return {
+      ...item,
+      date_created: modifyDate(item.date_created),
+    };
+  });
+  return darItems;
+};
+
+exports.generateSocialWorkAdministrationItems = async (month, service_id) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  const swaItems = await prisma.dar_swa.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+      is_active: 1,
+    },
+    include: {
+      dar_swa_services: true,
+    },
+  });
+  let filteredSwaItems = swaItems.filter((item) =>
+    item.dar_swa_services.some((service) => service.service_id === service_id)
+  );
+  filteredSwaItems = filteredSwaItems.map((item) => {
+    return {
+      ...item,
+      date_created: modifyDate(item.date_created),
+    };
+  });
+  return filteredSwaItems;
+};
+exports.generateDarServicesItems = async (month, dar_service_id) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  const darItems = await prisma.daily_activity_report.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+      is_active: 1,
+    },
+    include: {
+      dar_case_services: true,
+    },
+  });
+  let filteredDarItems = darItems.filter((item) =>
+    item.dar_case_services.some(
+      (service) => service.dar_service_id === dar_service_id
+    )
+  );
+  filteredDarItems = filteredDarItems.map((item) => {
+    return {
+      ...item,
+      date_created: modifyDate(item.date_created),
+    };
+  });
+  return filteredDarItems;
+};
+exports.generateMswDocumentationItems = async (month, dar_service_id) => {
+  const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
+  const darItems = await prisma.daily_activity_report.findMany({
+    where: {
+      date_created: {
+        gte: startOfMonth,
+        lte: endOfMonth,
+      },
+      is_active: 1,
+    },
+    include: {
+      dar_case_services: true,
+    },
+  });
+  let filteredDarItems = darItems.filter((item) =>
+    item.dar_case_services.some(
+      (service) => service.dar_service_id === dar_service_id
+    )
+  );
+  filteredDarItems = filteredDarItems.map((item) => {
+    return {
+      ...item,
+      date_created: modifyDate(item.date_created),
+    };
+  });
+  return filteredDarItems;
 };

@@ -70,6 +70,10 @@ async function searchPatient(search) {
   patients.map((patient) => {
     patient.fullname =
       `${patient.first_name} ${patient.middle_name} ${patient.last_name}`.toUpperCase();
+    // modify created_at to human readable format local
+    patient.created_at = moment(patient.created_at).format(
+      "MMMM DD, YYYY hh:mm A"
+    );
   });
   return patients || [];
 }

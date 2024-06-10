@@ -42,6 +42,7 @@ async function createInterview(reqBody) {
       ).toISOString(),
       basic_ward: body.basic_ward,
       nonbasic_ward: body.nonbasic_ward,
+      source_of_referral: body.source_of_referral,
       health_record_number: body.health_record_number,
       mswd_number: body.mswd_number,
       referring_party: body.referring_party,
@@ -73,6 +74,7 @@ async function getInterviewById(patient_id) {
   return interview || false;
 }
 async function updateInterviewById(patient_id, reqBody) {
+  console.log("this is body", reqBody);
   const interview = await prisma.patient_interview.update({
     where: {
       id: parseInt(reqBody.id),
@@ -86,6 +88,7 @@ async function updateInterviewById(patient_id, reqBody) {
       area: reqBody.area,
       department: reqBody.department,
       health_record_number: reqBody.health_record_number,
+      source_of_referral: reqBody.source_of_referral,
       mswd_number: reqBody.mswd_number,
       referring_party: reqBody.referring_party,
       address: reqBody.address,
@@ -97,7 +100,7 @@ async function updateInterviewById(patient_id, reqBody) {
       remarks: reqBody.remarks,
     },
   });
-  console.log("updated interview", interview);
+  // console.log("updated interview", interview);
   reqBody.activity = "Updated interview details";
   await createActivityLog(patient_id, reqBody);
   return interview;

@@ -36,7 +36,9 @@ exports.getDarActivityLogs = async function (dar_id) {
   const updatedActivityLogs = activityLogs.map((item) => {
     return {
       ...item,
-      created_at: moment(item.created_at).local().format("YYYY-MM-DD hh:mm A"),
+      created_at: moment(item.created_at)
+        .local()
+        .format("MMMM-DD-YYYY hh:mm A"),
     };
   });
   return updatedActivityLogs || [];
@@ -50,7 +52,9 @@ exports.getSwaActivityLogs = async function (dar_swa_id) {
   const updatedActivityLogs = activityLogs.map((item) => {
     return {
       ...item,
-      created_at: moment(item.created_at).local().format("YYYY-MM-DD hh:mm A"),
+      created_at: moment(item.created_at)
+        .local()
+        .format("MMMM-DD-YYYY hh:mm A"),
     };
   });
   return updatedActivityLogs || [];
@@ -200,7 +204,7 @@ exports.getDailyActivityReportByDate = async function (date) {
         `${item.patients.first_name} ${item.patients.middle_name} ${item.patients.last_name}`.toUpperCase(),
       date_created: moment(item.date_created)
         .local()
-        .format("YYYY-MM-DD hh:mm A"),
+        .format("MMMM DD, YYYY hh:mm A"),
     };
   });
   return darLocalTime || [];
@@ -306,8 +310,6 @@ exports.getSwaServices = async function () {
   return services || [];
 };
 exports.getDarSwa = async function () {
-  // Set 'today' to April 4, 2024
-  //const today = moment("2024-04-04").startOf('day');
   const today = moment().startOf("day");
   const tomorrow = moment(today).add(1, "days");
 
@@ -317,6 +319,7 @@ exports.getDarSwa = async function () {
         gte: today.toDate(),
         lt: tomorrow.toDate(),
       },
+      is_active: 1,
     },
   });
 
@@ -341,6 +344,7 @@ exports.getDarSwaByDate = async function (date) {
         gte: today.toDate(),
         lt: tomorrow.toDate(),
       },
+      is_active: 1,
     },
   });
 
@@ -463,7 +467,7 @@ exports.getSwaNotes = async function (dar_swa_id) {
         : null,
       date_created: moment(item.date_created)
         .local()
-        .format("YYYY-MM-DD hh:mm"),
+        .format("MMMM-DD-YYYY hh:mm A"),
     };
   });
   return updatedSwaNotes || [];
@@ -493,7 +497,7 @@ exports.updateSwaNote = async function (reqBody) {
     ...swaNote,
     date_created: moment(swaNote.date_created)
       .local()
-      .format("YYYY-MM-DD hh:mm A"),
+      .format("MMMM-DD-YYYY hh:mm A"),
     note_time_started: moment(swaNote.note_time_started, "HH:mm").format(
       "hh:mm A"
     ),
@@ -585,7 +589,7 @@ exports.createDarNote = async function (reqBody) {
     ...darNote,
     date_created: moment(darNote.date_created)
       .local()
-      .format("YYYY-MM-DD hh:mm A"),
+      .format("MMMM-DD-YYYY hh:mm A"),
   };
   reqBody.activity = `Created DAR Note : ${darNote.note_title}`;
   await createDarActivityLog(reqBody);
@@ -630,7 +634,7 @@ exports.updateDarNote = async function (reqBody) {
     ...darNote,
     date_created: moment(darNote.date_created)
       .local()
-      .format("YYYY-MM-DD hh:mm A"),
+      .format("MMMM-DD-YYYY hh:mm A"),
   };
   reqBody.activity = `Updated DAR Note : ${darNote.note_title}`;
   reqBody.dar_id = darNote.dar_id;
