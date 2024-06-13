@@ -226,7 +226,6 @@ const transformedSourceOfReferralResult = (array) => {
 
   return Object.values(result);
 };
-// ? II case load
 // ? III Place of Origin
 const getMonthlyPlaceOfOrigin = async (startOfMonth, endOfMonth) => {
   const regionSevenProvince = ["CEBU", "BOHOL", "SIQUIJOR", "NEGROS ORIENTAL"];
@@ -475,6 +474,7 @@ const generateCaseLoad = async (isPhic, startOfMonth, endOfMonth) => {
   });
   // get the sum using reduce with the "count" property of result
   // const sum = result.reduce((acc, curr) => acc + curr.count, 0);
+  console.log(result);
   return result;
 };
 
@@ -502,7 +502,6 @@ exports.generateSourceOfReferralDarItems = async (month, sor_id) => {
   });
   return darItems;
 };
-
 exports.generateSocialWorkAdministrationItems = async (month, service_id) => {
   const { startOfMonth, endOfMonth } = generateStartAndEndOfMonth(month);
   const swaItems = await prisma.dar_swa.findMany({
