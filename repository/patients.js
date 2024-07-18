@@ -9,7 +9,7 @@ async function getPatients() {
   const tomorrow = moment(currentDate).add(1, "days").toISOString();
   const patients = await prisma.patients.findMany({
     orderBy: {
-      last_name: "asc",
+      created_at: "desc",
     },
     where: {
       created_at: {
