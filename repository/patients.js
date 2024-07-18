@@ -80,7 +80,7 @@ async function searchPatient(search) {
 
 async function createPatient(reqBody) {
   const { interview, demographicData } = reqBody;
-  console.log(interview, demographicData);
+  // console.log(interview, demographicData);
   const patient = await prisma.patients.create({
     data: {
       first_name: demographicData.first_name,
