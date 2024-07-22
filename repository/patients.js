@@ -9,7 +9,7 @@ async function getPatients() {
   const tomorrow = moment(currentDate).add(1, "days").toISOString();
   const patients = await prisma.patients.findMany({
     orderBy: {
-      last_name: "asc",
+      created_at: "desc",
     },
     where: {
       created_at: {
@@ -80,8 +80,8 @@ async function searchPatient(search) {
 
 async function createPatient(reqBody) {
   const { interview, demographicData } = reqBody;
-  console.log(interview, demographicData);
-  const patient = await prisma.patients.create({
+  // console.log(interview, demographicData);
+  let patient = await prisma.patients.create({
     data: {
       first_name: demographicData.first_name,
       middle_name: demographicData.middle_name,
@@ -112,7 +112,13 @@ async function createPatient(reqBody) {
     patientId,
     demographicData.social_worker
   );
-  return patient;
+  const updatedPatient = {
+    ...patient,
+    created_at: moment(patient.created_at).format("MMMM DD, YYYY hh:mm A"),
+    fullname: `${patient.first_name} ${patient.last_name}`.toUpperCase(),
+  };
+
+  return updatedPatient;
 }
 async function createPatientAddress(addressData, addressType, patientId) {
   const [region, province, municipality] = await Promise.all([
